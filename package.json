@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "better-npm-run": "^0.0.13",
+    "axios": "^0.15.3",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "connect-flash": "^0.1.1",
@@ -67,8 +68,7 @@
   },
   "devDependencies": {
     "async": "^2.1.5",
-    "autoprefixer": "^6.6.1",
-    "axios": "^0.15.3",
+    "autoprefixer": "^6.6.1",    
     "babel": "^6.5.2",
     "babel-core": "^6.20.0",
     "babel-eslint": "^7.1.1",
