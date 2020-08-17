@@ -3,11 +3,14 @@ const getDiscussion = require('./controller').getDiscussion;
 const createDiscussion = require('./controller').createDiscussion;
 const toggleFavorite = require('./controller').toggleFavorite;
 const deleteDiscussion = require('./controller').deleteDiscussion;
-
+const axios = require('axios');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 /**
  * discussion apis
  */
-const discussionAPI = (app) => {
+const discussionAPI = (app, client) => {
   // get signle discussion
   app.get('/api/discussion/:discussion_slug', (req, res) => {
     const { discussion_slug } = req.params;
@@ -37,12 +40,21 @@ const discussionAPI = (app) => {
   });
 
   // create a new discussion
-  app.post('/api/discussion/newDiscussion', (req, res) => {
+  app.post('/api/discussion/newDiscussion', upload.single('tile'), (req, res) => {
     if (req.user) {
-      createDiscussion(req.body).then(
-        (result) => { res.send(Object.assign({}, result._doc, { postCreated: true })); },
+
+      createDiscussion(req.body, client, req.file).then(
+        (result) => {
+          res.send(Object.assign({}, result._doc, { postCreated: true }));
+
+        },
         (error) => { res.send({ postCreated: false }); }
       );
+      res.on('finish', () => {
+        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+          .then(message => console.log(message))
+      });
+
     } else {
       res.send({ postCreated: false });
     }

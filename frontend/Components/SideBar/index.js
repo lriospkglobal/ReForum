@@ -27,8 +27,8 @@ SideBar.defaultProps = {
   currentForum: 'general',
 };
 
-SideBar.propTypes = {
+/* SideBar.propTypes = {
   currentForum: React.PropTypes.string,
-};
+}; */
 
 export default SideBar;

@@ -39,7 +39,7 @@ class AppContainer extends Component {
 
     let newCurrentForum = '';
     if (params.forum) newCurrentForum = params.forum;
-    else if (forums) newCurrentForum = forums[0].forum_slug;
+    else if (forums && forums.length) newCurrentForum = forums[0].forum_slug;
 
     // update current forum if necessery
     if (newCurrentForum !== currentForum) updateCurrentForum(newCurrentForum);

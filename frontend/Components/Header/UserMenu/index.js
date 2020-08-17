@@ -97,11 +97,11 @@ UserMenu.defaultProps = {
   avatar: '',
 };
 
-UserMenu.propTypes = {
+/* UserMenu.propTypes = {
   signedIn: React.PropTypes.bool.isRequired,
   userName: React.PropTypes.string,
   gitHandler: React.PropTypes.string,
   avatar: React.PropTypes.string,
-};
+}; */
 
 export default onClickOutside(UserMenu);

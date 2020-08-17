@@ -35,12 +35,12 @@ const getAdminDashInfo = () => {
       },
       (lastResult, callback) => {
         Forum
-        .find({})
-        .sort({ date: -1 })
-        .lean()
-        .exec((error, forums) => {
-          callback(null, Object.assign(lastResult, { forums }));
-        });
+          .find({})
+          .sort({ date: -1 })
+          .lean()
+          .exec((error, forums) => {
+            callback(null, Object.assign(lastResult, { forums }));
+          });
       },
     ], (error, result) => {
       if (error) { console.log(error); reject(error); }
@@ -55,27 +55,29 @@ const getAdminDashInfo = () => {
  * @param  {String} forum_slug
  * @return {Promise}
  */
-const createForum = ({ forum_name, forum_slug }) => {
+const createForum = ({ forum_name, forum_slug, original_img_id }) => {
   return new Promise((resolve, reject) => {
     // check if the forum exists
     Forum
-    .findOne({ forum_slug })
-    .exec((error, forum) => {
-      if (error) { console.log(error); reject({ serverError: true }); }
-      else if (forum) { reject({ alreadyExists: true }); }
-      else {
-        // forum does not exists, so create a new one
-        const newForum = new Forum({
-          forum_slug,
-          forum_name,
-        });
+      .findOne({ forum_slug })
+      .exec((error, forum) => {
+        if (error) { console.log(error); reject({ serverError: true }); }
+        else if (forum) { reject({ alreadyExists: true }); }
+        else {
+          // forum does not exists, so create a new one
+          const newForum = new Forum({
+            forum_slug,
+            forum_name,
+            original_img_id,
+            mosaic_img_id: null
+          });
 
-        newForum.save((error) => {
-          if (error) { console.log(error); reject({ created: false }); }
-          else { resolve(Object.assign({}, newForum, { created: true })); }
-        });
-      }
-    });
+          newForum.save((error) => {
+            if (error) { console.log(error); reject({ created: false }); }
+            else { resolve(Object.assign({}, newForum, { created: true })); }
+          });
+        }
+      });
   });
 };
 

@@ -106,7 +106,7 @@ Discussion.defaultProps = {
   deleteAction: () => { },
 };
 
-Discussion.propTypes = {
+/* Discussion.propTypes = {
   id: React.PropTypes.any,
   userAvatar: React.PropTypes.string,
   userName: React.PropTypes.string,
@@ -122,6 +122,6 @@ Discussion.propTypes = {
   allowDelete: React.PropTypes.bool,
   deletingDiscussion: React.PropTypes.bool,
   deleteAction: React.PropTypes.func,
-};
+}; */
 
 export default Discussion;

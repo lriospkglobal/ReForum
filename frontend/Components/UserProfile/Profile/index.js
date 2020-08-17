@@ -33,11 +33,11 @@ Profile.defaultProps = {
   avatarUrl: 'https://google.com',
 };
 
-Profile.propTypes = {
+/* Profile.propTypes = {
   name: React.PropTypes.string,
   gitHandler: React.PropTypes.string,
   location: React.PropTypes.string,
   avatarUrl: React.PropTypes.string,
-};
+}; */
 
 export default Profile;

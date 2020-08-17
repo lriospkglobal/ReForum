@@ -166,12 +166,12 @@ RichEditor.defaultProps = {
   onSave: () => { },
 };
 
-RichEditor.propTypes = {
+/* RichEditor.propTypes = {
   readOnly: React.PropTypes.bool,
   value: React.PropTypes.any,
-  type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
+  //type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
   onChange: React.PropTypes.func,
   onSave: React.PropTypes.func,
-};
+}; */
 
 export default RichEditor;

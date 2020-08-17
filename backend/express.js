@@ -13,7 +13,9 @@ const flash = require('connect-flash');
 /**
  * express configuration
  */
-const expressConfig = (app, serverConfigs) => {
+const expressConfig = (app, serverConfigs, client) => {
+
+  
 
   // apply gzip compression (should be placed before express.static)
   app.use(compress());
@@ -35,7 +37,7 @@ const expressConfig = (app, serverConfigs) => {
     secret: 'secret',
     store: new mongoStore({
       url: serverConfigs.DBURL,
-      collection : 'sessions',
+      collection: 'sessions',
     }),
   }));
 
@@ -55,7 +57,7 @@ const expressConfig = (app, serverConfigs) => {
   }
 
   // apply route configs
-  require('./routes')(app);
+  require('./routes')(app, client);
 };
 
 module.exports = expressConfig;

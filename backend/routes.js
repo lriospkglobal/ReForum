@@ -13,7 +13,7 @@ const adminAPI = require('./entities/admin/api');
 /**
  * routes configurations
  */
-const routesConfig = (app) => {
+const routesConfig = (app, client) => {
   // serves static files from public directory
   const publicPath = path.resolve(__dirname, '../public');
   app.use(express.static(publicPath));
@@ -27,16 +27,16 @@ const routesConfig = (app) => {
   userAPI(app);
 
   // apply forum apis
-  forumAPI(app);
+  forumAPI(app, client);
 
   // apply discussion apis
-  discussionAPI(app);
+  discussionAPI(app, client);
 
   // apply opinion apis
   opinionAPI(app);
 
   // apply admin apis
-  adminAPI(app);
+  adminAPI(app, client);
 
   // all get request will send index.html for react-router
   // to handle the route request

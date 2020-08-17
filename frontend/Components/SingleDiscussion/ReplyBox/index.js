@@ -29,10 +29,10 @@ ReplyBox.defaultProps = {
   onChange: (value) => { },
 };
 
-ReplyBox.propTypes = {
+/* ReplyBox.propTypes = {
   posting: React.PropTypes.bool,
   onSubmit: React.PropTypes.func,
   onChange: React.PropTypes.func,
-};
+}; */
 
 export default ReplyBox;

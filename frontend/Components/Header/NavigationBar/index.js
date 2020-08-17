@@ -58,8 +58,8 @@ NavigationBar.defaultProps = {
   ],
 };
 
-NavigationBar.propTypes = {
+/* NavigationBar.propTypes = {
   navigationLinks: React.PropTypes.array,
-};
+}; */
 
 export default NavigationBar;

@@ -44,14 +44,14 @@ Button.defaultProps = {
   onClick: () => { },
 };
 
-Button.propTypes = {
-  type: React.PropTypes.oneOf(['default', 'outline']),
+/* Button.propTypes = {
+  //type: React.PropTypes.oneOf(['default', 'outline']),
   fullWidth: React.PropTypes.bool,
   noUppercase: React.PropTypes.bool,
   alwaysActive: React.PropTypes.bool,
   className: React.PropTypes.string,
   style: React.PropTypes.object,
   onClick: React.PropTypes.func,
-};
+}; */
 
 export default Button;

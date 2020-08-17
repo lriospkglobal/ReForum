@@ -95,14 +95,14 @@ FeedBox.defaultProps = {
   userProfile: false,
 };
 
-FeedBox.propTypes = {
-  type: React.PropTypes.oneOf(['general', 'pinned']),
+/* FeedBox.propTypes = {
+  //type: React.PropTypes.oneOf(['general', 'pinned']),
   loading: React.PropTypes.bool,
   discussions: React.PropTypes.array,
   currentForum: React.PropTypes.string,
   activeSortingMethod: React.PropTypes.string,
   onChangeSortingMethod: React.PropTypes.func,
   userProfile: React.PropTypes.bool,
-};
+}; */
 
 export default FeedBox;

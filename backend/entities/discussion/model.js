@@ -15,6 +15,7 @@ const discussionSchema = mongoose.Schema({
   favorites: Array,
   tags: Array,
   pinned: Boolean,
+  tile_id: String
 });
 
 module.exports = mongoose.model('discussion', discussionSchema);

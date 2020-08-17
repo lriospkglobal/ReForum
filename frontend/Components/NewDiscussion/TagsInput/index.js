@@ -139,10 +139,10 @@ TagsInput.defaultProps = {
   onChange: (tags) => {},
 };
 
-TagsInput.propTypes = {
+/* TagsInput.propTypes = {
   value: React.PropTypes.array,
   maxTagCount: React.PropTypes.number,
   onChange: React.PropTypes.func,
-};
+}; */
 
 export default TagsInput;

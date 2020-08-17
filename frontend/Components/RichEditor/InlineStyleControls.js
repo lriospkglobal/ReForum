@@ -37,10 +37,10 @@ class InlineStyleControls extends Component {
   }
 }
 
-InlineStyleControls.propTypes = {
+/* InlineStyleControls.propTypes = {
   onToggle: React.PropTypes.func.isRequired,
   editorState: React.PropTypes.any.isRequired,
-  type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
-};
+  //type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
+}; */
 
 export default InlineStyleControls;

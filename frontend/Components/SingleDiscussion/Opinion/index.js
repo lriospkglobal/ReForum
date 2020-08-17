@@ -75,7 +75,7 @@ Opinion.defaultProps = {
   deletingOpinion: null,
 };
 
-Opinion.propTypes = {
+/* Opinion.propTypes = {
   opinionId: React.PropTypes.string,
   userAvatar: React.PropTypes.string,
   userName: React.PropTypes.string,
@@ -87,6 +87,6 @@ Opinion.propTypes = {
   currentUserRole: React.PropTypes.string,
   deleteAction: React.PropTypes.func,
   deletingOpinion: React.PropTypes.any,
-};
+}; */
 
 export default Opinion;

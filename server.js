@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const MongoClient = require('mongodb').MongoClient;
 
 // server configurations
 const serverConfigs = require('./config/serverConfig');
@@ -14,7 +15,10 @@ mongoose.connect(serverConfigs.DBURL);
 const app = express();
 
 // apply express configs
-require('./backend/express')(app, serverConfigs);
+MongoClient.connect(serverConfigs.DBURL, function (err, client) {
+  if (err) throw err;
+  require('./backend/express')(app, serverConfigs, client);
+});
 
 // fire up the server
 app.listen(serverConfigs.PORT, (error) => {

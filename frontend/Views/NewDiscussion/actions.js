@@ -9,7 +9,7 @@ import {
   UPDATE_DISCUSSION_CONTENT,
   UPDATE_DISCUSSION_PIN_STATUS,
   UPDATE_DISCUSSION_TAGS,
-
+  UPDATE_DISCUSSION_TILE,
   CLEAR_SUCCESS_MESSAGE,
 } from './constants';
 import { postDiscussionApi } from './api';
@@ -29,6 +29,7 @@ export const postDiscussion = (userId, forumId, currentForum) => {
     // discussion values are in redux state
     const {
       title,
+      tile,
       content,
       tags,
       pinned,
@@ -60,6 +61,14 @@ export const postDiscussion = (userId, forumId, currentForum) => {
       });
     }
 
+    if (tile === undefined) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please add a tile .',
+      });
+    }
+
     if (tags === null || tags.length === 0) {
       validated = false;
       return dispatch({
@@ -77,6 +86,7 @@ export const postDiscussion = (userId, forumId, currentForum) => {
         content,
         tags,
         pinned,
+        tile
       }).then(
         (data) => {
           if (data.data.postCreated === true) {
@@ -108,7 +118,8 @@ export const postDiscussion = (userId, forumId, currentForum) => {
  * @param  {String} value
  * @return {action}
  */
-export const updateDiscussionTitle = (value) => {
+export const updateDiscussionTitle = (value) => { 
+  
   return {
     type: UPDATE_DISCUSSION_TITLE,
     payload: value,
@@ -124,6 +135,19 @@ export const updateDiscussionContent = (value) => {
   return {
     type: UPDATE_DISCUSSION_CONTENT,
     payload: value,
+  };
+};
+
+/**
+ * update discussion tile in redux state (not controlled input)
+ * @param  {Object} tile
+ * @return {action}
+ */
+export const updateDiscussionTile = (tile) => {  
+ 
+  return {
+    type: UPDATE_DISCUSSION_TILE,
+    payload: tile,
   };
 };
 

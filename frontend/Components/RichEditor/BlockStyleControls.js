@@ -48,10 +48,10 @@ class BlockStyleControls extends Component {
   }
 }
 
-BlockStyleControls.propTypes = {
+/* BlockStyleControls.propTypes = {
   onToggle: React.PropTypes.func.isRequired,
   editorState: React.PropTypes.any.isRequired,
-  type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
-};
+  //type: React.PropTypes.oneOf(['newDiscussion', 'newOpinion']),
+}; */
 
 export default BlockStyleControls;

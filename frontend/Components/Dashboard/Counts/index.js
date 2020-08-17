@@ -23,9 +23,9 @@ Counts.defaultProps = {
   label: 'default',
 };
 
-Counts.propTypes = {
+/* Counts.propTypes = {
   count: React.PropTypes.number,
   label: React.PropTypes.string,
-};
+}; */
 
 export default Counts;

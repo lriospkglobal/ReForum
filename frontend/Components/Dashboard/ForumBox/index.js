@@ -11,6 +11,7 @@ class ForumBox extends Component {
       newForumTitle: '',
       newForumSlug: '',
       errorMsg: null,
+      mosaicImage: null
     };
 
     this.handleCreateForum = this.handleCreateForum.bind(this);
@@ -23,6 +24,7 @@ class ForumBox extends Component {
     const {
       newForumTitle,
       newForumSlug,
+      mosaicImage
     } = this.state;
 
     let convertedTitle = null;
@@ -41,6 +43,8 @@ class ForumBox extends Component {
       return this.setState({ errorMsg: 'Forum title is empty. Please provide a valid Forum Title.' });
     }
 
+    //check mosaic image
+    if(!mosaicImage) return this.setState({errorMsg: 'Select an image for mosaic.' })
     // check and confirm forum slug
     if (convertedSlug !== '') {
       const slugRegex = /^[a-z\_]+$/;
@@ -57,7 +61,7 @@ class ForumBox extends Component {
     if (!convertedTitle) { return this.setState({ errorMsg: 'Please provide a valid Forum Title.' }); }
     if (!convertedSlug) { return this.setState({ errorMsg: 'Please provide a valid Forum Slug. Slug can only contain small case alphabets and underscore.' }); }
 
-    if (convertedTitle && convertedSlug) { this.props.createAction({ title: convertedTitle, slug: convertedSlug }); }
+    if (convertedTitle && convertedSlug) { this.props.createAction({ title: convertedTitle, slug: convertedSlug, mosaicImage }); }
   }
 
   render() {
@@ -112,6 +116,15 @@ class ForumBox extends Component {
                 onChange={(e) => { this.setState({ newForumSlug: e.target.value }); }}
               />
             </div>
+            <div className={styles.createInputContainer}>
+              <div className={styles.inputLabel}>Mosaic Image: </div>
+              <input
+                type={'file'}                        
+                accept="image/jpeg" 
+                name="img"                 
+                onChange={(e) => { this.setState({ mosaicImage: e.target.files[0] }); }}
+              />
+            </div>
             <Button onClick={this.handleCreateForum}>Create</Button>
           </div>
           { errorMsg && <div className={styles.errorMsg}>{errorMsg}</div> }
@@ -124,12 +137,12 @@ class ForumBox extends Component {
 ForumBox.defaultProps = {
 };
 
-ForumBox.propTypes = {
+/* ForumBox.propTypes = {
   forums: React.PropTypes.array,
   deletingForum: React.PropTypes.bool,
   deleteAction: React.PropTypes.func,
   creatingForum: React.PropTypes.bool,
   createAction: React.PropTypes.func,
-};
+}; */
 
 export default ForumBox;

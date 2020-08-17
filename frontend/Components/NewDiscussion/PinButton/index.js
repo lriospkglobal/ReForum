@@ -53,9 +53,9 @@ PinButton.defaultProps = {
   value: false,
 };
 
-PinButton.propTypes = {
+/* PinButton.propTypes = {
   onChange: React.PropTypes.func,
   value: React.PropTypes.bool,
-};
+}; */
 
 export default PinButton;

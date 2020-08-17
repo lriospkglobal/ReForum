@@ -11,6 +11,7 @@ import TagsInput from 'Components/NewDiscussion/TagsInput';
 import {
   postDiscussion,
   updateDiscussionTitle,
+  updateDiscussionTile,
   updateDiscussionContent,
   updateDiscussionPinStatus,
   updateDiscussionTags,
@@ -27,6 +28,7 @@ class NewDiscussion extends Component {
       forumId: null,
       userId: null,
       fatalError: null,
+      tileImage: null
     };
   }
 
@@ -73,6 +75,7 @@ class NewDiscussion extends Component {
 
     const {
       updateDiscussionTitle,
+      updateDiscussionTile,
       updateDiscussionContent,
       updateDiscussionPinStatus,
       updateDiscussionTags,
@@ -85,6 +88,8 @@ class NewDiscussion extends Component {
       content,
       tags,
       pinned,
+      tile
+
     } = this.props.newDiscussion;
 
     const {
@@ -120,6 +125,16 @@ class NewDiscussion extends Component {
           onChange={(value) => { updateDiscussionContent(value); }}
           onSave={() => { postDiscussion(userId, forumId, currentForum); }}
         />,
+        <div key={'tile'} className={styles.createInputContainer}>
+          <div className={styles.inputLabel}>Tile Image: </div>
+          <input
+
+            type={'file'}
+            accept="image/jpeg"
+            name="tile"
+            onChange={(e) => { updateDiscussionTile(e.target.files[0]); }}
+          />
+        </div>
       ];
     }
 
@@ -150,26 +165,36 @@ class NewDiscussion extends Component {
           You are creating a new discussion on <span className={styles.forumName}>{currentForum}</span> forum.
         </div>
         <div className={styles.errorMsg}>{errorMsg}</div>
-        { postingSuccess && <div className={styles.successMsg}>Your discussion is created :-)</div> }
-        { this.renderEditor() }
-        { postingDiscussion && <div className={styles.postingMsg}>Posting discussion...</div> }
+        {postingSuccess && <div className={styles.successMsg}>Your discussion is created :-)</div>}
+        {this.renderEditor()}
+        {postingDiscussion && <div className={styles.postingMsg}>Posting discussion...</div>}
       </div>
     );
   }
 }
 
 export default connect(
-  (state) => { return {
-    user: state.user,
-    forums: state.app.forums,
-    currentForum: state.app.currentForum,
-    newDiscussion: state.newDiscussion,
-  }; },
-  (dispatch) => { return {
-    postDiscussion: (userId, forumId, currentForum) => { dispatch(postDiscussion(userId, forumId, currentForum)); },
-    updateDiscussionTitle: (value) => { dispatch(updateDiscussionTitle(value)); },
-    updateDiscussionContent: (value) => { dispatch(updateDiscussionContent(value)); },
-    updateDiscussionPinStatus: (value) => { dispatch(updateDiscussionPinStatus(value)); },
-    updateDiscussionTags: (value) => { dispatch(updateDiscussionTags(value)); },
-  }; }
+  (state) => {
+    return {
+      user: state.user,
+      forums: state.app.forums,
+      currentForum: state.app.currentForum,
+      newDiscussion: state.newDiscussion
+
+    };
+  },
+  (dispatch) => {
+    return {
+      postDiscussion: (userId, forumId, currentForum) => { dispatch(postDiscussion(userId, forumId, currentForum)); },
+      updateDiscussionTitle: (value) => {
+        dispatch(updateDiscussionTitle(value));
+      },
+      updateDiscussionTile: (value) => {
+        dispatch(updateDiscussionTile(value));
+      },
+      updateDiscussionContent: (value) => { dispatch(updateDiscussionContent(value)); },
+      updateDiscussionPinStatus: (value) => { dispatch(updateDiscussionPinStatus(value)); },
+      updateDiscussionTags: (value) => { dispatch(updateDiscussionTags(value)); },
+    };
+  }
 )(NewDiscussion);

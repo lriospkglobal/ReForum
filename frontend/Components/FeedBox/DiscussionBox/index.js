@@ -63,7 +63,7 @@ DiscussionBox.defaultProps = {
   userProfile: false,
 };
 
-DiscussionBox.propTypes = {
+/* DiscussionBox.propTypes = {
   discussionId: React.PropTypes.number,
   voteCount: React.PropTypes.number,
   userName: React.PropTypes.string,
@@ -74,6 +74,6 @@ DiscussionBox.propTypes = {
   tags: React.PropTypes.array,
   link: React.PropTypes.string,
   userProfile: React.PropTypes.bool,
-};
+}; */
 
 export default DiscussionBox;

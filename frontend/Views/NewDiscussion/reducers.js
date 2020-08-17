@@ -9,6 +9,7 @@ import {
   UPDATE_DISCUSSION_TAGS,
 
   CLEAR_SUCCESS_MESSAGE,
+  UPDATE_DISCUSSION_TILE,
 } from './constants';
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   errorMsg: null,
   postingDiscussion: false,
   title: '',
+  tile: null,
   content: null,
   tags: [],
   pinned: false,
@@ -53,8 +55,15 @@ export const newDiscussionReducer = (state = initialState, action) => {
       });
 
     case UPDATE_DISCUSSION_CONTENT:
+
       return Object.assign({}, state, {
+
         content: action.payload,
+      });
+
+    case UPDATE_DISCUSSION_TILE:      
+      return Object.assign({}, state, {
+        tile: action.payload,
       });
 
     case UPDATE_DISCUSSION_PIN_STATUS:

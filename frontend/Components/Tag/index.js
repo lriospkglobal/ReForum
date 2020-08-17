@@ -34,10 +34,10 @@ Tag.defaultProps = {
   removeAction: () => {},
 };
 
-Tag.propTypes = {
+/* Tag.propTypes = {
   name: React.PropTypes.string.isRequired,
   withRemove: React.PropTypes.bool,
   removeAction: React.PropTypes.func,
-};
+}; */
 
 export default Tag;

@@ -5,6 +5,7 @@ export const POSTING_DISCUSSION_FAILURE = 'posting_discussion_failure';
 
 export const UPDATE_DISCUSSION_TITLE = 'update_discussion_title';
 export const UPDATE_DISCUSSION_CONTENT = 'update_discussion_content';
+export const UPDATE_DISCUSSION_TILE = 'update_discussion_tile';
 export const UPDATE_DISCUSSION_PIN_STATUS = 'update_discussion_pin_status';
 export const UPDATE_DISCUSSION_TAGS = 'update_discussion_tags';
 

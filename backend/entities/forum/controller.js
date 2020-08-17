@@ -51,6 +51,7 @@ const getDiscussions = (forum_id, pinned, sorting_method='date') => {
         // attach opinion count to each discussion
         asyncEach(discussions, (eachDiscussion, callback) => {
           // add opinion count
+          console.log(eachDiscussion)
           getAllOpinions(eachDiscussion._id).then(
             (opinions) => {
               // add opinion count to discussion doc
