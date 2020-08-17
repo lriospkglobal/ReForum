@@ -21,7 +21,7 @@
   ],
   "main": "server.js",
   "engines": {
-    "node": "7.1.0"
+    "node": "10.21.0"
   },
   "scripts": {
     "test": "jest",
