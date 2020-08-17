@@ -21,7 +21,7 @@ MongoClient.connect(serverConfigs.DBURL, function (err, client) {
 });
 
 // fire up the server
-app.listen(serverConfigs.PORT, (error) => {
+app.listen(process.env.PORT || 5000, (error) => {
   if (error) throw error;
-  console.log('Server running on port: ' + serverConfigs.PORT);
+  console.log('Server running on port: ' + process.env.PORT || 5000);
 });
