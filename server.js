@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cors = require('cors');
 const MongoClient = require('mongodb').MongoClient;
 
 // server configurations
@@ -13,7 +14,7 @@ mongoose.connect(serverConfigs.DBURL);
 
 // initialize express
 const app = express();
-
+app.use(cors());
 // apply express configs
 MongoClient.connect(serverConfigs.DBURL, function (err, client) {
   if (err) throw err;

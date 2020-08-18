@@ -51,10 +51,6 @@ const expressConfig = (app, serverConfigs, client) => {
   // connect flash for flash messages (should be declared after sessions)
   app.use(flash());
 
-  // apply development environment additionals
-  if (!serverConfigs.PRODUCTION) {
-    require('./dev')(app);
-  }
 
   // apply route configs
   require('./routes')(app, client);
