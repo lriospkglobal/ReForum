@@ -48,9 +48,9 @@ const createDiscussion = (discussion, client, file) => {
   return new Promise((resolve, reject) => {
 
     gridFsSave('reforum', discussion.forumId, file.buffer, file.fieldname + Date.now() + '.jpg', client)
-      .then(id => resolve(id)).catch(err => reject(err))
+      .then(obj => resolve(obj)).catch(err => reject(err))
 
-  }).then(function (id) {
+  }).then(function (obj) {
 
 
     
@@ -67,7 +67,7 @@ const createDiscussion = (discussion, client, file) => {
         favorites: [],
         tags: discussion.tags,
         pinned: discussion.pinned,
-        tile_id: id
+        tile_id: obj.photoName
       });
 
       newDiscussion.save((error) => {

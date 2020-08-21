@@ -1,5 +1,6 @@
 const asyncEach = require('async/each');
-
+const { getImageFromGridFs, base64encode } = require('../helpers');
+const fs = require('fs');
 // models
 const Forum = require('./model');
 const Discussion = require('../discussion/model');
@@ -15,12 +16,12 @@ const getUser = require('../user/controller').getUser;
 const getAllForums = () => {
   return new Promise((resolve, reject) => {
     Forum
-    .find({})
-    .exec((error, results) => {
-      if (error) { console.log(error); reject(error); }
-      else if (!results) reject(null);
-      else resolve(results);
-    });
+      .find({})
+      .exec((error, results) => {
+        if (error) { console.log(error); reject(error); }
+        else if (!results) reject(null);
+        else resolve(results);
+      });
   });
 };
 
@@ -30,42 +31,52 @@ const getAllForums = () => {
  * @param  {Boolean} pinned
  * @return {Promise}
  */
-const getDiscussions = (forum_id, pinned, sorting_method='date') => {
+const getDiscussions = (client, forum_id, pinned, sorting_method = 'date') => {
   return new Promise((resolve, reject) => {
     // define sorthing method
-    const sortWith = { };
+    const sortWith = {};
     if (sorting_method === 'date') sortWith.date = -1;
     if (sorting_method === 'popularity') sortWith.favorites = -1;
 
     // match discussion id and pinned status
     Discussion
-    .find({ forum_id: forum_id, pinned: pinned })
-    .sort(sortWith)
-    .populate('forum')
-    .populate('user')
-    .lean()
-    .exec((error, discussions) => {
-      if (error) { console.error(error); reject(error); }
-      else if (!discussions) reject(null);
-      else {
-        // attach opinion count to each discussion
-        asyncEach(discussions, (eachDiscussion, callback) => {
-          // add opinion count
-          console.log(eachDiscussion)
-          getAllOpinions(eachDiscussion._id).then(
-            (opinions) => {
-              // add opinion count to discussion doc
-              eachDiscussion.opinion_count = opinions ? opinions.length : 0;
-              callback();
-            },
-            (error) => { console.error(error); callback(error); }
-          );
-        }, (error) => {
-          if (error) { console.error(error); reject(error); }
-          else resolve(discussions);
-        });
-      }
-    });
+      .find({ forum_id: forum_id, pinned: pinned })
+      .sort(sortWith)
+      .populate('forum')
+      .populate('user')
+      .lean()
+      .exec((error, discussions) => {
+        if (error) { console.error(error); reject(error); }
+        else if (!discussions) reject(null);
+        else {
+          // attach opinion count to each discussion
+          asyncEach(discussions, (eachDiscussion, callback) => {
+            // add opinion count
+            getAllOpinions(eachDiscussion._id).then(
+              (opinions) => {
+                // add opinion count to discussion doc
+                eachDiscussion.opinion_count = opinions ? opinions.length : 0;
+                // get individual tile
+                return new Promise((resolve, reject) => {
+
+                  getImageFromGridFs({ filename: eachDiscussion.tile_id }, 'reforum', forum_id, client, forum_id).then(img => {
+                    const base64 = base64encode(img.savedFsFilename);
+                    fs.unlinkSync(img.savedFsFilename);
+                    eachDiscussion.base64 = base64;
+                    resolve();
+
+                  }).catch(err => reject(err))
+                })
+
+              },
+              (error) => { console.error(error); callback(error); }
+            ).then(() => callback());
+          }, (error) => {
+            if (error) { console.error(error); reject(error); }
+            else resolve(discussions);
+          });
+        }
+      });
   });
 };
 

@@ -9,7 +9,9 @@ const forumSchema = mongoose.Schema({
   original_img_id: String,
   mosaic_img_id: String,
   mosaic: Object,
-  coordinates: Array
+  coordinates: Array,
+  base64: String
+
   
 });
 

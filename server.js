@@ -6,6 +6,7 @@ const passport = require('passport');
 const cors = require('cors');
 const MongoClient = require('mongodb').MongoClient;
 
+
 // server configurations
 const serverConfigs = require('./config/serverConfig');
 
@@ -20,6 +21,12 @@ MongoClient.connect(serverConfigs.DBURL, function (err, client) {
   if (err) throw err;
   require('./backend/express')(app, serverConfigs, client);
 });
+
+
+// Serve the static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+
 
 // fire up the server
 app.listen(process.env.PORT || 5000, (error) => {

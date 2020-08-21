@@ -28,7 +28,7 @@ module.exports = {
 
       uploadStream.on('finish', () => {
 
-        return resolve(id);
+        return resolve({ photoName, id });
 
       });
     })
@@ -64,6 +64,9 @@ module.exports = {
 
 
   },
+  base64encodeBuffer: (buffer) => buffer.toString('base64')
+
+  ,
   base64encode: (file) => {
     // read binary data
     const bitmap = fs.readFileSync(file);

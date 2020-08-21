@@ -4,37 +4,7 @@ const createForum = require('./controller').createForum;
 const deleteForum = require('./controller').deleteForum;
 const deleteUser = require('./controller').deleteUser;
 const deleteDiscussion = require('./controller').deleteDiscussion;
-//TODO use gridFsSave from helpers
-function gridFsSave(dbName, bucketName, buffer, photoName, client) {
-  return new Promise((resolve, reject) => {
-
-    const db = client.db(dbName);
-
-    // Covert buffer to Readable Stream
-    const readablePhotoStream = new Readable();
-    readablePhotoStream.push(buffer);
-    readablePhotoStream.push(null);
-
-    let bucket = new mongodb.GridFSBucket(db, {
-      bucketName
-    });
-
-    let uploadStream = bucket.openUploadStream(photoName);
-    let id = uploadStream.id;
-    readablePhotoStream.pipe(uploadStream);
-
-    uploadStream.on('error', () => {
-
-      return reject({ message: "Error uploading file" });
-    });
-
-    uploadStream.on('finish', () => {
-
-      return resolve(id);
-
-    });
-  })
-}
+const {gridFsSave, base64encodeBuffer} = require('../helpers')
 const multer = require('multer');
 const { Readable } = require('stream');
 const mongodb = require('mongodb');
@@ -65,8 +35,8 @@ const adminAPI = (app, client) => {
 
 
       gridFsSave('reforum', 'mosaicImages', req.file.buffer, req.file.fieldname + Date.now() + '.jpg', client)
-        .then((id) =>
-          createForum({ forum_name: title, forum_slug: slug, original_img_id: id })
+        .then((obj) =>          
+          createForum({ forum_name: title, forum_slug: slug, original_img_id: obj.id, base64: base64encodeBuffer(req.file.buffer) })
         ).then(data => res.send(data)
 
         ).catch(obj => res.status(500).json(obj));

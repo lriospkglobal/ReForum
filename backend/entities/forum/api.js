@@ -10,7 +10,6 @@ const forumAPI = (app, client) => {
   // get forum mosaic tile
   app.get('/api/forum/tile', (req, res) => {
     getImageFromGridFs({ filename: req.query.tileFileName }, 'reforum', req.query.forumId, client, req.query.forumId).then(img => {
-      console.log('resolved')
       const base64 = base64encode(img.savedFsFilename)
       fs.unlinkSync(img.savedFsFilename)
 
@@ -60,7 +59,7 @@ const forumAPI = (app, client) => {
 
   // get discussions of a forum
   app.get('/api/forum/:forum_id/discussions', (req, res) => {
-    getDiscussions(req.params.forum_id, false, req.query.sorting_method).then(
+    getDiscussions(client, req.params.forum_id, false, req.query.sorting_method).then(
       (result) => { res.send(result); },
       (error) => { res.send([]); }
     );
@@ -68,7 +67,7 @@ const forumAPI = (app, client) => {
 
   // get pinned discussions of a forum
   app.get('/api/forum/:forum_id/pinned_discussions', (req, res) => {
-    getDiscussions(req.params.forum_id, true).then(
+    getDiscussions(client, req.params.forum_id, true).then(
       (result) => { res.send(result); },
       (error) => { res.send([]); }
     );

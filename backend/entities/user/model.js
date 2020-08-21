@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
   email: String,
   role: { type: String, default: 'user' }, // ['admin', 'moderator', 'user']
   github: {
-    id: Number,
+    id: String,
     url: String,
     company: String,
     location: String,

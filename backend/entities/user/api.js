@@ -8,22 +8,34 @@ const getFullProfile = require('./controller').getFullProfile;
 const userAPI = (app) => {
   // get authenticated user
   app.get('/api/user/getUser', (req, res) => {
-    if (req.user) res.send(req.user);
+    if (req.user){           
+      res.send(req.user);
+    }
     else res.send(null);
+
   });
 
   // github authentication route
-  app.get(
+  app.post(
     '/api/user/authViaGitHub',
-    passport.authenticate('github')
-  );
+    passport.authenticate('custom'), function (req, res) {
+    
+      res.cookie('user', req.user)
+      res.redirect('/');
+
+    })
+
 
   // callback route from github
   app.get(
     // this should match callback url of github app
     '/api/user/authViaGitHub/callback',
     passport.authenticate('github', { failureRedirect: '/signIn/failed' }),
-    (req, res) => { res.redirect('/'); }
+    (req, res) => {
+      {        
+        res.redirect('/');
+      }
+    }
   );
 
   // signout the user

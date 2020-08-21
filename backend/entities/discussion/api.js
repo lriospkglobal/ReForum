@@ -40,18 +40,22 @@ const discussionAPI = (app, client) => {
   });
 
   // create a new discussion
-  app.post('/api/discussion/newDiscussion', upload.single('tile'), (req, res) => {
+  app.post('/api/discussion/newDiscussion', upload.single('tile'), (req, res) => {    
     if (req.user) {
 
       createDiscussion(req.body, client, req.file).then(
         (result) => {
           res.send(Object.assign({}, result._doc, { postCreated: true }));
 
-        },
-        (error) => { res.send({ postCreated: false }); }
-      );
+        }
+        
+      ).catch(error => {
+        console.log(error)
+        res.send({ postCreated: false });
+        
+      });
       res.on('finish', () => {
-        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
           .then(message => console.log(message))
       });
 
