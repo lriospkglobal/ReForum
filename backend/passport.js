@@ -28,7 +28,7 @@ const passportConfig = (app) => {
 
   passport.use('custom', new CustomStrategy(
     function (req, done) {      
-      signInViaGithub(req.query.user).then(
+      signInViaGithub(req.query.user, req.query.email).then(
         (user) => {           
           req.user = user;
           done(null, user); },

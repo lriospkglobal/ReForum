@@ -38,9 +38,9 @@ const getDiscussions = (client, forum_id, pinned, sorting_method = 'date') => {
     if (sorting_method === 'date') sortWith.date = -1;
     if (sorting_method === 'popularity') sortWith.favorites = -1;
 
-    // match discussion id and pinned status
+    // match discussion id 
     Discussion
-      .find({ forum_id: forum_id, pinned: pinned })
+      .find({ forum_id: forum_id })
       .sort(sortWith)
       .populate('forum')
       .populate('user')

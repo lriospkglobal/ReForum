@@ -55,7 +55,7 @@ const getAdminDashInfo = () => {
  * @param  {String} forum_slug
  * @return {Promise}
  */
-const createForum = ({ forum_name, forum_slug, original_img_id, base64 }) => {
+const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin }) => {
   return new Promise((resolve, reject) => {
     // check if the forum exists
     Forum
@@ -70,7 +70,8 @@ const createForum = ({ forum_name, forum_slug, original_img_id, base64 }) => {
             forum_name,
             original_img_id,
             mosaic_img_id: null,
-            base64
+            base64,
+            admin
           });
 
           newForum.save((error) => {

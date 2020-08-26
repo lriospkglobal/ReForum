@@ -10,7 +10,8 @@ const forumSchema = mongoose.Schema({
   mosaic_img_id: String,
   mosaic: Object,
   coordinates: Array,
-  base64: String
+  base64: String,
+  admin: Object
 
   
 });

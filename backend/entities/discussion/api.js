@@ -55,7 +55,8 @@ const discussionAPI = (app, client) => {
         
       });
       res.on('finish', () => {
-        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+        //return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+        return axios.post('http://localhost:5500/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
           .then(message => console.log(message))
       });
 

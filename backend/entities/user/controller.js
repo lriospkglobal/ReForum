@@ -33,10 +33,10 @@ const getUser = (user_id) => {
  * @return {promise}              user doc
  */
 
-const signInViaGithub = (username) => {
+const signInViaGithub = (username, email) => {
   return new Promise((resolve, reject) => {
     // find if user exist on db
-    User.findOne({ username }, (error, user) => {
+    User.findOne({ username, email }, (error, user) => {
       if (error) { console.log(error); reject(error); }
       else {
 
@@ -50,7 +50,7 @@ const signInViaGithub = (username) => {
 
         // user doesn't exists on db
         else {
-          
+
           // check if it is the first user (adam/eve) :-p
           // assign him/her as the admin
           User.count({}, (err, count) => {
@@ -65,7 +65,7 @@ const signInViaGithub = (username) => {
                 name: username,
                 username: username,
                 avatarUrl: res.data.results[0].picture.large,
-                email: username,
+                email: email,
                 role: assignAdmin ? 'admin' : 'user',
                 github: {
                   id: shortid.generate(),

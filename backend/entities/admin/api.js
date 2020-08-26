@@ -4,7 +4,7 @@ const createForum = require('./controller').createForum;
 const deleteForum = require('./controller').deleteForum;
 const deleteUser = require('./controller').deleteUser;
 const deleteDiscussion = require('./controller').deleteDiscussion;
-const {gridFsSave, base64encodeBuffer} = require('../helpers')
+const { gridFsSave, base64encodeBuffer } = require('../helpers')
 const multer = require('multer');
 const { Readable } = require('stream');
 const mongodb = require('mongodb');
@@ -33,10 +33,13 @@ const adminAPI = (app, client) => {
       } = req.body;
 
 
-
       gridFsSave('reforum', 'mosaicImages', req.file.buffer, req.file.fieldname + Date.now() + '.jpg', client)
-        .then((obj) =>          
-          createForum({ forum_name: title, forum_slug: slug, original_img_id: obj.id, base64: base64encodeBuffer(req.file.buffer) })
+        .then((obj) =>
+          createForum({
+            forum_name: title, forum_slug: slug, original_img_id: obj.id, base64: base64encodeBuffer(req.file.buffer), admin: {
+              name: req.user.name, avatarUrl: req.user.avatarUrl
+            }
+          })
         ).then(data => res.send(data)
 
         ).catch(obj => res.status(500).json(obj));
