@@ -23,14 +23,7 @@ MongoClient.connect(serverConfigs.DBURL, function (err, client) {
 });
 
 
-// Serve the static files from the React app
-app.use(express.static(path.join(__dirname, 'build')));
 
-
-// Handles any requests that don't match the ones above
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/build/index.html'));
-});
 // fire up the server
 app.listen(process.env.PORT || 5000, (error) => {
   if (error) throw error;
