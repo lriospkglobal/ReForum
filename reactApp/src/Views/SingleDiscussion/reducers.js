@@ -50,6 +50,7 @@ export const singleDiscussionReducer = (state = initialState, action) => {
       });
 
     case FETCHING_SINGLE_DISC_SUCCESS:
+      
       return Object.assign({}, state, {
         discussion: action.payload,
         fetchingDiscussion: false,

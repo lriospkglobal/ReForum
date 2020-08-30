@@ -1,5 +1,5 @@
 import {
-  FETCHING_SINGLE_DISC_START,  
+  FETCHING_SINGLE_DISC_START,
   FETCHING_SINGLE_DISC_SUCCESS,
   FETCHING_SINGLE_DISC_FAILURE,
 
@@ -24,7 +24,7 @@ import {
 } from './constants';
 
 import {
-  fetchSingleDiscussion,  
+  fetchSingleDiscussion,
   toggleFavoriteApi,
   postOpinionApi,
   deletePostApi,
@@ -40,7 +40,9 @@ export const getDiscussion = (discussionSlug) => {
   return (dispatch, getState) => {
     dispatch({ type: FETCHING_SINGLE_DISC_START });
     fetchSingleDiscussion(discussionSlug).then(
+
       data => {
+        console.log(data)
         if (data.data) dispatch({ type: FETCHING_SINGLE_DISC_SUCCESS, payload: data.data });
         else dispatch({ type: FETCHING_SINGLE_DISC_FAILURE });
       },
@@ -95,8 +97,8 @@ export const postOpinion = (opinion, discussionSlug) => {
     dispatch({ type: POSTING_OPINION_START });
 
     // validate the opinion
-    if (!opinion.content || opinion.content.length < 20) {
-      dispatch({ type: POSTING_OPINION_FAILURE, payload: 'Please provide a bit more info in your opinion....at least 20 characters.' });
+    if (!opinion.content.length) {
+      dispatch({ type: POSTING_OPINION_FAILURE, payload: 'Please provide a bit more info in your opinion...' });
     } else {
       // call the api to post the opinion
       postOpinionApi(opinion).then(
@@ -124,10 +126,10 @@ export const postOpinion = (opinion, discussionSlug) => {
  * @param  {String} discussionSlug
  * @return {action}
  */
-export const deletePost = (discussionSlug) => {
+export const deletePost = (discussionSlug, currentForum) => {
   return (dispatch, getState) => {
     dispatch({ type: DELETE_DISC_START });
-    deletePostApi(discussionSlug).then(
+    deletePostApi(discussionSlug, currentForum).then(
       data => {
         if (data.data.deleted) { dispatch({ type: DELETE_DISC_SUCCESS }); }
         else { dispatch({ type: DELETE_DISC_FAILURE }); }

@@ -11,6 +11,9 @@ import {
   UPDATE_DISCUSSION_TAGS,
   UPDATE_DISCUSSION_TILE,
   CLEAR_SUCCESS_MESSAGE,
+  UPDATE_CAMERA,
+  UPDATE_PHOTO_LOCATION,
+  UPDATE_RIGHTS
 } from './constants';
 import { postDiscussionApi } from './api';
 
@@ -33,6 +36,9 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       content,
       tags,
       pinned,
+      photoLocation,
+      rights,
+      camera
     } = getState().newDiscussion;
 
     let validated = true;
@@ -57,11 +63,11 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       validated = false;
       return dispatch({
         type: POSTING_DISCUSSION_FAILURE,
-        payload: 'Please write some content before posting.',
+        payload: 'Please write some description before posting.',
       });
     }
 
-    if (tile === undefined) {
+    if (!tile) {
       validated = false;
       return dispatch({
         type: POSTING_DISCUSSION_FAILURE,
@@ -77,6 +83,28 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       });
     }
 
+    if (!camera.length) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please add a camera.',
+      });
+    }
+    if (!rights) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please check photo rights.',
+      });
+    }
+
+    if (!photoLocation.length) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please add a location.',
+      });
+    }
     // make api call if post is validated
     if (validated) {
       postDiscussionApi({
@@ -86,7 +114,10 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
         content,
         tags,
         pinned,
-        tile
+        tile,
+        photoLocation,
+        camera,
+        rights
       }).then(
         (data) => {
           if (data.data.postCreated === true) {
@@ -118,8 +149,8 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
  * @param  {String} value
  * @return {action}
  */
-export const updateDiscussionTitle = (value) => { 
-  
+export const updateDiscussionTitle = (value) => {
+
   return {
     type: UPDATE_DISCUSSION_TITLE,
     payload: value,
@@ -132,8 +163,47 @@ export const updateDiscussionTitle = (value) => {
  * @return {action}
  */
 export const updateDiscussionContent = (value) => {
+
   return {
     type: UPDATE_DISCUSSION_CONTENT,
+    payload: value,
+  };
+};
+
+/**
+ * update camera in redux state (controlled input)
+ * @param  {String} value
+ * @return {action}
+ */
+export const updateCamera = (value) => {
+
+  return {
+    type: UPDATE_CAMERA,
+    payload: value,
+  };
+};
+
+/**
+ * update LOCATION in redux state (controlled input)
+ * @param  {String} value
+ * @return {action}
+ */
+export const updatePhotoLocation = (value) => {
+
+  return {
+    type: UPDATE_PHOTO_LOCATION,
+    payload: value,
+  };
+};
+
+/**
+ * update rights in redux state (controlled input)
+ * @param  {Boolean} value
+ * @return {action}
+ */
+export const updateRights = (value) => {
+  return {
+    type: UPDATE_RIGHTS,
     payload: value,
   };
 };
@@ -143,8 +213,8 @@ export const updateDiscussionContent = (value) => {
  * @param  {Object} tile
  * @return {action}
  */
-export const updateDiscussionTile = (tile) => {  
- 
+export const updateDiscussionTile = (tile) => {
+
   return {
     type: UPDATE_DISCUSSION_TILE,
     payload: tile,

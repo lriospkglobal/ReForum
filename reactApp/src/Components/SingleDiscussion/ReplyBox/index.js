@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
-
-import RichEditor from '../../../Components/RichEditor';
+import { Form, Button } from 'react-bootstrap';
 
 class ReplyBox extends Component {
   render() {
@@ -14,11 +12,18 @@ class ReplyBox extends Component {
     if (posting) return <div >Posting your opinion...</div>;
 
     return (
-      <RichEditor
-        type="newOpinion"
-        onSave={onSubmit}
-        onChange={onChange}
-      />
+
+      <Form onSubmit={(e) => {
+        e.preventDefault()
+
+      }}>
+        <Form.Group controlId="exampleForm.ControlTextarea1">
+          <Form.Control onChange={onChange} placeholder="Your comment" as="textarea" />
+        </Form.Group>
+        <Form.Group >
+          <Button onClick={() => { onSubmit() }} className="w-100">Comment</Button>
+        </Form.Group>
+      </Form>
     );
   }
 }

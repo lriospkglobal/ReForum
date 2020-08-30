@@ -7,9 +7,12 @@ import {
   UPDATE_DISCUSSION_CONTENT,
   UPDATE_DISCUSSION_PIN_STATUS,
   UPDATE_DISCUSSION_TAGS,
+  UPDATE_CAMERA,
 
   CLEAR_SUCCESS_MESSAGE,
   UPDATE_DISCUSSION_TILE,
+  UPDATE_RIGHTS,
+  UPDATE_PHOTO_LOCATION,
 } from './constants';
 
 const initialState = {
@@ -18,9 +21,12 @@ const initialState = {
   postingDiscussion: false,
   title: '',
   tile: null,
-  content: null,
+  content: '',
   tags: [],
   pinned: false,
+  camera: '',
+  photoLocation: '',
+  rights: false
 };
 
 export const newDiscussionReducer = (state = initialState, action) => {
@@ -61,7 +67,7 @@ export const newDiscussionReducer = (state = initialState, action) => {
         content: action.payload,
       });
 
-    case UPDATE_DISCUSSION_TILE:      
+    case UPDATE_DISCUSSION_TILE:
       return Object.assign({}, state, {
         tile: action.payload,
       });
@@ -74,6 +80,21 @@ export const newDiscussionReducer = (state = initialState, action) => {
     case UPDATE_DISCUSSION_TAGS:
       return Object.assign({}, state, {
         tags: action.payload,
+      });
+
+    case UPDATE_CAMERA:
+      return Object.assign({}, state, {
+        camera: action.payload,
+      });
+
+    case UPDATE_RIGHTS:
+      return Object.assign({}, state, {
+        rights: action.payload,
+      });
+
+      case UPDATE_PHOTO_LOCATION:
+      return Object.assign({}, state, {
+        photoLocation: action.payload,
       });
 
     default:

@@ -15,8 +15,8 @@ export const postOpinionApi = (opinion) => {
   return axios.post('/api/opinion/newOpinion', opinion);
 };
 
-export const deletePostApi = (discussionSlug) => {
-  return axios.delete(`/api/discussion/deleteDiscussion/${discussionSlug}`);
+export const deletePostApi = (discussionSlug, currentForum) => {
+  return axios.delete(`/api/discussion/deleteDiscussion/${discussionSlug}?forumName=${currentForum}`);
 };
 
 export const deleteOpinionApi = (opinionId) => {

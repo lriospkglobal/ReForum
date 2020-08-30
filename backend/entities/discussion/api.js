@@ -68,13 +68,17 @@ const discussionAPI = (app, client) => {
   // delete a discussion
   app.delete('/api/discussion/deleteDiscussion/:discussion_slug', (req, res) => {
     if (req.user) {
-      deleteDiscussion(req.params.discussion_slug).then(
-        (result) => { res.send({ deleted: true }); },
+      deleteDiscussion(req.params.discussion_slug, req.query.forumName, client, req.user.email).then(
+        (result) => {
+
+          res.send({ deleted: true });
+        },
         (error) => { res.send({ deleted: false }); }
       );
     } else {
       res.send({ deleted: false });
     }
+
   });
 };
 

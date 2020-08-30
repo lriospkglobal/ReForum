@@ -16,7 +16,10 @@ const discussionSchema = mongoose.Schema({
   tags: Array,
   pinned: Boolean,
   tile_id: String,
-  tile_base64: String
+  tile_base64: String,
+  camera: String,
+  photo_location: String,
+  rights: Boolean
 });
 
 module.exports = mongoose.model('discussion', discussionSchema);

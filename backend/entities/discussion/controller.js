@@ -3,7 +3,9 @@ const getAllOpinions = require('../opinion/controller').getAllOpinions;
 const getUser = require('../user/controller').getUser;
 const { gridFsSave } = require('../helpers');
 const Discussion = require('./model');
+const Forum = require('../forum/model')
 const Opinion = require('../opinion/model');
+const axios = require('axios');
 
 /**
  * get a single discussion
@@ -53,7 +55,7 @@ const createDiscussion = (discussion, client, file) => {
   }).then(function (obj) {
 
 
-    
+
     return new Promise((resolve, reject) => {
       const newDiscussion = new Discussion({
         forum_id: discussion.forumId,
@@ -67,7 +69,10 @@ const createDiscussion = (discussion, client, file) => {
         favorites: [],
         tags: discussion.tags,
         pinned: discussion.pinned,
-        tile_id: obj.photoName
+        tile_id: obj.photoName,
+        camera: discussion.camera,
+        photo_location: discussion.photoLocation,
+        rights: discussion.rights
       });
 
       newDiscussion.save((error) => {
@@ -128,35 +133,82 @@ const updateDiscussion = (forum_id, discussion_slug) => {
   // TODO: implement update feature
 };
 
-const deleteDiscussion = (discussion_slug) => {
+const deleteDiscussion = (discussion_slug, forumName, client, email) => {
   return new Promise((resolve, reject) => {
     // find the discussion id first
+    //TODO: use one Discussion query 
+    let buildNewMosaic = true;
     Discussion
       .findOne({ discussion_slug })
       .exec((error, discussion) => {
         if (error) { console.log(error); reject(error); }
 
-        // get the discussion id
+        // get the discussion and forum id
         const discussion_id = discussion._id;
+        const forum_id = discussion.forum_id;
+        Discussion
+          .find({ discussion_slug })
+          .exec((error, discussions) => {
+            if (error) {
 
-        // remove any opinion regarding the discussion
-        Opinion
-          .remove({ discussion_id })
-          .exec((error) => {
-            if (error) { console.log(error); reject(error); }
-
-            // finally remove the discussion
-            else {
-              Discussion
-                .remove({ discussion_slug })
-                .exec((error) => {
-                  if (error) { console.log(error); reject(error); }
-                  else {
-                    resolve({ deleted: true });
-                  }
-                });
+              return reject(error);
             }
-          });
+
+            /* if (discussions.length === 1) {
+              buildNewMosaic = false;
+              //delete bucket and mosaic if no discussions
+              //TODO: fix this nested mess
+              const db = client.db('reforum');
+              db.collection(forum_id + ".files").drop(function (err, ok) {
+                if (err) return reject(err);
+                if (ok) {
+                  db.collection(forum_id + ".chunks").drop(function (err, ok) {
+                    if (err) return reject(err);
+                    if (ok) {
+                      Forum.findOneAndUpdate({ _id: forum_id }, { mosaic: null }, { upsert: true }, function (err, doc) {
+                        if (err) return reject(err);
+                        removeOpinions(discussion_id, discussion_slug, forum_id)
+                      });
+
+                    }
+
+                  });
+
+                }
+
+              });
+            } else { */
+              removeOpinions(discussion_id, discussion_slug, forum_id)
+            //}
+          })
+
+        function removeOpinions(discussion_id, discussion_slug, forum_id) {
+          // remove any opinion regarding the discussion
+          Opinion
+            .remove({ discussion_id })
+            .exec((error) => {
+              if (error) { console.log(error); reject(error); }
+
+              // remove the discussion
+              else {
+                Discussion
+                  .remove({ discussion_slug })
+                  .exec((error) => {
+                    if (error) { console.log(error); reject(error); }
+                    else {
+                      /* if (buildNewMosaic) {
+                        axios.post('http://localhost:5500/api-mosaic/build-mosaic?forumId=' + forum_id + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(email))
+                          .then(message => console.log(message))
+                      } */
+
+
+                      resolve({ deleted: true });
+                    }
+                  });
+              }
+            });
+        }
+
       });
   });
 };

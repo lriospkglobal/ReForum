@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import Button from '../../../Components/Button';
+
 import RichEditor from '../../../Components/RichEditor';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
-
+import { Form, Button } from 'react-bootstrap';
 class Discussion extends Component {
   render() {
     const {
       id,
 
-      discTitle,      
+      discTitle,
       discContent,
       favoriteCount,
       favoriteAction,
@@ -29,29 +29,29 @@ class Discussion extends Component {
       <section className="single-discussion">
 
 
-        <div >{discTitle}</div>
 
 
+        <p>
+          <strong >{discTitle}</strong><br />
+          {discContent}
+        </p>
 
 
 
 
         <div className="mt-3 mb-3 d-flex single-discussion__tools align-items-center justify-content-between">
           <div ><button onClick={() => { !toggleingFavorite && favoriteAction(id); }} className={userFavorited ? 'active misc-button p-2' : 'misc-button p-2'} ><img src={thumbsUp} /></button> <span className="ml-2">{favoriteCount} Kudos</span></div>
-          {allowDelete && <Button noUppercase onClick={() => { deleteAction(); }}>
-            <i ></i>
-            <span>Delete</span>
-          </Button>}
+          {allowDelete &&
+            <i onClick={() => { deleteAction(); }} className="delete fa fa-minus-circle" aria-hidden="true"></i>
+          }
         </div>
 
 
 
 
 
-        <RichEditor
-          readOnly={true}
-          value={discContent}
-        />
+
+
 
 
         {deletingDiscussion && <div>

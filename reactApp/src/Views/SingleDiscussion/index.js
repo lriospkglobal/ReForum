@@ -40,13 +40,14 @@ class SingleDiscussion extends Component {
       deletedDiscussionRedirect,
     } = this.props;
 
-    /* const { forum } = this.props.params;
+
 
     // check if the discussion is deleted and redirect the user
     if (deletedDiscussion) {
-      browserHistory.push(`/${forum}`);
-      setTimeout(() => { deletedDiscussionRedirect(); }, 100);
-    } */
+
+      //setTimeout(() => { deletedDiscussionRedirect(); }, 100);
+      window.location = '/'
+    }
   }
 
   componentWillUnmount() {
@@ -64,14 +65,14 @@ class SingleDiscussion extends Component {
 
   handleReplySubmit() {
 
-    const {      
+    const {
       postOpinion,
       discussion,
       opinionContent,
       userId,
     } = this.props;
 
-    const discussion_slug = this.props.discussion.discussion_slug;    
+    const discussion_slug = this.props.discussion.discussion_slug;
     const forumId = this.props.discussion.forum._id;
 
     postOpinion(
@@ -86,15 +87,15 @@ class SingleDiscussion extends Component {
   }
 
   deleteDiscussion() {
-    const { discussion } = this.props.params;
-    const { deletePost } = this.props;
-    deletePost(discussion);
+    const { discussionSlug, deletePost, currentForum } = this.props;
+
+    deletePost(discussionSlug, currentForum);
   }
 
   deleteOpinion(opinionId) {
-    const { discussion } = this.props.params;
+    const { discussionSlug } = this.props;
     const { deleteOpinion } = this.props;
-    deleteOpinion(opinionId, discussion);
+    deleteOpinion(opinionId, discussionSlug);
   }
 
   render() {
@@ -165,7 +166,7 @@ class SingleDiscussion extends Component {
           <ReplyBox
             posting={postingOpinion}
             onSubmit={this.handleReplySubmit.bind(this)}
-            onChange={(content) => { updateOpinionContent(content); }}
+            onChange={(e) => { updateOpinionContent(e.target.value); }}
           />
 
           <hr />
@@ -199,6 +200,7 @@ class SingleDiscussion extends Component {
 export default connect(
   (state) => {
     return {
+      currentForum: state.app.currentForum,
       forums: state.app.forums,
       userId: state.user._id,
       userRole: state.user.role,
@@ -219,7 +221,7 @@ export default connect(
       toggleFavorite: (discussionId) => { dispatch(toggleFavorite(discussionId)); },
       updateOpinionContent: (content) => { dispatch(updateOpinionContent(content)); },
       postOpinion: (opinion, discussionSlug) => { dispatch(postOpinion(opinion, discussionSlug)); },
-      deletePost: (discussionSlug) => { dispatch(deletePost(discussionSlug)); },
+      deletePost: (discussionSlug, currentForum) => { dispatch(deletePost(discussionSlug, currentForum)); },
       deletedDiscussionRedirect: () => { dispatch(deletedDiscussionRedirect()); },
       deleteOpinion: (opinionId, discussionSlug) => { dispatch(deleteOpinion(opinionId, discussionSlug)); },
     };

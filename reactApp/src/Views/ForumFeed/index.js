@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
+import Moment from 'moment';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import NewDiscussion from '../NewDiscussion/index';
 import _ from 'lodash';
 import axios from 'axios';
 import { Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Popover, Col, Row, Card } from 'react-bootstrap';
-
+import SingleDiscussion from '../../Views/SingleDiscussion';
 import {
   getDiscussions,
   updateSortingMethod,
@@ -30,7 +31,6 @@ class ForumFeed extends Component {
       canvasWidth: 0,
       coordinates: null,
       loadedEncodedImages: {},
-      showModal: false,
       imageOnModal: '',
       showUploadTilesButton: false,
       showUploadMosaicImageButton: false,
@@ -44,7 +44,10 @@ class ForumFeed extends Component {
       quality: 100,
       showTooltip: false,
       currentForumId: null,
-      showDiscussionModal: false
+      showDiscussionModal: false,
+      showPopover: false,
+      lgShow: false,
+      currentDiscussion: null
     }
     this.canvas = React.createRef()
   }
@@ -53,11 +56,7 @@ class ForumFeed extends Component {
     this.setState({ imageOnModal: this.state.loadedEncodedImages[imgName], loadingImage: false })
   }
 
-  closeModal = () => {
-    this.setState({
-      showModal: false
-    })
-  }
+
 
   getIndividualImage = (x, y) => {
 
@@ -97,45 +96,52 @@ class ForumFeed extends Component {
     }
   }
 
-  getCoordenate = (e) => {
-
-
-
-
-    const rect = e.target.getBoundingClientRect()
-    const clientX = e.clientX
-    const clientY = e.clientY
-    const x = clientX - rect.left
-    const y = clientY - rect.top
-
-
-    if (timer !== undefined) {
-      window.clearTimeout(timer)
-    }
-    timer = window.setTimeout(() => {
-
-      if (!this.state.inPopover) {
-        this.setState({
-          x: clientX,
-          y: clientY
-        }, () => {
-          if (!this.state.showModal) {
-            this.getIndividualImage(x, y)
+  clickedTile = (e) => {
+    const {
+      discussions
+    } = this.props;
+    const el = e.target;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    let matchedDiscussion;
+    //this.getIndividualImage(xCanvas, yCanvas)
+    for (let attr in this.state.coordinates) {
+      const imageCoordinates = attr.split('-')
+      const imageCoordinatesX = parseInt(imageCoordinates[0])
+      const imageCoordinatesY = parseInt(imageCoordinates[1])
+      if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
+        const tileId = this.state.coordinates[attr]
+        for (let i = 0; i < discussions.length; i++) {
+          const discussion = discussions[i];
+          if (discussion.tile_id === tileId) {
+            matchedDiscussion = discussion;
+            break;
           }
         }
-
-
-        )
       }
 
-    }, 500);
 
 
-
-
+    }
+    this.setState({ currentDiscussion: matchedDiscussion, lgShow: true })
 
 
   }
+
+  getCoordenate = (e) => {
+    const el = e.target
+    const rect = el.getBoundingClientRect()
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const top = rect.top + scrollTop
+    const left = rect.left + scrollLeft
+    const xCanvas = e.clientX - rect.left;
+    const yCanvas = e.clientY - rect.top;
+    this.setState({ x: left + xCanvas, y: top + yCanvas, showPopover: true }, () => this.getIndividualImage(xCanvas, yCanvas))
+
+  }
+
 
   drawImage = (currentForumObj) => {
     const context = this.canvas.current.getContext('2d')
@@ -246,29 +252,12 @@ class ForumFeed extends Component {
     }
   }
 
-  renderNewDiscussionButtion() {
-    const { currentForum } = this.props;
-
-    return (
-      <div >
-
-        <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
-          Post a Photo
-          </ButtonBootstrap>
-
-        <Modal className="new-discussion-modal" show={this.state.showDiscussionModal} size="xl" onHide={() => this.setState({ showDiscussionModal: false })}>
-          <Modal.Header closeButton>
-            <Modal.Title>Post a Photo</Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="p-0">
-            <NewDiscussion successCallback={this.successCallback} />
-          </Modal.Body>
-
-        </Modal>
-
-      </div>
-    );
+  timeDisplay = () => {
+    const postTime = Moment(this.state.currentDiscussion.date);
+    return postTime.from(Moment());
   }
+
+
 
   render() {
     const {
@@ -308,13 +297,23 @@ class ForumFeed extends Component {
 
               </p>
                 <div className="w-25">
-                  {this.renderNewDiscussionButtion()}
+
+                  <div >
+
+                    <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
+                      Post a Photo
+          </ButtonBootstrap>
+
+
+
+                  </div>
                 </div>
               </div>
             </section>
-            <Popover placement="right"
-              style={{ display: this.state.loading || !this.state.coordinates ? 'none' : 'block', top: this.state.y, left: this.state.x }} onClick={() => this.setState({ showModal: true })}
-              onMouseOut={() => this.setState({ inPopover: false })} onMouseOver={() => this.setState({ inPopover: true })} >
+
+            {this.state.showPopover && (this.state.x && this.state.y) ? <Popover placement="right"
+              style={{ top: this.state.y + 'px', left: this.state.x + 'px' }}
+            >
 
               <Popover.Content>
                 {this.state.loadingImage ? <div className="d-flex mt-2 justify-content-center align-items-center"><div className="spinner-border" role="status">
@@ -323,14 +322,24 @@ class ForumFeed extends Component {
 
 
               </Popover.Content>
-            </Popover>
-            <canvas onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
+            </Popover> : null}
+
+            <canvas
+              style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
+              onMouseOut={() => this.setState({
+                showPopover: false,
+                x: null, y: null
+              })}
+              onClick={this.clickedTile}
+              onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
           </Container>
         </Container>
         <Container className="pt-4">
           <Row>
             <Col md="8" >
-              {this.renderNewDiscussionButtion()}
+              <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
+                Post a Photo
+          </ButtonBootstrap>
 
               <FeedBox
                 type='general'
@@ -339,6 +348,7 @@ class ForumFeed extends Component {
                 currentForum={currentForum}
                 onChangeSortingMethod={this.handleSortingChange.bind(this)}
                 activeSortingMethod={sortingMethod}
+                setDiscussionOpenModal={this.setDiscussionOpenModal}
               />
 
 
@@ -416,25 +426,43 @@ class ForumFeed extends Component {
           </Row>
 
         </Container>
+        {this.state.currentDiscussion && <Modal
 
-        <Modal size="xl" show={this.state.showModal} onHide={this.closeModal}>
-          <Modal.Header closeButton>
-          </Modal.Header>
-          <Modal.Body className="text-center">
-            <div className="tile-image-container"
-              style={{
-                height: '100%',
-                backgroundImage: 'url("data:image/jpeg;base64, ' + this.state.imageOnModal + '")',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-              }}></div>
+          size="xl"
+          show={this.state.lgShow}
+          onHide={() =>
+            this.setState({ lgShow: false, currentDiscussion: null })
+
+          }
+          aria-labelledby="example-modal-sizes-title-lg"
+        >
+
+          <Modal.Body className="p-0 d-flex">
+            <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.currentDiscussion.base64 + ')' }}>
+
+            </div>
+            <div className="w-25 p-3">
+              <section className="discussion-box__header d-flex mb-3">
+
+
+                <ImageBootstrap src={this.state.currentDiscussion.user.avatarUrl} roundedCircle />
+                <div className="d-flex flex-column justify-content-center">
+                  <span>{this.state.currentDiscussion.user.name || this.state.currentDiscussion.user.username} </span>
+                  <span className="text-muted">{this.state.currentDiscussion && this.timeDisplay()}</span>
+                </div>
+              </section>
+              <SingleDiscussion discussionSlug={this.state.currentDiscussion.discussion_slug} />
+            </div>
           </Modal.Body>
-          <Modal.Footer>
-            <ButtonBootstrap variant="secondary" onClick={this.closeModal}>
-              Close
-        </ButtonBootstrap>
-          </Modal.Footer>
+        </Modal>}
+        <Modal className="new-discussion-modal" show={this.state.showDiscussionModal} size="xl" onHide={() => this.setState({ showDiscussionModal: false })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Post a Photo</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="p-0">
+            <NewDiscussion closeModal={() => this.setState({ showDiscussionModal: false })} successCallback={this.successCallback} />
+          </Modal.Body>
+
         </Modal>
       </section>
     );

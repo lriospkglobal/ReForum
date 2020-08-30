@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
 import moment from 'moment';
-import { Image } from 'react-bootstrap';
+import { Image, Button } from 'react-bootstrap';
 
-import Button from '../../../Components/Button';
-import RichEditor from '../../../Components/RichEditor';
+
+
 
 class Opinion extends Component {
   render() {
@@ -21,28 +21,25 @@ class Opinion extends Component {
       deletingOpinion,
     } = this.props;
 
-    
+
 
     const allowDelete = (userId === currentUserId) || (currentUserRole === 'admin');
 
     return (
-      <div className="opinion d-flex">
+      <div className="opinion d-flex align-items-start mb-4">
         <div className="opinion__image-container">
-          <Image src={userAvatar} fluid roundedCircle/>
+          <Image src={userAvatar} fluid roundedCircle />
 
 
-          {allowDelete && <Button noUppercase onClick={() => { deleteAction(opinionId); }}>
-            <i ></i>
-            <span>Delete</span>
-          </Button>}
-          {/* <Button noUppercase>Quote</Button> */}
+
+
         </div>
 
-        <div className="opinion__comment-container">
-          <RichEditor
-            readOnly
-            value={opContent}
-          />
+        <div className="opinion__comment-container p-2">
+          {allowDelete &&
+            <i onClick={() => { deleteAction(opinionId); }} className="delete fa fa-minus-circle" aria-hidden="true"></i>
+          }
+          {opContent}
         </div>
 
         {(deletingOpinion === opinionId) && <div >Deleting Opinion ...</div>}
