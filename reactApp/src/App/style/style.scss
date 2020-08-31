@@ -140,6 +140,11 @@ body {
   max-width: 100px;
 }
 
+.canvas {
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 //Components
 .opinion {
   .opinion__image-container {
@@ -362,7 +367,8 @@ header {
     font-size: 16px;
     font-weight: bold;
     color: $aarp-blue;
-    .delete{
+
+    .delete {
       cursor: pointer;
       position: absolute;
       top: 10px;

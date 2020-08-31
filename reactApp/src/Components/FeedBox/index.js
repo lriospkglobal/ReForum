@@ -44,7 +44,7 @@ function FeedBox(props) {
     }
   }
 
-  
+
 
 
   const {
@@ -61,9 +61,9 @@ function FeedBox(props) {
 
   return (
     <div >
-      <div >
+      {/* <div >
         {!userProfile && renderSort()}
-      </div>
+      </div> */}
       {loading && <div className="d-flex justify-content-center align-items-center"><div className="spinner-border" role="status">
         <span className="sr-only">Loading...</span>
       </div></div>}
@@ -95,22 +95,27 @@ function FeedBox(props) {
         aria-labelledby="example-modal-sizes-title-lg"
       >
 
-        <Modal.Body className="p-0 d-flex">
-          <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
+        <Modal.Body className="p-0">
+          <Modal.Header closeButton>
 
-          </div>
-          <div className="w-25 p-3">
-            <section className="discussion-box__header d-flex mb-3">
+          </Modal.Header>
+          <section className="d-flex">
+            <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
+
+            </div>
+            <div className="w-25 p-3">
+              <section className="discussion-box__header d-flex mb-3">
 
 
-              <Image src={discussion.user.avatarUrl} roundedCircle />
-              <div className="d-flex flex-column justify-content-center">
-                <span>{discussion.user.name || discussion.user.username} </span>
-                {/* <span className="text-muted">{timeDisplay}</span> */}
-              </div>
-            </section>
-            <SingleDiscussion discussionSlug={discussion.discussion_slug} />
-          </div>
+                <Image src={discussion.user.avatarUrl} roundedCircle />
+                <div className="d-flex flex-column justify-content-center">
+                  <span>{discussion.user.name || discussion.user.username} </span>
+                  {/* <span className="text-muted">{timeDisplay}</span> */}
+                </div>
+              </section>
+              <SingleDiscussion discussionSlug={discussion.discussion_slug} />
+            </div>
+          </section>
         </Modal.Body>
       </Modal>}
     </div>

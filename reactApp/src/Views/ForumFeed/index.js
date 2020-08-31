@@ -60,13 +60,14 @@ class ForumFeed extends Component {
 
   getIndividualImage = (x, y) => {
 
+    let imgName
     for (let attr in this.state.coordinates) {
 
       const imageCoordinates = attr.split('-')
       const imageCoordinatesX = parseInt(imageCoordinates[0])
       const imageCoordinatesY = parseInt(imageCoordinates[1])
       if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
-        const imgName = this.state.coordinates[attr]
+        imgName = this.state.coordinates[attr]
 
         if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName]) {
 
@@ -94,6 +95,25 @@ class ForumFeed extends Component {
       }
 
     }
+    if (this.props.location.query.highlights)
+      this.highlightArea(imgName)
+
+  }
+
+  highlightArea = (imgName) => {
+    const context = this.canvas.current.getContext('2d')
+    for (let attr in this.state.coordinates) {
+      const imgNameFromCoordinates = this.state.coordinates[attr]
+      const imageCoordinates = attr.split('-')
+      const imageCoordinatesX = parseInt(imageCoordinates[0])
+      const imageCoordinatesY = parseInt(imageCoordinates[1])
+      context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+      if (imgName === imgNameFromCoordinates) {
+        context.fillStyle = 'rgba(63, 191, 63, 0.3)';
+        context.fillRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+      }
+    }
+
   }
 
   clickedTile = (e) => {
@@ -142,11 +162,12 @@ class ForumFeed extends Component {
 
   }
 
-
   drawImage = (currentForumObj) => {
     const context = this.canvas.current.getContext('2d')
     const img = new Image()
     const that = this;
+
+
     img.onload = function () {
 
       let state = {
@@ -158,17 +179,22 @@ class ForumFeed extends Component {
       }
 
 
+
+
       that.setState(state, () => {
         that.canvas.current.width = that.state.canvasWidth
         that.canvas.current.height = that.state.canvasHeight
         context.drawImage(this, 0, 0, this.width, this.height)
+
       })
 
     }
 
     img.src = 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64
+    this.canvas.current.style.backgroundImage = 'url(' + 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64 + ')'
   }
   componentDidMount() {
+
     const {
       currentForumId,
       getDiscussions,
@@ -251,6 +277,21 @@ class ForumFeed extends Component {
       getDiscussions(currentForum, false, true);
     }
   }
+  clearAllHighlights = () => {
+    if (this.props.location.query.highlights) {
+      const context = this.canvas.current.getContext('2d')
+      for (let attr in this.state.coordinates) {
+
+        const imageCoordinates = attr.split('-')
+        const imageCoordinatesX = parseInt(imageCoordinates[0])
+        const imageCoordinatesY = parseInt(imageCoordinates[1])
+        context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+
+      }
+    }
+
+
+  }
 
   timeDisplay = () => {
     const postTime = Moment(this.state.currentDiscussion.date);
@@ -325,11 +366,12 @@ class ForumFeed extends Component {
             </Popover> : null}
 
             <canvas
+              className="canvas"
               style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
               onMouseOut={() => this.setState({
                 showPopover: false,
                 x: null, y: null
-              })}
+              }, () => this.clearAllHighlights())}
               onClick={this.clickedTile}
               onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
           </Container>
