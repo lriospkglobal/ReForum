@@ -109,7 +109,7 @@ class ForumFeed extends Component {
       const imageCoordinatesY = parseInt(imageCoordinates[1])
       context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
       if (imgName === imgNameFromCoordinates) {
-        context.fillStyle = 'rgba(63, 191, 63, 0.3)';
+        context.fillStyle = 'rgb(63, 191, 63)';
         context.fillRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
       }
     }
