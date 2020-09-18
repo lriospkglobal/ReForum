@@ -441,7 +441,7 @@ class ForumFeed extends Component {
               {
                 this.state.previousMosaics.map(prevMosaic => {
                   return (
-                    <div className="previous-mosaic d-flex justify-content-center flex-wrap" key={prevMosaic._id}>
+                    <div className="previous-mosaic d-flex justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
                       <ImageBootstrap onClick={() => {
                         this.setState({
                           showPrevMosaicModal: true,
