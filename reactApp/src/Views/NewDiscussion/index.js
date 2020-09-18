@@ -7,6 +7,9 @@ import Dropzone from 'react-dropzone';
 import RichEditor from '../../Components/RichEditor';
 import PinButton from '../../Components/NewDiscussion/PinButton';
 import TagsInput from '../../Components/NewDiscussion/TagsInput';
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 import {
   postDiscussion,
@@ -17,7 +20,9 @@ import {
   updateDiscussionTags,
   updateCamera,
   updatePhotoLocation,
-  updateRights
+  updateRights,
+  updateDate,
+  updateTime
 } from './actions';
 
 
@@ -33,11 +38,18 @@ class NewDiscussion extends Component {
       fatalError: null,
       tileImage: null,
       uploadedImage: null,
-      uploadedBase64: null
+      uploadedBase64: null,
+      startDate: new Date()
     };
 
 
   }
+
+  handleChange = date => {
+    this.setState({
+      startDate: date
+    }, () => this.props.updateDate(this.state.startDate));
+  };
 
   componentDidMount() {
     const {
@@ -108,7 +120,8 @@ class NewDiscussion extends Component {
       postDiscussion,
       currentForum,
       successCallback,
-      closeModal
+      closeModal,
+      updateTime
     } = this.props;
 
     const {
@@ -119,7 +132,8 @@ class NewDiscussion extends Component {
       tile,
       camera,
       photoLocation,
-      rights
+      rights,
+      time
 
     } = this.props.newDiscussion;
 
@@ -200,6 +214,29 @@ class NewDiscussion extends Component {
               /> */}
               <Form.Control value={content} onChange={(e) => { updateDiscussionContent(e.target.value); }} as="textarea"></Form.Control>
             </Form.Group>
+            <Form.Group>
+              <Form.Label><strong>Date</strong></Form.Label>
+              <Form.Text className="mb-2">
+                Date when picture was taken
+              </Form.Text>
+              <DatePicker
+                selected={this.state.startDate}
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label><strong>Time</strong></Form.Label>
+              <Form.Text className="mb-2">
+                Time of day photo was taken
+              </Form.Text>
+              <Form.Control value={time} onChange={e => updateTime(e.target.value)} as="select">
+                <option>Morning</option>
+                <option>Noon</option>
+                <option>Evening</option>
+                <option>Night</option>
+
+              </Form.Control>
+            </Form.Group>
             <Form.Group className="small">
               <Form.Check checked={rights} onChange={(e) => { updateRights(e.target.checked); }}
                 type="checkbox" label="I am the owner of this photo. AARP may use this photo without permission or attribution. (Required)" />
@@ -209,7 +246,7 @@ class NewDiscussion extends Component {
               <Button onClick={() => postDiscussion(userId, forumId, currentForum, successCallback)}>Post Photo</Button>
             </Form.Group>
           </Form>
-        </section>
+        </section >
       )/* [
         <textarea
           
@@ -296,6 +333,8 @@ export default connect(
       updateCamera: (value) => { dispatch(updateCamera(value)); },
       updatePhotoLocation: (value) => { dispatch(updatePhotoLocation(value)); },
       updateRights: (value) => { dispatch(updateRights(value)); },
+      updateDate: (value) => { dispatch(updateDate(value)); },
+      updateTime: (value) => { dispatch(updateTime(value)); },
     };
   }
 )(NewDiscussion);

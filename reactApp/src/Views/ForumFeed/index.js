@@ -39,21 +39,35 @@ class ForumFeed extends Component {
       showSuccessMessage: false,
       successMessage: '',
       tileSize: null,
-      timesWider: '1',
-      widthHeight: '3',
+      previousMosaics: [],
       quality: 100,
       showTooltip: false,
       currentForumId: null,
       showDiscussionModal: false,
       showPopover: false,
       lgShow: false,
-      currentDiscussion: null
+      currentDiscussion: null,
+      highlights: true,
+      widthGrowth: null,
+      showPrevMosaicModal: false,
+      prevMosaicImage: null
+
     }
     this.canvas = React.createRef()
+    this.popover = React.createRef()
   }
 
   setImageModalPopover = (imgName) => {
-    this.setState({ imageOnModal: this.state.loadedEncodedImages[imgName], loadingImage: false })
+
+    this.setState({
+      imageOnModal: this.state.loadedEncodedImages[imgName],
+      loadingImage: false
+    }, () => {
+      if (this.popover.current.getBoundingClientRect().right > window.innerWidth) {
+        const regex = /\D/g
+        this.popover.current.style.left = (parseInt(this.popover.current.style.left.replace(regex, '')) - this.popover.current.offsetWidth) - 10 + 'px'
+      }
+    })
   }
 
 
@@ -95,7 +109,7 @@ class ForumFeed extends Component {
       }
 
     }
-    if (this.props.location.query.highlights)
+    if (this.state.highlights)
       this.highlightArea(imgName)
 
   }
@@ -109,7 +123,7 @@ class ForumFeed extends Component {
       const imageCoordinatesY = parseInt(imageCoordinates[1])
       context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
       if (imgName === imgNameFromCoordinates) {
-        context.fillStyle = 'rgb(63, 191, 63)';
+        context.fillStyle = '#4ed164';
         context.fillRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
       }
     }
@@ -168,6 +182,8 @@ class ForumFeed extends Component {
     const that = this;
 
 
+
+
     img.onload = function () {
 
       let state = {
@@ -177,14 +193,38 @@ class ForumFeed extends Component {
         coordinates: currentForumObj.mosaic.coordinates,
         tileSize: parseInt(currentForumObj.mosaic.tile_size)
       }
+      //added pixels for full width
+      const style = window.getComputedStyle(that.canvas.current.parentElement, null)
+      const regex = /\D/g
+      //canvas container width without padding
+      const canvasContainerWidth = parseFloat(style.getPropertyValue("width").replace(regex, '')) - (parseFloat(style.getPropertyValue("padding-left").replace(regex, '')) +
+        parseFloat(style.getPropertyValue("padding-right").replace(regex, '')))
 
+
+      const nTilesWidth = state.canvasWidth / state.tileSize
+      const nTilesHeight = state.canvasHeight / state.tileSize
+      const widthGrowth = (canvasContainerWidth - state.canvasWidth) / nTilesWidth
+      state.widthGrowth = null//widthGrowth
+      /* if (state.widthGrowth > 0) {
+        state.tileSize = state.tileSize + state.widthGrowth
+        for (let attr in state.coordinates) {
+          const imageCoordinates = attr.split('-')
+          const imageCoordinatesX = parseInt(imageCoordinates[0])
+          const imageCoordinatesY = parseInt(imageCoordinates[1])
+          
+        }
+        
+      } */
 
 
 
       that.setState(state, () => {
-        that.canvas.current.width = that.state.canvasWidth
-        that.canvas.current.height = that.state.canvasHeight
-        context.drawImage(this, 0, 0, this.width, this.height)
+        that.canvas.current.width = state.widthGrowth > 0 ? canvasContainerWidth : that.state.canvasWidth
+        that.canvas.current.height = state.widthGrowth > 0 ? (nTilesHeight * (state.tileSize + state.widthGrowth)) : that.state.canvasHeight
+
+        context.drawImage(this, 0, 0, state.widthGrowth > 0
+          ? canvasContainerWidth : that.state.canvasWidth,
+          state.widthGrowth > 0 ? (nTilesHeight * (state.tileSize + state.widthGrowth)) : that.state.canvasHeight)
 
       })
 
@@ -192,6 +232,16 @@ class ForumFeed extends Component {
 
     img.src = 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64
     this.canvas.current.style.backgroundImage = 'url(' + 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64 + ')'
+  }
+
+  getPreviousMosaics = () => {
+    axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
+      .then(response => {
+        this.setState({
+          previousMosaics: response.data.length ? response.data : []
+        })
+      })
+
   }
   componentDidMount() {
 
@@ -213,7 +263,11 @@ class ForumFeed extends Component {
         currentForumObj
       }, () => {
         if (currentForumObj.mosaic) {
-          this.setState({ currentForumId: currentForumObj._id }, () => this.drawImage(currentForumObj))
+
+          this.setState({ currentForumId: currentForumObj._id }, () => {
+            this.drawImage(currentForumObj)
+            this.getPreviousMosaics()
+          })
         }
       })
 
@@ -249,7 +303,10 @@ class ForumFeed extends Component {
           currentForumObj
         }, () => {
           if (currentForumObj.mosaic) {
-            this.setState({ currentForumId: currentForumObj._id }, () => this.drawImage(currentForumObj))
+            this.setState({ currentForumId: currentForumObj._id }, () => {
+              this.drawImage(currentForumObj)
+              this.getPreviousMosaics()
+            })
           }
         })
 
@@ -278,7 +335,7 @@ class ForumFeed extends Component {
     }
   }
   clearAllHighlights = () => {
-    if (this.props.location.query.highlights) {
+    if (this.state.highlights) {
       const context = this.canvas.current.getContext('2d')
       for (let attr in this.state.coordinates) {
 
@@ -350,10 +407,14 @@ class ForumFeed extends Component {
                   </div>
                 </div>
               </div>
+              <div className="pt-2 pb-2 d-flex align-items-center">
+                <input className="apple-switch mr-4" checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
+              </div>
             </section>
 
-            {this.state.showPopover && (this.state.x && this.state.y) ? <Popover placement="right"
-              style={{ top: this.state.y + 'px', left: this.state.x + 'px' }}
+            <Popover
+              className={this.state.showPopover && (this.state.x && this.state.y) ? 'd-block' : 'd-none'}
+              style={{ top: this.state.y + 'px', left: this.state.x + 'px' }} ref={this.popover}
             >
 
               <Popover.Content>
@@ -363,7 +424,7 @@ class ForumFeed extends Component {
 
 
               </Popover.Content>
-            </Popover> : null}
+            </Popover>
 
             <canvas
               className="canvas"
@@ -374,12 +435,45 @@ class ForumFeed extends Component {
               }, () => this.clearAllHighlights())}
               onClick={this.clickedTile}
               onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
+
+            {this.state.previousMosaics.length ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
+              <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
+              {
+                this.state.previousMosaics.map(prevMosaic => {
+                  return (
+                    <div className="previous-mosaic d-flex justify-content-center flex-wrap" key={prevMosaic._id}>
+                      <ImageBootstrap onClick={() => {
+                        this.setState({
+                          showPrevMosaicModal: true,
+                          prevMosaicImage: 'data:image/jpeg;base64, ' + prevMosaic.base64
+                        })
+                      }} thumbnail src={'data:image/jpeg;base64, ' + prevMosaic.base64} />
+                      <strong className="text-white text-center w-100 mt-2">{prevMosaic.nTiles} PHOTOS</strong>
+                    </div>
+                  )
+                })
+              }
+
+
+
+              <Modal show={this.state.showPrevMosaicModal} onHide={() => this.setState({ showPrevMosaicModal: false })}>
+                <Modal.Header closeButton>
+
+                </Modal.Header>
+                <Modal.Body>
+                  <ImageBootstrap src={this.state.prevMosaicImage} fluid />
+                </Modal.Body>
+
+              </Modal>
+
+            </section> : null}
+
           </Container>
         </Container>
         <Container className="pt-4">
           <Row>
             <Col md="8" >
-              <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
+              <ButtonBootstrap className="camera mb-4" onClick={() => this.setState({ showDiscussionModal: true })}>
                 Post a Photo
           </ButtonBootstrap>
 
@@ -497,6 +591,9 @@ class ForumFeed extends Component {
             </div>
           </Modal.Body>
         </Modal>}
+
+
+
         <Modal className="new-discussion-modal" show={this.state.showDiscussionModal} size="xl" onHide={() => this.setState({ showDiscussionModal: false })}>
           <Modal.Header closeButton>
             <Modal.Title>Post a Photo</Modal.Title>

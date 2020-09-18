@@ -13,6 +13,8 @@ import {
   UPDATE_DISCUSSION_TILE,
   UPDATE_RIGHTS,
   UPDATE_PHOTO_LOCATION,
+  UPDATE_DATE,
+  UPDATE_TIME
 } from './constants';
 
 const initialState = {
@@ -26,7 +28,9 @@ const initialState = {
   pinned: false,
   camera: '',
   photoLocation: '',
-  rights: false
+  rights: false,
+  date: null,
+  time: 'Morning'
 };
 
 export const newDiscussionReducer = (state = initialState, action) => {
@@ -92,10 +96,21 @@ export const newDiscussionReducer = (state = initialState, action) => {
         rights: action.payload,
       });
 
-      case UPDATE_PHOTO_LOCATION:
+    case UPDATE_PHOTO_LOCATION:
       return Object.assign({}, state, {
         photoLocation: action.payload,
       });
+
+    case UPDATE_DATE:
+      return Object.assign({}, state, {
+        date: action.payload,
+      });
+
+    case UPDATE_TIME:
+      return Object.assign({}, state, {
+        time: action.payload,
+      });
+
 
     default:
       return state;

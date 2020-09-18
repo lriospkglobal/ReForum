@@ -13,7 +13,9 @@ import {
   CLEAR_SUCCESS_MESSAGE,
   UPDATE_CAMERA,
   UPDATE_PHOTO_LOCATION,
-  UPDATE_RIGHTS
+  UPDATE_RIGHTS,
+  UPDATE_DATE,
+  UPDATE_TIME
 } from './constants';
 import { postDiscussionApi } from './api';
 
@@ -38,7 +40,9 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       pinned,
       photoLocation,
       rights,
-      camera
+      camera,
+      date, 
+      time
     } = getState().newDiscussion;
 
     let validated = true;
@@ -58,7 +62,20 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
         payload: 'Title should be at least 10 characters.',
       });
     }
-
+    if (date === null) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please add a picture date.',
+      });
+    }
+    if (time === null) {
+      validated = false;
+      return dispatch({
+        type: POSTING_DISCUSSION_FAILURE,
+        payload: 'Please add a picture time.',
+      });
+    }
     if (content === null || content.length === 0) {
       validated = false;
       return dispatch({
@@ -117,7 +134,9 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
         tile,
         photoLocation,
         camera,
-        rights
+        rights, 
+        date, 
+        time
       }).then(
         (data) => {
           if (data.data.postCreated === true) {
@@ -232,6 +251,31 @@ export const updateDiscussionPinStatus = (value) => {
     payload: value,
   };
 };
+
+/**
+ * update date status in redux state (controlled input)
+ * @param  {Date} value
+ * @return {action}
+ */
+export const updateDate = (value) => {
+  return {
+    type: UPDATE_DATE,
+    payload: value,
+  };
+};
+
+/**
+ * update date status in redux state (controlled input)
+ * @param  {String} value
+ * @return {action}
+ */
+export const updateTime = (value) => {
+  return {
+    type: UPDATE_TIME,
+    payload: value,
+  };
+};
+
 
 /**
  * update discussion tags in redux state (controlled input)

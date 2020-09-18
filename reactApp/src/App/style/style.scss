@@ -49,6 +49,47 @@ body {
   }
 }
 
+.popover{
+  width: 200px;
+  .arrow{
+    display: none;
+  }
+}
+
+input.apple-switch {
+  cursor: pointer;
+  position: relative;
+  -webkit-appearance: none;
+  outline: none;
+  width: 50px;
+  height: 30px;
+  background-color: #fff;
+  border: 1px solid #D9DADC;
+  border-radius: 50px;
+  box-shadow: inset -20px 0 0 0 #fff;
+  &.apple-switch:after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    background: transparent;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+  }
+  &:checked {
+    box-shadow: inset 20px 0 0 0 #4ed164;
+    border-color: #4ed164;
+    &:after {
+      left: 20px;
+      box-shadow: -2px 4px 3px rgba(0,0,0,0.05);
+    }
+  }
+  
+}
+
+
 .card {
   .card-header {
     background: transparent;
@@ -134,10 +175,6 @@ body {
 
 .modal-backdrop {
   z-index: 1065;
-}
-
-.popover {
-  max-width: 100px;
 }
 
 .canvas {
@@ -230,6 +267,15 @@ header {
     .intro {
       color: white;
     }
+    .previous-mosaics{
+      .previous-mosaic{
+        width: 113px;
+        height: 67px;
+        img{
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .moderator-card {
@@ -320,6 +366,28 @@ header {
     font-weight: bold;
     color: $aarp-blue;
 
+    .opinion-section {
+      color: black;
+
+      .opinion {
+        display: flex;
+        justify-content: space-between;
+
+        .opinion__comment-container {
+          width: calc(100% - 55px) !important;
+          font-weight: normal;
+        }
+
+        .opinion__image-container {
+          width: auto;
+
+          img {
+            width: 40px;
+            height: 40px;
+          }
+        }
+      }
+    }
 
   }
 }

@@ -18,6 +18,39 @@ const forumAPI = (app, client) => {
     }).catch(err => res.send(err))
   });
 
+  //get past mosaics from forum
+  app.get('/api/forum/:forum_id/past-mosaics', (req, res) => {
+    const db = client.db('reforum');
+    db.collection('previous' + req.params.forum_id + '.files').find({}).toArray(function (err, result) {
+      if (err) throw err;
+      if (result.length) {
+        const allPromises = []
+        result.forEach((object) => {
+
+          allPromises.push(
+            getImageFromGridFs({ filename: object.filename }, 'reforum', 'previous' + req.params.forum_id, client, req.params.forum_id)
+          )
+
+
+        });
+        Promise.all(allPromises).then(values => {
+
+          /* Add base64 mosaic */
+          values.forEach((value, index) => {
+
+            result[index]['base64'] = base64encode(value.savedFsFilename)
+            fs.unlinkSync(value.savedFsFilename)
+
+          })
+
+          return res.send(result);
+        });
+      } else res.send([]);
+
+
+    })
+
+  })
   // get all forums
   app.get('/api/forum', (req, res) => {
     getAllForums().then(

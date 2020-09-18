@@ -94,12 +94,12 @@ function FeedBox(props) {
         }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
+        <Modal.Header closeButton>
 
+        </Modal.Header>
         <Modal.Body className="p-0">
-          <Modal.Header closeButton>
-
-          </Modal.Header>
-          <section className="d-flex">
+          
+          <section className="d-flex h-100">
             <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
 
             </div>

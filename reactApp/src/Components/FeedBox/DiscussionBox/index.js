@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Image, Modal, Container, Col, Row } from 'react-bootstrap';
 import Moment from 'moment';
-import SingleDiscussion from '../../../Views/SingleDiscussion';
+
+import Opinion from '../../../Components/SingleDiscussion/Opinion';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
-
+import axios from 'axios';
 function DiscussionBox(props) {
-
+  const [opinions, setOpinions] = useState([]);
 
   const user = props.discussion.user
 
   const discussionTitle = props.discussion.title
   const discussionContent = props.discussion.content
   const pinnedDiscussion = props.discussion.pinned
+  const discussion_slug = props.discussion.discussion_slug
   const time = props.discussion.date
-  const camera = props.discussion.camera
-  const location = props.discussion.photo_location
+  const camera = props.discussion.camera ? props.discussion.camera : ''
+  const location = props.discussion.photo_location ? props.discussion.photo_location : ''
   const voteCount = props.discussion.favorites.length
 
 
@@ -22,6 +24,8 @@ function DiscussionBox(props) {
 
   const postTime = Moment(time);
   const timeDisplay = postTime.from(Moment());
+  
+
 
   return (
     <Card key={id} className="discussion-box mb-3">
@@ -54,14 +58,44 @@ function DiscussionBox(props) {
         </Container>
 
 
-        <div className="d-flex discussion-box__footer align-items-center justify-content-between">
-          <div ><button className="misc-button p-2"><img src={thumbsUp} /></button> <span className="ml-2">{voteCount} Kudos</span></div>
-          <Button onClick={() => {
-            setLgShow(true)
-            setDiscussion(discussion)
-          }
-          }>Comment</Button>
+        <div className="discussion-box__footer ">
+          <div className="d-flex align-items-center justify-content-between">
+            <div>
+              <button className="misc-button p-2">
+                <img src={thumbsUp} />
+              </button>
+              <span className="ml-2">{voteCount} Kudos</span>
+            </div>
+            <Button onClick={() => {
+              setLgShow(true)
+              setDiscussion(discussion)
+            }
+            }>Comment</Button>
+          </div>
+          {(opinions && opinions.length) ?
+            <div className="opinion-section">
+              <h4 className="mt-4 mb-3"><strong>{opinions.length} Comments</strong></h4>
+              {opinions.map((opinion) => {
+                return (
+                  <Opinion
+                    key={opinion._id}
+                    opinionId={opinion._id}
+                    userAvatar={opinion.user.avatarUrl}
+                    userName={opinion.user.name}
+                    userGitHandler={opinion.user.username}
+                    opDate={opinion.date}
+                    opContent={opinion.content}
+                    userId={opinion.user_id}
+
+
+
+                  />
+                );
+              })}
+            </div> : null}
         </div>
+
+
       </Card.Body>
 
 

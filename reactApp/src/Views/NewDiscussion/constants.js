@@ -11,6 +11,9 @@ export const UPDATE_DISCUSSION_TAGS = 'update_discussion_tags';
 export const UPDATE_CAMERA = 'update_camera';
 export const UPDATE_PHOTO_LOCATION = 'update_photo_location';
 export const UPDATE_RIGHTS = 'update_rights';
+export const UPDATE_DATE = 'update_date';
+export const UPDATE_TIME = 'update_time';
+
 
 export const CLEAR_SUCCESS_MESSAGE = 'clear_success_message';
 
