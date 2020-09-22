@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import NewDiscussion from '../NewDiscussion/index';
 import _ from 'lodash';
 import axios from 'axios';
-import { Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Popover, Col, Row, Card } from 'react-bootstrap';
+import { Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Carousel, Popover, Col, Row, Card } from 'react-bootstrap';
 import SingleDiscussion from '../../Views/SingleDiscussion';
 import {
   getDiscussions,
@@ -47,27 +47,45 @@ class ForumFeed extends Component {
       showPopover: false,
       lgShow: false,
       currentDiscussion: null,
-      highlights: true,
+      highlights: false,
       widthGrowth: null,
       showPrevMosaicModal: false,
-      prevMosaicImage: null
-
+      prevMosaicImage: null,
+      vertical: { width: '200px', height: '280px' },
+      horizontal: { width: '280px', height: '200px' },
+      popupOrientation: null
     }
     this.canvas = React.createRef()
     this.popover = React.createRef()
   }
 
   setImageModalPopover = (imgName) => {
+    if (this.state.loadedEncodedImages[imgName]) {
+      const image = new Image()
 
-    this.setState({
-      imageOnModal: this.state.loadedEncodedImages[imgName],
-      loadingImage: false
-    }, () => {
-      if (this.popover.current.getBoundingClientRect().right > window.innerWidth) {
-        const regex = /\D/g
-        this.popover.current.style.left = (parseInt(this.popover.current.style.left.replace(regex, '')) - this.popover.current.offsetWidth) - 10 + 'px'
+      image.onload = () => {
+        let popupOrientation
+        if (image.width > image.height) {
+          popupOrientation = this.state.horizontal
+        } else
+          popupOrientation = this.state.vertical
+        this.setState({
+          imageOnModal: this.state.loadedEncodedImages[imgName],
+          loadingImage: false,
+          popupOrientation
+        }, () => {
+          if (this.popover.current && this.popover.current.getBoundingClientRect().right > window.innerWidth) {
+            const regex = /\D/g
+            this.popover.current.style.left = (parseInt(this.popover.current.style.left.replace(regex, '')) - this.popover.current.offsetWidth) - 10 + 'px'
+          }
+        })
+
       }
-    })
+
+      image.src = 'data:image/jpeg;base64, ' + this.state.loadedEncodedImages[imgName]
+
+    }
+
   }
 
 
@@ -414,13 +432,13 @@ class ForumFeed extends Component {
 
             <Popover
               className={this.state.showPopover && (this.state.x && this.state.y) ? 'd-block' : 'd-none'}
-              style={{ top: this.state.y + 'px', left: this.state.x + 'px' }} ref={this.popover}
+              style={{ top: this.state.y + 'px', left: this.state.x + 'px', ...this.state.popupOrientation }} ref={this.popover}
             >
 
               <Popover.Content>
                 {this.state.loadingImage ? <div className="d-flex mt-2 justify-content-center align-items-center"><div className="spinner-border" role="status">
                   <span className="sr-only">Loading...</span>
-                </div></div> : <ImageBootstrap src={'data:image/jpeg;base64, ' + this.state.imageOnModal} thumbnail />}
+                </div></div> : <div className="image-container" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.imageOnModal + ')' }} ></div>}
 
 
               </Popover.Content>
@@ -439,13 +457,13 @@ class ForumFeed extends Component {
             {this.state.previousMosaics.length ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
               <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
               {
-                this.state.previousMosaics.map(prevMosaic => {
+                this.state.previousMosaics.map((prevMosaic, index) => {
                   return (
                     <div className="previous-mosaic d-flex justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
                       <ImageBootstrap onClick={() => {
                         this.setState({
                           showPrevMosaicModal: true,
-                          prevMosaicImage: 'data:image/jpeg;base64, ' + prevMosaic.base64
+                          prevMosaicImage: index
                         })
                       }} thumbnail src={'data:image/jpeg;base64, ' + prevMosaic.base64} />
                       <strong className="text-white text-center w-100 mt-2">{prevMosaic.nTiles} PHOTOS</strong>
@@ -456,12 +474,41 @@ class ForumFeed extends Component {
 
 
 
-              <Modal show={this.state.showPrevMosaicModal} onHide={() => this.setState({ showPrevMosaicModal: false })}>
+
+
+              <Modal show={this.state.showPrevMosaicModal} className="full" onHide={() => this.setState({ showPrevMosaicModal: false })}>
                 <Modal.Header closeButton>
 
                 </Modal.Header>
                 <Modal.Body>
-                  <ImageBootstrap src={this.state.prevMosaicImage} fluid />
+
+                  {/* <ImageBootstrap src={this.state.prevMosaicImage} fluid /> */}
+                  <Container className="ml-5 mr-5">
+                    <Carousel activeIndex={this.state.prevMosaicImage} indicators={false}
+                      onSelect={(selectedIndex) => this.setState({ prevMosaicImage: selectedIndex })}>
+                      {this.state.previousMosaics.map(prevMosaic => {
+                        return (
+                          <Carousel.Item key={prevMosaic._id}>
+                            <ImageBootstrap
+                              fluid
+                              thumbnail
+                              className="d-block w-100"
+                              src={'data:image/jpeg;base64, ' + prevMosaic.base64}
+                              alt="slide"
+                            />
+                            <Carousel.Caption>
+                              <h5><strong>{prevMosaic.nTiles} Photos</strong></h5>
+                              <p>This is a static image of the mosaic built with {prevMosaic.nTiles} photos,
+                              to view current interactive mosaic please exit this window.
+                              </p>
+                            </Carousel.Caption>
+                          </Carousel.Item>
+                        )
+                      })}
+
+
+                    </Carousel>
+                  </Container>
                 </Modal.Body>
 
               </Modal>

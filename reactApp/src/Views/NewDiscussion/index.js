@@ -171,7 +171,7 @@ class NewDiscussion extends Component {
           </div>
           <Form className="new-discussion__form p-3" onSubmit={(e) => { e.preventDefault() }}>
             <Form.Group controlId="exampleForm.ControlInput1">
-              <Form.Label><strong>Discussion Title</strong></Form.Label>
+              <Form.Label><strong>Photo Title</strong></Form.Label>
               <Form.Control key={'title'}
                 type="text"
                 value={title}
