@@ -8,6 +8,7 @@ import RichEditor from '../../Components/RichEditor';
 import PinButton from '../../Components/NewDiscussion/PinButton';
 import TagsInput from '../../Components/NewDiscussion/TagsInput';
 import DatePicker from "react-datepicker";
+import UploadImage from '../../App/img/Photo-Upload-Box.png';
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -146,10 +147,10 @@ class NewDiscussion extends Component {
     if (authenticated) {
 
       return (
-        <section className="d-flex new-discussion">
+        <section className="d-flex new-discussion align-items-start">
           <div className="new-discussion__dropzone-container d-flex">
             {this.state.uploadedBase64 ? <div className="new-discussion__uploaded-image-container" style={{ backgroundImage: 'url(' + this.state.uploadedBase64 + ')' }} ></div> :
-              <Dropzone accept="image/jpeg, image/png"
+              <Dropzone accept="image/jpeg, image/png" maxSize={5000000}
                 onDrop={acceptedFiles => {
                   this.setState({ uploadedImage: acceptedFiles[0] }, () =>
                     this.processImage()
@@ -161,7 +162,12 @@ class NewDiscussion extends Component {
                   <section className="d-flex w-100 justify-content-center">
                     <div className="d-flex" {...getRootProps()} >
                       <input name="tile" {...getInputProps()} />
-                      <p className="p-3 justify-content-center align-items-center w-100 d-flex">Drag 'n' drop some files here, or click to select files</p>
+                      <div className="p-3 justify-content-center align-items-center w-100 flex-column d-flex">
+                        <Image className="upload-image" src={UploadImage} />
+                        <small className="w-100 text-center mt-3">Maximum upload file size: 5MB<br />
+                        (.JPG, .PNG)
+                        </small>
+                      </div>
                     </div>
                   </section>
                 )}
@@ -169,7 +175,7 @@ class NewDiscussion extends Component {
 
 
           </div>
-          <Form className="new-discussion__form p-3" onSubmit={(e) => { e.preventDefault() }}>
+          <Form className="new-discussion__form p-3 overflow-auto" onSubmit={(e) => { e.preventDefault() }}>
             <Form.Group controlId="exampleForm.ControlInput1">
               <Form.Label><strong>Photo Title</strong></Form.Label>
               <Form.Control key={'title'}
@@ -297,9 +303,9 @@ class NewDiscussion extends Component {
     } = this.props.newDiscussion;
 
     return (
-      <div >
+      <div className="h-100">
 
-        <div >{errorMsg}</div>
+        {errorMsg && <div >{errorMsg}</div>}
         {postingSuccess && <div >Your discussion is created :-)</div>}
         {this.renderEditor()}
         {postingDiscussion && <div >Posting discussion...</div>}

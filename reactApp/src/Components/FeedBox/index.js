@@ -7,7 +7,10 @@ import SingleDiscussion from '../../Views/SingleDiscussion';
 function FeedBox(props) {
   const [lgShow, setLgShow] = useState(false);
   const [discussion, setDiscussion] = useState(null);
-
+  const timeDisplay = (date) => {
+    const postTime = Moment(date);
+    return postTime.from(Moment());
+  }
   const renderSort = () => {
     const {
       activeSortingMethod,
@@ -94,23 +97,22 @@ function FeedBox(props) {
         }}
         aria-labelledby="example-modal-sizes-title-lg"
       >
-        <Modal.Header closeButton>
 
-        </Modal.Header>
-        <Modal.Body className="p-0">
-          
+        <Modal.Body className="p-0 h-100">
+
           <section className="d-flex h-100">
             <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
-
+              
             </div>
-            <div className="w-25 p-3">
+            <div className="overflow-auto w-25 p-3">
               <section className="discussion-box__header d-flex mb-3">
 
 
                 <Image src={discussion.user.avatarUrl} roundedCircle />
+
                 <div className="d-flex flex-column justify-content-center">
                   <span>{discussion.user.name || discussion.user.username} </span>
-                  {/* <span className="text-muted">{timeDisplay}</span> */}
+                  <span className="text-muted">{timeDisplay(discussion.date)}</span>
                 </div>
               </section>
               <SingleDiscussion discussionSlug={discussion.discussion_slug} />

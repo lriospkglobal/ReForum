@@ -20,9 +20,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
 .new-discussion-modal {
   .modal-content {
-    height: auto;
+    .modal-header {
+      .modal-title {
+        font-size: 16px;
+
+        img {
+          width: 20px;
+
+        }
+      }
+    }
+
+    .new-discussion {
+      height: 100%;
+
+      .new-discussion__form {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+      }
+    }
   }
 }
 
@@ -200,6 +222,8 @@ input.apple-switch {
 
       .modal-content {
         background-color: transparent;
+        display: flex;
+        justify-content: center;
 
         .modal-header {
           border: none;
@@ -350,6 +374,18 @@ header {
 
     .intro {
       color: white;
+    }
+
+    .canvas-background-wrapper {
+      background-color: white;
+      position: relative;
+
+      .canvas {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+
+      }
     }
 
     .previous-mosaics {
@@ -506,9 +542,15 @@ header {
   }
 
   .new-discussion__dropzone-container {
+    height: 100%;
     width: 60%;
     border: 1px solid $light-gray;
     background-color: $lighter-gray;
+
+    .upload-image {
+      width: 220px;
+      height: auto;
+    }
   }
 
   .new-discussion__form {
@@ -522,13 +564,39 @@ header {
     font-weight: bold;
     color: $aarp-blue;
 
-    .delete {
+    .extra-options {
       cursor: pointer;
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 7px;
+      right: 1rem;
       font-size: x-large;
       color: $aarp-red;
+
+      .btn-primary:not(:disabled):not(.disabled).active,
+      .btn-primary:not(:disabled):not(.disabled):active,
+      .show>.btn-primary.dropdown-toggle {
+        color: black;
+        text-decoration: none;
+      }
+
+      .btn {
+        border: none;
+        display: inline;
+        background: none;
+        padding: 0;
+        color: black;
+
+        &:after {
+          content: none;
+        }
+
+        &:hover,
+        &:active,
+        &:visited {
+          color: black;
+          text-decoration: none;
+        }
+      }
     }
   }
 

@@ -13,14 +13,10 @@ import {
   updateSortingMethod,
 } from './actions';
 
-
+import camera from '../../App/img/camera-icon.svg';
 import FeedBox from '../../Components/FeedBox';
 import SideBar from '../../Components/SideBar';
 
-
-
-
-let timer;
 
 class ForumFeed extends Component {
   constructor(props) {
@@ -39,6 +35,7 @@ class ForumFeed extends Component {
       showSuccessMessage: false,
       successMessage: '',
       tileSize: null,
+      tileSizeOriginal: null,
       previousMosaics: [],
       quality: 100,
       showTooltip: false,
@@ -89,7 +86,21 @@ class ForumFeed extends Component {
   }
 
 
+  requestImage = (imgName, cb) => {
+    this.setState({ loadingImage: true }, () => {
+      axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
+        this.setState({
+          loadedEncodedImages: {
+            ...this.state.loadedEncodedImages,
+            [imgName]: response.data.base64
 
+          }
+        }, cb
+
+        )
+      }).catch(e => console.error(e))
+    })
+  }
   getIndividualImage = (x, y) => {
 
     let imgName
@@ -105,20 +116,9 @@ class ForumFeed extends Component {
 
           this.setImageModalPopover(imgName)
         } else {
-          this.setState({ loadingImage: true }, () => {
-            axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
-              this.setState({
-                loadedEncodedImages: {
-                  ...this.state.loadedEncodedImages,
-                  [imgName]: response.data.base64
 
-                }
-              }, () =>
-                this.setImageModalPopover(imgName)
 
-              )
-            }).catch(e => console.error(e))
-          })
+          this.requestImage(imgName, () => this.setImageModalPopover(imgName))
 
         }
 
@@ -139,10 +139,12 @@ class ForumFeed extends Component {
       const imageCoordinates = attr.split('-')
       const imageCoordinatesX = parseInt(imageCoordinates[0])
       const imageCoordinatesY = parseInt(imageCoordinates[1])
-      context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+      const size = Math.ceil(this.state.tileSize)
+      context.clearRect(imageCoordinatesX, imageCoordinatesY, size, size)
       if (imgName === imgNameFromCoordinates) {
+
         context.fillStyle = '#4ed164';
-        context.fillRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+        context.fillRect(imageCoordinatesX, imageCoordinatesY, size, size)
       }
     }
 
@@ -199,9 +201,6 @@ class ForumFeed extends Component {
     const img = new Image()
     const that = this;
 
-
-
-
     img.onload = function () {
 
       let state = {
@@ -209,40 +208,64 @@ class ForumFeed extends Component {
         canvasHeight: this.height,
         loading: false,
         coordinates: currentForumObj.mosaic.coordinates,
-        tileSize: parseInt(currentForumObj.mosaic.tile_size)
+        tileSize: parseInt(currentForumObj.mosaic.tile_size),
+        tileSizeOriginal: parseInt(currentForumObj.mosaic.tile_size),
       }
       //added pixels for full width
       const style = window.getComputedStyle(that.canvas.current.parentElement, null)
       const regex = /\D/g
-      //canvas container width without padding
-      const canvasContainerWidth = parseFloat(style.getPropertyValue("width").replace(regex, '')) - (parseFloat(style.getPropertyValue("padding-left").replace(regex, '')) +
-        parseFloat(style.getPropertyValue("padding-right").replace(regex, '')))
-
-
+      //canvas container width
+      let canvasContainerWidth = parseFloat(style.getPropertyValue("width").replace(regex, ''))
+      //rest 5px each horizontal side for white background (borders)
+      canvasContainerWidth = canvasContainerWidth - 10
       const nTilesWidth = state.canvasWidth / state.tileSize
-      const nTilesHeight = state.canvasHeight / state.tileSize
       const widthGrowth = (canvasContainerWidth - state.canvasWidth) / nTilesWidth
-      state.widthGrowth = null//widthGrowth
-      /* if (state.widthGrowth > 0) {
+
+      state.widthGrowth = widthGrowth
+      if (state.widthGrowth > 0) {
+        state.ratioFactor = state.canvasHeight / state.canvasWidth
+        state.newHeight = state.ratioFactor * canvasContainerWidth
         state.tileSize = state.tileSize + state.widthGrowth
+
+        const newCoordinates = {}
         for (let attr in state.coordinates) {
+
           const imageCoordinates = attr.split('-')
-          const imageCoordinatesX = parseInt(imageCoordinates[0])
-          const imageCoordinatesY = parseInt(imageCoordinates[1])
-          
+          let imageCoordinatesX = parseInt(imageCoordinates[0])
+          let imageCoordinatesY = parseInt(imageCoordinates[1])
+
+          if (imageCoordinatesX !== 0) {
+            const multiplierX = imageCoordinatesX / state.tileSizeOriginal
+            imageCoordinatesX = multiplierX * state.tileSize
+          }
+          if (imageCoordinatesY !== 0) {
+            const multiplierY = imageCoordinatesY / state.tileSizeOriginal
+            imageCoordinatesY = multiplierY * state.tileSize
+          }
+          newCoordinates[imageCoordinatesX + '-' + imageCoordinatesY] = state.coordinates[attr]
+
         }
-        
-      } */
+        state.coordinates = newCoordinates
+
+      }
 
 
 
       that.setState(state, () => {
         that.canvas.current.width = state.widthGrowth > 0 ? canvasContainerWidth : that.state.canvasWidth
-        that.canvas.current.height = state.widthGrowth > 0 ? (nTilesHeight * (state.tileSize + state.widthGrowth)) : that.state.canvasHeight
+        that.canvas.current.height = state.widthGrowth > 0 ? state.newHeight : that.state.canvasHeight
 
         context.drawImage(this, 0, 0, state.widthGrowth > 0
           ? canvasContainerWidth : that.state.canvasWidth,
-          state.widthGrowth > 0 ? (nTilesHeight * (state.tileSize + state.widthGrowth)) : that.state.canvasHeight)
+          state.widthGrowth > 0 ? state.newHeight : that.state.canvasHeight)
+
+
+        if (that.props.location.query.forumId && that.props.location.query.tileId) {
+
+          that.openFromUrl(that.props.location.query.forumId, that.props.location.query.tileId)
+        }
+
+
 
       })
 
@@ -250,6 +273,44 @@ class ForumFeed extends Component {
 
     img.src = 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64
     this.canvas.current.style.backgroundImage = 'url(' + 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64 + ')'
+  }
+
+  openFromUrl = (forumId, tileId) => {
+
+    let coordinates
+
+    for (let attr in this.state.coordinates) {
+      if (this.state.coordinates[attr] === tileId) {
+        coordinates = attr
+
+        break
+      }
+
+    }
+    if (coordinates) {
+      const imgName = this.state.coordinates[coordinates]
+      const imageCoordinates = coordinates.split('-')
+      const imageCoordinatesX = parseInt(imageCoordinates[0])
+      const imageCoordinatesY = parseInt(imageCoordinates[1])
+
+      const el = this.canvas.current
+      const rect = el.getBoundingClientRect()
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const top = rect.top + scrollTop
+      const left = rect.left + scrollLeft
+
+      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true }, () => {
+        if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName])
+          this.setImageModalPopover(imgName)
+        else
+          this.requestImage(imgName, () => this.setImageModalPopover(imgName))
+
+        this.canvas.current.scrollIntoView()
+      })
+
+
+    }
   }
 
   getPreviousMosaics = () => {
@@ -308,7 +369,7 @@ class ForumFeed extends Component {
 
 
     // get the discussions again
-    // if the forum didn't matched
+    // if the forum didn't match
     if (prevProps.currentForum !== currentForum) {
       const feedChanged = true;
       getDiscussions(currentForumId(), feedChanged);
@@ -360,7 +421,8 @@ class ForumFeed extends Component {
         const imageCoordinates = attr.split('-')
         const imageCoordinatesX = parseInt(imageCoordinates[0])
         const imageCoordinatesY = parseInt(imageCoordinates[1])
-        context.clearRect(imageCoordinatesX, imageCoordinatesY, 3, 3)
+        const size = Math.ceil(this.state.tileSize)
+        context.clearRect(imageCoordinatesX, imageCoordinatesY, size, size)
 
       }
     }
@@ -443,16 +505,22 @@ class ForumFeed extends Component {
 
               </Popover.Content>
             </Popover>
-
-            <canvas
-              className="canvas"
-              style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
-              onMouseOut={() => this.setState({
-                showPopover: false,
-                x: null, y: null
-              }, () => this.clearAllHighlights())}
-              onClick={this.clickedTile}
-              onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
+            <section className="canvas-background-wrapper w-100"
+              style={{
+                display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none',
+                height: (this.state.newHeight || this.state.canvasHeight) + 10 + 'px'
+              }}>
+              <div className="canvas-background"></div>
+              <canvas
+                className="canvas"
+                style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
+                onMouseOut={() => this.setState({
+                  showPopover: false,
+                  x: null, y: null
+                }, () => this.clearAllHighlights())}
+                onClick={this.clickedTile}
+                onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
+            </section>
 
             {this.state.previousMosaics.length ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
               <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
@@ -483,7 +551,7 @@ class ForumFeed extends Component {
                 <Modal.Body>
 
                   {/* <ImageBootstrap src={this.state.prevMosaicImage} fluid /> */}
-                  <Container className="ml-5 mr-5">
+                  <Container>
                     <Carousel activeIndex={this.state.prevMosaicImage} indicators={false}
                       onSelect={(selectedIndex) => this.setState({ prevMosaicImage: selectedIndex })}>
                       {this.state.previousMosaics.map(prevMosaic => {
@@ -643,7 +711,7 @@ class ForumFeed extends Component {
 
         <Modal className="new-discussion-modal" show={this.state.showDiscussionModal} size="xl" onHide={() => this.setState({ showDiscussionModal: false })}>
           <Modal.Header closeButton>
-            <Modal.Title>Post a Photo</Modal.Title>
+            <Modal.Title className="d-flex align-items-center"><ImageBootstrap src={camera} className="mr-2"/><strong>Post a Photo</strong></Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
             <NewDiscussion closeModal={() => this.setState({ showDiscussionModal: false })} successCallback={this.successCallback} />

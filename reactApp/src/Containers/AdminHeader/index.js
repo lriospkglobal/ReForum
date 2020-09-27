@@ -25,7 +25,7 @@ class AdminHeader extends Component {
     return (
       <div >
         <div >
-          <Logo />
+
           Welcome Admin
           <UserMenu
             signedIn={authenticated}
@@ -43,8 +43,10 @@ class AdminHeader extends Component {
 }
 
 export default connect(
-  (state) => { return {
-    user: state.user,
-    forums: state.app.forums,
-  }; }
+  (state) => {
+    return {
+      user: state.user,
+      forums: state.app.forums,
+    };
+  }
 )(AdminHeader);

@@ -20,6 +20,7 @@ const discussionAPI = (app, client) => {
     );
   });
 
+
   // toggle favorite to the discussion
   app.put('/api/discussion/toggleFavorite/:discussion_id', (req, res) => {
     const { discussion_id } = req.params;
@@ -39,12 +40,25 @@ const discussionAPI = (app, client) => {
     }
   });
 
+  //create new mosaic
+  app.post('/api/discussion/newMosaic', (req, res) => {
+    return new Promise((resolve, reject) => {
+      //axios.post('http://localhost:5500/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.body.user.email))
+        .then(message => {
+          console.log(message)
+          resolve(res.send(message))
+        })
+    })
+  })
   // create a new discussion
   app.post('/api/discussion/newDiscussion', upload.single('tile'), (req, res) => {
+    let tileId
     if (req.user) {
 
       createDiscussion(req.body, client, req.file).then(
         (result) => {
+          tileId = result._doc.tile_id
           res.send(Object.assign({}, result._doc, { postCreated: true }));
 
         }
@@ -55,9 +69,8 @@ const discussionAPI = (app, client) => {
 
       });
       res.on('finish', () => {
-        //return axios.post('http://localhost:5500/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
-        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.user.email))
-          .then(message => console.log(message))
+        return axios.post('http://localhost:5000/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId })
+          .then(() => console.log('Success!'))
       });
 
     } else {
