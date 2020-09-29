@@ -69,7 +69,7 @@ const discussionAPI = (app, client) => {
 
       });
       res.on('finish', () => {
-        return axios.post('http://localhost:5000/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId })
+        return axios.post('https://mosaic-forum.herokuapp.com/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId })
           .then(() => console.log('Success!'))
       });
 
