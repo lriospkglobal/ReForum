@@ -44,11 +44,10 @@ const discussionAPI = (app, client) => {
   app.post('/api/discussion/newMosaic', (req, res) => {
     return new Promise((resolve, reject) => {
       //axios.post('http://localhost:5500/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
-        return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.body.user.email))
-        .then(message => {
-          console.log(message)
-          resolve(res.send(message))
-        })
+      return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.body.user.email))
+        .then(req => {
+          resolve(res.send(req.data.message))
+        }).catch(err => console.error(err))
     })
   })
   // create a new discussion
@@ -70,7 +69,7 @@ const discussionAPI = (app, client) => {
       });
       res.on('finish', () => {
         return axios.post('https://mosaic-forum.herokuapp.com/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId })
-          .then(() => console.log('Success!'))
+          .then(() => console.log('Success!')).catch(err => console.error(err))
       });
 
     } else {
