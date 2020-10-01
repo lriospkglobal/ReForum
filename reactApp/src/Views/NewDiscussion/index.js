@@ -1,12 +1,9 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Form, Button, Image } from 'react-bootstrap';
+import { Form, Button, Image, Alert } from 'react-bootstrap';
 import Dropzone from 'react-dropzone';
-
-import RichEditor from '../../Components/RichEditor';
-import PinButton from '../../Components/NewDiscussion/PinButton';
-import TagsInput from '../../Components/NewDiscussion/TagsInput';
+import CreatableSelect from 'react-select/creatable'
 import DatePicker from "react-datepicker";
 import UploadImage from '../../App/img/Photo-Upload-Box.png';
 
@@ -26,6 +23,12 @@ import {
   updateTime
 } from './actions';
 
+const options = [
+  { value: 'smartphone', label: 'Smartphone' },
+  { value: 'tablet', label: 'Tablet' },
+  { value: 'point and shoot', label: 'Point and Shoot' },
+  { value: 'slr and dslr', label: 'SLR and DSLR' }
+]
 
 
 
@@ -40,11 +43,13 @@ class NewDiscussion extends Component {
       tileImage: null,
       uploadedImage: null,
       uploadedBase64: null,
-      startDate: new Date()
+      startDate: new Date(),
+      selectedOption: null
     };
 
 
   }
+
 
   handleChange = date => {
     this.setState({
@@ -57,9 +62,11 @@ class NewDiscussion extends Component {
       user,
       currentForum,
       forums,
-      updateDiscussionTags
+      updateDiscussionTags,
+      updateDate
     } = this.props;
     updateDiscussionTags(['aarp'])
+    updateDate(this.state.startDate)
     this.setUserAndForumID(user, forums, currentForum);
 
   }
@@ -84,7 +91,7 @@ class NewDiscussion extends Component {
       });
     } else {
       this.setState({
-        fatalError: 'Invalid forum buddy, go for the right one!',
+        fatalError: 'Invalid forum, go for the right one!',
       });
     }
   }
@@ -108,6 +115,12 @@ class NewDiscussion extends Component {
       authenticated,
       role,
     } = this.props.user;
+
+    const {
+      errorMsg,
+      postingSuccess,
+      postingDiscussion,
+    } = this.props.newDiscussion;
 
     const {
       updateDiscussionTitle,
@@ -192,8 +205,14 @@ class NewDiscussion extends Component {
             </Form.Group>}
             <Form.Group >
               <Form.Label><strong>Camera</strong></Form.Label>
-              <Form.Control onChange={(event) => { updateCamera(event.target.value); }} value={camera} type="text" />
 
+              <CreatableSelect
+                isClearable
+                onChange={obj => obj.value && updateCamera(obj.value)}
+                onInputChange={obj => obj.value && updateCamera(obj.value)}
+                options={options}
+                placeholder="Select or input..."
+              />
 
             </Form.Group>
 
@@ -247,10 +266,24 @@ class NewDiscussion extends Component {
               <Form.Check checked={rights} onChange={(e) => { updateRights(e.target.checked); }}
                 type="checkbox" label="I am the owner of this photo. AARP may use this photo without permission or attribution. (Required)" />
             </Form.Group>
+            {(errorMsg || postingSuccess) ? <Form.Group>
+
+              {errorMsg && <Alert variant="danger">
+                {errorMsg}
+              </Alert>}
+              {postingSuccess && <Alert variant="success">
+                Discussion created!
+          </Alert>}
+
+
+            </Form.Group> : null}
             <Form.Group className="d-flex justify-content-between">
               <Button onClick={() => closeModal()} variant="secondary">Cancel</Button>
-              <Button onClick={() => postDiscussion(userId, forumId, currentForum, successCallback)}>Post Photo</Button>
+              <Button disabled={postingDiscussion} onClick={() => postDiscussion(userId, forumId, currentForum, successCallback)}>{postingDiscussion ? <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+              </div> : 'Post Photo'}</Button>
             </Form.Group>
+
           </Form>
         </section >
       )/* [
@@ -296,19 +329,13 @@ class NewDiscussion extends Component {
     if (fatalError) { return (<div >{fatalError}</div>); }
 
     const { currentForum } = this.props;
-    const {
-      errorMsg,
-      postingSuccess,
-      postingDiscussion,
-    } = this.props.newDiscussion;
+
 
     return (
       <div className="h-100">
 
-        {errorMsg && <div >{errorMsg}</div>}
-        {postingSuccess && <div >Your discussion is created :-)</div>}
         {this.renderEditor()}
-        {postingDiscussion && <div >Posting discussion...</div>}
+
       </div>
     );
   }

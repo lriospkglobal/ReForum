@@ -73,7 +73,7 @@ function FeedBox(props) {
       {renderEmptyDiscussionLine(loading, discussions)}
       {!loading &&
         <div >
-          {discussions && discussions.map((discussion) =>
+          {discussions && discussions.length && discussions.map((discussion) =>
             <DiscussionBox
               discussion={discussion}
               userProfile={userProfile}
@@ -102,7 +102,7 @@ function FeedBox(props) {
 
           <section className="d-flex h-100">
             <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
-              
+
             </div>
             <div className="overflow-auto w-25 p-3">
               <section className="discussion-box__header d-flex mb-3">
