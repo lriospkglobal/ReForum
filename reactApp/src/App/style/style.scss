@@ -71,6 +71,50 @@ body {
   }
 }
 
+.left.bs-popover-auto[x-placement^=right]>.arrow::before,
+.left.bs-popover-right>.arrow::before {
+  right: -12px;
+  left: initial;
+  transform: rotate(180deg);
+
+}
+
+.left.bs-popover-auto[x-placement^=right]>.arrow::after,
+.left.bs-popover-right>.arrow::after {
+  right: -11px;
+  left: initial;
+  transform: rotate(180deg);
+
+}
+
+.left.bs-popover-auto[x-placement^=right]>.arrow,
+.left.bs-popover-right>.arrow {
+  left: initial;
+  right: calc(-.5rem - 1px);
+  width: .5rem;
+  height: 1rem;
+  margin: .3rem 0;
+  top: 5px;
+}
+
+.left.bs-popover-auto[x-placement^=right],
+.left.bs-popover-right {
+  margin-right: .5rem;
+}
+
+.bs-popover-auto[x-placement^=right]>.arrow::before,
+.bs-popover-right>.arrow::before {
+  left: -12px;
+  border-width: .5rem 20px 2px 0;
+}
+
+.bs-popover-auto[x-placement^=right]>.arrow::after,
+.bs-popover-right>.arrow::after {
+  left: -11px;
+  border-width: .5rem 20px 2px 0;
+
+}
+
 .popover {
   .popover-body {
     width: 100%;
@@ -84,9 +128,7 @@ body {
     }
   }
 
-  .arrow {
-    display: none;
-  }
+
 }
 
 input.apple-switch {

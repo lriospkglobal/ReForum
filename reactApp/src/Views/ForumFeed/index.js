@@ -51,19 +51,25 @@ class ForumFeed extends Component {
       vertical: { width: '200px', height: '280px' },
       horizontal: { width: '280px', height: '200px' },
       popupOrientation: null
+
+
     }
     this.canvas = React.createRef()
     this.popover = React.createRef()
   }
 
   setImageModalPopover = (imgName) => {
+
     if (this.state.loadedEncodedImages[imgName]) {
       const image = new Image()
 
       image.onload = () => {
+
         let popupOrientation
+
         if (image.width > image.height) {
           popupOrientation = this.state.horizontal
+
         } else
           popupOrientation = this.state.vertical
         this.setState({
@@ -71,9 +77,16 @@ class ForumFeed extends Component {
           loadingImage: false,
           popupOrientation
         }, () => {
-          if (this.popover.current && this.popover.current.getBoundingClientRect().right > window.innerWidth) {
-            const regex = /\D/g
-            this.popover.current.style.left = (parseInt(this.popover.current.style.left.replace(regex, '')) - this.popover.current.offsetWidth) - 10 + 'px'
+          if (this.popover.current) {
+
+            if (this.popover.current.getBoundingClientRect().right > window.innerWidth) {
+              const regex = /\D/g
+              this.popover.current.style.left = (parseInt(this.popover.current.style.left.replace(regex, '')) - this.popover.current.offsetWidth) - 40 + 'px'
+
+            }
+
+            this.setState({ showPopover: true })
+
           }
         })
 
@@ -183,16 +196,27 @@ class ForumFeed extends Component {
 
   }
 
+
+
   getCoordenate = (e) => {
+
     const el = e.target
     const rect = el.getBoundingClientRect()
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-    const top = rect.top + scrollTop
-    const left = rect.left + scrollLeft
-    const xCanvas = e.clientX - rect.left;
-    const yCanvas = e.clientY - rect.top;
-    this.setState({ x: left + xCanvas, y: top + yCanvas, showPopover: true }, () => this.getIndividualImage(xCanvas, yCanvas))
+    let top = rect.top + scrollTop
+    let left = rect.left + scrollLeft
+
+    //for popup adjustment
+    top = top - 16
+    left = left + 11
+
+    const xCanvas = e.clientX - rect.left
+    const yCanvas = e.clientY - rect.top
+
+
+
+    this.setState({ x: left + xCanvas, y: top + yCanvas, showPopover: false }, () => this.getIndividualImage(xCanvas, yCanvas))
 
   }
 
@@ -288,6 +312,7 @@ class ForumFeed extends Component {
 
     }
     if (coordinates) {
+
       const imgName = this.state.coordinates[coordinates]
       const imageCoordinates = coordinates.split('-')
       const imageCoordinatesX = parseInt(imageCoordinates[0])
@@ -297,15 +322,21 @@ class ForumFeed extends Component {
       const rect = el.getBoundingClientRect()
       const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const top = rect.top + scrollTop
-      const left = rect.left + scrollLeft
+      let top = rect.top + scrollTop
+      let left = rect.left + scrollLeft
+      //for popup adjustment
+      top = top - 16
+      left = left + 11
 
-      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true }, () => {
+
+
+      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true }, () => {
         if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName])
           this.setImageModalPopover(imgName)
         else
           this.requestImage(imgName, () => this.setImageModalPopover(imgName))
 
+        this.highlightArea(imgName)
         this.canvas.current.scrollIntoView()
       })
 
@@ -435,6 +466,19 @@ class ForumFeed extends Component {
     return postTime.from(Moment());
   }
 
+  checkPopoverLeft = () => {
+    const canvas = this.canvas.current
+
+    const popover = this.popover.current
+
+    if (canvas && popover) {
+      const rectPopover = popover.getBoundingClientRect()
+      const leftPopover = rectPopover.left
+      return this.state.x > leftPopover
+    } else return false
+
+  }
+
 
 
   render() {
@@ -493,7 +537,7 @@ class ForumFeed extends Component {
             </section>
 
             <Popover
-              className={this.state.showPopover && (this.state.x && this.state.y) ? 'd-block' : 'd-none'}
+              className={(this.state.showPopover && (this.state.x && this.state.y) ? 'visible' : 'invisible') + (this.checkPopoverLeft() ? ' left' : '')}
               style={{ top: this.state.y + 'px', left: this.state.x + 'px', ...this.state.popupOrientation }} ref={this.popover}
             >
 
@@ -711,7 +755,7 @@ class ForumFeed extends Component {
 
         <Modal className="new-discussion-modal" show={this.state.showDiscussionModal} size="xl" onHide={() => this.setState({ showDiscussionModal: false })}>
           <Modal.Header closeButton>
-            <Modal.Title className="d-flex align-items-center"><ImageBootstrap src={camera} className="mr-2"/><strong>Post a Photo</strong></Modal.Title>
+            <Modal.Title className="d-flex align-items-center"><ImageBootstrap src={camera} className="mr-2" /><strong>Post a Photo</strong></Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
             <NewDiscussion closeModal={() => this.setState({ showDiscussionModal: false })} successCallback={this.successCallback} />
