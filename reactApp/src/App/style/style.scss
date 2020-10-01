@@ -414,6 +414,44 @@ header {
     background: url('../img/bg-texture.jpg') no-repeat;
     background-size: cover;
 
+    .status-bar {
+      position: relative;
+      height: 12px;
+      width: 400px;
+      border-radius: 8px;
+      background-color: #D8D8D8;
+
+      .count {
+        position: absolute;
+        top: -23px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      &::after {
+        position: absolute;
+        content: '1000';
+        right: 0;
+        bottom: -23px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      small {
+        font-size: xx-small;
+      }
+
+      .fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 12px;
+
+        border-radius: 8px;
+        background-color: $aarp-blue;
+      }
+    }
+
     .intro {
       color: white;
     }

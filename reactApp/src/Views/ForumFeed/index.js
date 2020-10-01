@@ -479,7 +479,13 @@ class ForumFeed extends Component {
 
   }
 
-
+  getPercent = () => {
+    const {
+      discussions
+    } = this.props
+    if (discussions) return discussions.length * 100 / 1000
+    else return 0
+  }
 
   render() {
     const {
@@ -531,9 +537,19 @@ class ForumFeed extends Component {
                   </div>
                 </div>
               </div>
-              <div className="pt-2 pb-2 d-flex align-items-center">
-                <input className="apple-switch mr-4" checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
-              </div>
+              <section className="pt-2 pb-2 d-flex justify-content-between">
+                <div className="d-flex align-items-center">
+                  <input className="apple-switch mr-4" checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
+                </div>
+                <div className="d-flex align-items-center">
+                  <strong>Photos Posted: </strong>
+                  <div className="status-bar ml-2 d-flex justify-content-center align-items-center">
+                    {discussions && <span style={{ left: 'calc( ' + this.getPercent() + '% - 10px )' }} className="count">{discussions.length}</span>}
+                    {!discussions && <small className="text-dark">loading...</small>}
+                    <span style={{ width: this.getPercent() + '%' }} className="fill"></span>
+                  </div>
+                </div>
+              </section>
             </section>
 
             <Popover
