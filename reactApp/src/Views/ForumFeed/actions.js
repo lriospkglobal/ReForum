@@ -40,7 +40,7 @@ const findForumId = (state, forum) => {
  * @param  {Boolean} sortingChanged      if user chagned the sorting method
  * @return {thunk}
  */
-export const getDiscussions = (forumId, feedChanged=false, sortingChanged=false) => {
+export const getDiscussions = (forumId, feedChanged = false, sortingChanged = false) => {
   return (dispatch, getState) => {
     const sortingMethod = getState().feed.sortingMethod;
 
@@ -54,8 +54,7 @@ export const getDiscussions = (forumId, feedChanged=false, sortingChanged=false)
       // start fetching discussions
       fetchDiscussions(forumId, sortingMethod).then(
         data => {
-          
-          return dispatch({ type: FETCHING_DISCUSSIONS_SUCCESS, payload: data.data })
+          return dispatch({ type: FETCHING_DISCUSSIONS_SUCCESS, payload: data.data, forumId })
         },
         error => dispatch({ type: FETCHING_DISCUSSIONS_FAILURE })
       );
@@ -94,4 +93,13 @@ export const getPinnedDiscussions = (forumId, feedChanged) => {
  */
 export const updateSortingMethod = (method) => {
   return { type: UPDATE_SORTING_METHOD, payload: method };
+};
+
+
+/**
+ * Stop loading
+ * @return {action}
+ */
+export const stopLoading = () => {
+  return { type: STOP_FETCHING_DISCUSSIONS };
 };

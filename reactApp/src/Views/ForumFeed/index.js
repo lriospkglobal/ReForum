@@ -11,6 +11,7 @@ import SingleDiscussion from '../../Views/SingleDiscussion';
 import {
   getDiscussions,
   updateSortingMethod,
+  stopLoading
 } from './actions';
 
 import camera from '../../App/img/camera-icon.svg';
@@ -36,7 +37,7 @@ class ForumFeed extends Component {
       successMessage: '',
       tileSize: null,
       tileSizeOriginal: null,
-      previousMosaics: [],
+      previousMosaics: {},
       quality: 100,
       showTooltip: false,
       currentForumId: null,
@@ -164,34 +165,38 @@ class ForumFeed extends Component {
   }
 
   clickedTile = (e) => {
-    const {
-      discussions
-    } = this.props;
-    const el = e.target;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    let matchedDiscussion;
-    //this.getIndividualImage(xCanvas, yCanvas)
-    for (let attr in this.state.coordinates) {
-      const imageCoordinates = attr.split('-')
-      const imageCoordinatesX = parseInt(imageCoordinates[0])
-      const imageCoordinatesY = parseInt(imageCoordinates[1])
-      if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
-        const tileId = this.state.coordinates[attr]
-        for (let i = 0; i < discussions.length; i++) {
-          const discussion = discussions[i];
-          if (discussion.tile_id === tileId) {
-            matchedDiscussion = discussion;
-            break;
+    let { discussions, currentForumId } = this.props;
+    const forumId = currentForumId()
+    if (discussions && discussions[forumId]) {
+      discussions = discussions[forumId]
+      const el = e.target;
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      let matchedDiscussion;
+      //this.getIndividualImage(xCanvas, yCanvas)
+      for (let attr in this.state.coordinates) {
+        const imageCoordinates = attr.split('-')
+        const imageCoordinatesX = parseInt(imageCoordinates[0])
+        const imageCoordinatesY = parseInt(imageCoordinates[1])
+        if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
+          const tileId = this.state.coordinates[attr]
+          for (let i = 0; i < discussions.length; i++) {
+            const discussion = discussions[i];
+            if (discussion.tile_id === tileId) {
+              matchedDiscussion = discussion;
+              break;
+            }
           }
         }
+
+
+
       }
-
-
-
+      this.setState({ currentDiscussion: matchedDiscussion, lgShow: true })
     }
-    this.setState({ currentDiscussion: matchedDiscussion, lgShow: true })
+
+
 
 
   }
@@ -345,10 +350,14 @@ class ForumFeed extends Component {
   }
 
   getPreviousMosaics = () => {
+
     axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
       .then(response => {
+        const previousMosaics = {}
+        previousMosaics[this.state.currentForumId] = response.data.length ? response.data : []
         this.setState({
-          previousMosaics: response.data.length ? response.data : []
+          previousMosaics
+
         })
       })
 
@@ -394,14 +403,15 @@ class ForumFeed extends Component {
       currentForumId,
       getDiscussions,
       getPinnedDiscussions,
-      getCurrentForum
+      getCurrentForum,
+      stopLoading
     } = this.props;
-
 
 
     // get the discussions again
     // if the forum didn't match
     if (prevProps.currentForum !== currentForum) {
+      stopLoading()
       const feedChanged = true;
       getDiscussions(currentForumId(), feedChanged);
 
@@ -420,7 +430,7 @@ class ForumFeed extends Component {
               this.getPreviousMosaics()
             })
           } else
-            this.setState({ currentForumId, previousMosaics: [] })
+            this.setState({ currentForumId, previousMosaics: {} })
 
 
         })
@@ -485,23 +495,30 @@ class ForumFeed extends Component {
   }
 
   getPercent = () => {
-    const {
-      discussions
-    } = this.props
-    if (discussions) return discussions.length * 100 / 1000
+    let { discussions, currentForumId } = this.props;
+    const forumId = currentForumId()
+    if (discussions && discussions[forumId]) {
+      discussions = discussions[forumId]
+      return discussions.length * 100 / 1000
+    }
     else return 0
   }
 
   render() {
     const {
       currentForum,
-      discussions,
       fetchingDiscussions,
       pinnedDiscussions,
       fetchingPinnedDiscussions,
       sortingMethod,
       error,
+      currentForumId
     } = this.props;
+
+    let { discussions } = this.props;
+    const forumId = currentForumId()
+    if (discussions && discussions[forumId])
+      discussions = discussions[forumId]
 
     if (error) {
       return (
@@ -510,6 +527,7 @@ class ForumFeed extends Component {
         </div>
       );
     }
+
 
     return (
       <section className="forum-feed">
@@ -544,7 +562,7 @@ class ForumFeed extends Component {
               </div>
               <section className="pt-2 pb-2 d-flex justify-content-between">
                 <div className="d-flex align-items-center">
-                  <input className="apple-switch mr-4" checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
+                  <input className={(this.state.currentForumObj && this.state.currentForumObj.mosaic ? 'visible ' : 'invisible ') + 'apple-switch mr-4'} checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
                 </div>
                 <div className="d-flex align-items-center">
                   <strong>Photos Posted: </strong>
@@ -587,10 +605,10 @@ class ForumFeed extends Component {
                 onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
             </section>
 
-            {this.state.previousMosaics.length ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
-              <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
+            {this.state.previousMosaics[forumId] ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
+              {this.state.previousMosaics[forumId].length && <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>}
               {
-                this.state.previousMosaics.map((prevMosaic, index) => {
+                this.state.previousMosaics[forumId].map((prevMosaic, index) => {
                   return (
                     <div className="previous-mosaic d-flex justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
                       <ImageBootstrap onClick={() => {
@@ -619,7 +637,7 @@ class ForumFeed extends Component {
                   <Container>
                     <Carousel activeIndex={this.state.prevMosaicImage} indicators={false}
                       onSelect={(selectedIndex) => this.setState({ prevMosaicImage: selectedIndex })}>
-                      {this.state.previousMosaics.map(prevMosaic => {
+                      {this.state.previousMosaics[forumId].map(prevMosaic => {
                         return (
                           <Carousel.Item key={prevMosaic._id}>
                             <ImageBootstrap
@@ -814,6 +832,7 @@ export default connect(
       getDiscussions: (currentForumId, feedChanged, sortingMethod, sortingChanged) => { dispatch(getDiscussions(currentForumId, feedChanged, sortingMethod, sortingChanged)); },
 
       updateSortingMethod: (method) => { dispatch(updateSortingMethod(method)); },
+      stopLoading: () => dispatch(stopLoading())
     };
   }
 )(ForumFeed);

@@ -23,7 +23,7 @@ const initialState = {
 };
 
 export const feedReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case START_FETCHING_DISCUSSIONS:
       return Object.assign({}, state, {
         fetchingDiscussions: true,
@@ -36,8 +36,10 @@ export const feedReducer = (state = initialState, action) => {
       });;
 
     case FETCHING_DISCUSSIONS_SUCCESS:
+      const discussions = { ...state.discussions }
+      discussions[action.forumId] = action.payload
       return Object.assign({}, state, {
-        discussions: action.payload,
+        discussions,
         fetchingDiscussions: false,
         error: null,
       });
