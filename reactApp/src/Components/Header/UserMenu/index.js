@@ -74,7 +74,7 @@ class UserMenu extends Component {
               </span>}
               {/* { signedIn && <a  href={'#'}>Settings</a> } */}
               {signedIn &&
-                <span onClick={this.logout} class="dropdown-item" href={`/api/user/signout`}>Sign Out</span>
+                <span onClick={this.logout} className="dropdown-item" href={`/api/user/signout`}>Sign Out</span>
               }
             </NavDropdown>
           </Nav>

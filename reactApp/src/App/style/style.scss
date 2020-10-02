@@ -388,7 +388,35 @@ header {
         list-style-type: none;
 
         li {
-          padding: 10px;
+          padding: 10px 100px;
+          position: relative;
+
+          &.active {
+            border-bottom: 3px solid $aarp-red;
+            a{
+              color: $aarp-red;
+            }
+          }
+
+          &::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            display: block;
+            width: 1px;
+            height: 70%;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            background-color: $light-gray;
+            opacity: 0.5;
+          }
+
+          &:last-of-type {
+            &::after {
+              content: none;
+            }
+          }
 
           a {
             font-weight: bold;
@@ -408,7 +436,7 @@ header {
 }
 
 .forum-feed {
-  margin-top: 115px;
+  margin-top: 107px;
 
   .forum-feed__canvas-container {
     background: url('../img/bg-texture.jpg') no-repeat;

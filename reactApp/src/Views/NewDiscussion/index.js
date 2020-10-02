@@ -280,7 +280,7 @@ class NewDiscussion extends Component {
             <Form.Group className="d-flex justify-content-between">
               <Button onClick={() => closeModal()} variant="secondary">Cancel</Button>
               <Button disabled={postingDiscussion} onClick={() => postDiscussion(userId, forumId, currentForum, successCallback)}>{postingDiscussion ? <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
+                <span className="sr-only">Loading...</span>
               </div> : 'Post Photo'}</Button>
             </Form.Group>
 

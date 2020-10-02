@@ -73,7 +73,7 @@ function FeedBox(props) {
       {renderEmptyDiscussionLine(loading, discussions)}
       {!loading &&
         <div >
-          {discussions && discussions.length && discussions.map((discussion) =>
+          {(discussions && discussions.length) ? discussions.map((discussion) =>
             <DiscussionBox
               discussion={discussion}
               userProfile={userProfile}
@@ -84,7 +84,7 @@ function FeedBox(props) {
               setLgShow={setLgShow}
 
             />
-          )}
+          ) : null}
         </div>
       }
       {discussion && <Modal

@@ -8,16 +8,18 @@ class NavigationBar extends Component {
   render() {
     const {
       navigationLinks,
+      currentForum
     } = this.props;
 
     if (navigationLinks) {
+
       return (
         <section className="w-100 navigation-bar">
-          <ul className="d-flex justify-content-around">
+          <ul className="d-flex justify-content-center">
             {navigationLinks.map(link => {
               if (link.id === 0) {
                 return (
-                  <li key={_.uniqueId('navLink_')}>
+                  <li className={currentForum === link.name ? 'active' : ''} key={_.uniqueId('navLink_')}>
                     <IndexLink
 
 
@@ -30,7 +32,7 @@ class NavigationBar extends Component {
               }
 
               return (
-                <li key={_.uniqueId('navLink_')}>
+                <li className={currentForum === link.name ? 'active' : ''} key={_.uniqueId('navLink_')}>
                   <Link
 
 

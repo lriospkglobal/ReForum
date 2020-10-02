@@ -12,7 +12,8 @@ import NavigationBar from '../../Components/Header/NavigationBar';
 
 class Header extends Component {
   renderNavLinks() {
-    const { forums } = this.props;    
+    const { forums } = this.props;
+
     if (forums) {
       return forums.map((forum) => {
         return {
@@ -57,7 +58,7 @@ class Header extends Component {
           </div>
 
           <NavigationBar
-            navigationLinks={this.renderNavLinks()}
+            currentForum={this.props.currentForum} navigationLinks={this.renderNavLinks()}
           />
         </Navbar>
       </header>
@@ -69,6 +70,7 @@ class Header extends Component {
 export default connect(
   (state) => {
     return {
+      currentForum: state.app.currentForum,
       user: state.user,
       forums: state.app.forums,
     };

@@ -409,15 +409,20 @@ class ForumFeed extends Component {
       const currentForumObj = getCurrentForum();
 
       if (currentForumObj) {
+
         this.setState({
           currentForumObj
         }, () => {
+          const currentForumId = currentForumObj._id
           if (currentForumObj.mosaic) {
-            this.setState({ currentForumId: currentForumObj._id }, () => {
+            this.setState({ currentForumId }, () => {
               this.drawImage(currentForumObj)
               this.getPreviousMosaics()
             })
-          }
+          } else
+            this.setState({ currentForumId, previousMosaics: [] })
+
+
         })
 
 
@@ -524,17 +529,17 @@ class ForumFeed extends Component {
                   View the mosiac image below. Rollover individual images to see a larger thumbnail view, or click to view the full image with description and comments. Post your own photo and be part of the community.
 
               </p>
-                <div className="w-25">
+                <div className="w-25 overflow-auto">
 
-                  <div >
 
-                    <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
-                      Post a Photo
+
+                  <ButtonBootstrap className="camera float-right" onClick={() => this.setState({ showDiscussionModal: true })}>
+                    Post a Photo
           </ButtonBootstrap>
 
 
 
-                  </div>
+
                 </div>
               </div>
               <section className="pt-2 pb-2 d-flex justify-content-between">
