@@ -40,7 +40,7 @@ export const getAdminDashboardInfo = () => {
  * @param  {Object} forumObj
  * @return {action}
  */
-export const createForum = (forumObj) => {
+export const createForum = (forumObj, cb) => {
   return (dispatch, getState) => {
     dispatch({ type: CREATE_FORUM });
 
@@ -54,7 +54,11 @@ export const createForum = (forumObj) => {
             dispatch({ type: GET_ALL_INFO_SUCCESS, payload: data.data });
 
             // check if the forum was created
-            if (forumData.data.created) { dispatch({ type: CREATE_FORUM_SUCCESS }); }
+            if (forumData.data.created) { 
+
+              dispatch({ type: CREATE_FORUM_SUCCESS }); 
+              if(cb) cb()
+            }
             else dispatch({ type: CREATE_FORUM_FAILURE });
           },
           error => dispatch({ type: FETCHING_DISCUSSIONS_FAILURE, payload: error })

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { Table, Container, Image, Button, Tab, Tabs } from 'react-bootstrap';
 
 
-
-import {getForums} from '../../App/actions'
+import { getForums } from '../../App/actions'
 import {
   getAdminDashboardInfo,
   createForum,
@@ -41,46 +41,114 @@ class Dashboard extends Component {
     });
 
     return (
-      <div >
-        { loadingInfo && <div >
-          Loading dashboard info...
-        </div> }
-
+      <Container className="admin-dashboard mb-4 pb-4">
         <div >
-          <Counts label={'Users'} count={userCount} />
-          <Counts label={'Discussions'} count={discussionCount} />
-          <Counts label={'Opinions'} count={opinionCount} />
-          <Counts label={'Forums'} count={forumCount} />
+
+          <Tabs defaultActiveKey="new" >
+            <Tab eventKey="new" title="New Mosaic">
+              <section className="admin-dashboard__forum-box pt-4">
+                <ForumBox
+                  forums={forumsArray}
+                  deletingForum={deletingForum}
+                  deleteAction={(forumId) => { this.props.deleteForum(forumId); }}
+                  creatingForum={creatingForum}
+                  createAction={(forumObj, cb) => { this.props.createForum(forumObj, cb); }}
+                />
+
+                {creatingForumError && <div >{creatingForumError}</div>}
+                {deletingForumError && <div >{deletingForumError}</div>}
+              </section>
+            </Tab>
+            <Tab eventKey="dashboard" title="Dashboard">
+              <section className="admin-dashboard_table-dashboard pt-2">
+
+                <section className="my-4">
+                  <strong className="text-uppercase">Directions:</strong> Edit, or archive a community photo mosaic below.
+</section>
+
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>Photo</th>
+                      <th>Mosaic Overview</th>
+                      <th>Mentor</th>
+                      <th>Mentor Bio</th>
+                      <th>Archive</th>
+                      <th>Edit / Review</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {forums.map(forum => (
+                      <tr key={forum._id}>
+                        <td><Image fluid src={'data:image/jpeg;base64,' + forum.base64} /></td>
+                        <td>
+                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                          Nunc et nibh a risus sodales faucibus id sed nulla.
+                          Nam erat mi, volutpat id lobortis in, congue nec ante.
+                          Proin eu enim sed enim molestie accumsan fermentum at nisi.
+                          Donec et ultrices nulla. In et euismod odio, in consectetur tellus.
+
+        </p>
+                        </td>
+                        <td>
+                          <p>{forum.mentor}</p>
+                        </td>
+                        <td>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Nunc et nibh a risus sodales faucibus id sed nulla.
+                            Nam erat mi, volutpat id lobortis in, congue nec ante.
+                            Proin eu enim sed enim molestie accumsan fermentum at nisi.
+                            Nunc et nibh a risus sodales faucibus id sed nulla.
+                            Nunc et nibh a risus sodales faucibus.
+                          </p>
+                        </td>
+                        <td className="text-center">
+                          <input type="checkbox" />
+                        </td>
+                        <td>
+                          <Button variant="dark"><strong>Open</strong></Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                {loadingInfo && <section className="py-3 d-flex justify-content-center">
+                  <div className="spinner-grow" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </div></section>}
+
+              </section>
+            </Tab>
+
+          </Tabs>
+
+
+
         </div>
-
-        <ForumBox
-          forums={forumsArray}
-          deletingForum={deletingForum}
-          deleteAction={(forumId) => { this.props.deleteForum(forumId); }}
-          creatingForum={creatingForum}
-          createAction={(forumObj) => { this.props.createForum(forumObj); }}
-        />
-
-        { creatingForumError && <div >{creatingForumError}</div> }
-        { deletingForumError && <div >{deletingForumError}</div> }
-      </div>
+      </Container>
     );
   }
 }
 
 export default connect(
-  (state) => { return {
-    adminInfo: state.adminInfo,
-    loadingInfo: state.adminInfo.loadingInfo,
-    creatingForum: state.adminInfo.creatingForum,
-    creatingForumError: state.adminInfo.creatingForumError,
-    deletingForum: state.adminInfo.deletingForum,
-    deletingForumError: state.adminInfo.deletingForumError,
-  }; },
-  (dispatch) => { return {
-    getAdminDashboardInfo: () => { dispatch(getAdminDashboardInfo()); },
-    getForums: () => { dispatch(getForums()); },
-    deleteForum: (forumId) => { dispatch(deleteForum(forumId)); },
-    createForum: (forumObj) => { dispatch(createForum(forumObj)); },
-  }; }
+  (state) => {
+    return {
+      adminInfo: state.adminInfo,
+      loadingInfo: state.adminInfo.loadingInfo,
+      creatingForum: state.adminInfo.creatingForum,
+      creatingForumError: state.adminInfo.creatingForumError,
+      deletingForum: state.adminInfo.deletingForum,
+      deletingForumError: state.adminInfo.deletingForumError,
+    };
+  },
+  (dispatch) => {
+    return {
+      getAdminDashboardInfo: () => { dispatch(getAdminDashboardInfo()); },
+      getForums: () => { dispatch(getForums()); },
+      deleteForum: (forumId) => { dispatch(deleteForum(forumId)); },
+      createForum: (forumObj, cb) => { dispatch(createForum(forumObj, cb)); },
+    };
+  }
 )(Dashboard);
