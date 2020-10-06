@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Image, Modal, Container, Col, Row } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip, Card, Button, Image, Modal, Container, Col, Row } from 'react-bootstrap';
 import Moment from 'moment';
 
 import Opinion from '../../../Components/SingleDiscussion/Opinion';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
+import pin from './../../../App/img/pin-icon.svg';
+import { connect } from 'react-redux';
+import mockImage from '../mock-img.jpg';
 import axios from 'axios';
 function DiscussionBox(props) {
   const [opinions, setOpinions] = useState([]);
@@ -20,25 +23,43 @@ function DiscussionBox(props) {
   const voteCount = props.discussion.favorites.length
 
 
-  const { discussion, id, setDiscussion, setLgShow } = props;
+  const { discussion, id, setDiscussion, setLgShow, role, mock } = props;
 
   const postTime = Moment(time);
   const timeDisplay = postTime.from(Moment());
-  
+
 
 
   return (
     <Card key={id} className="discussion-box mb-3">
       <Card.Body>
-        <section className="discussion-box__header d-flex mb-3">
-          <Image src={user.avatarUrl} roundedCircle />
-          <div className="d-flex flex-column justify-content-center">
-            <span>{user.name || user.username} {pinnedDiscussion && <span className="rectangle">Featured</span>}</span>
-            <span className="text-muted">{user.role === 'admin' ? 'MODERATOR' : 'USER'} - {timeDisplay}</span>
+        <section className="discussion-box__header d-flex mb-3 align-items-center justify-content-between">
+          <div className="d-flex align-items-center h-100">
+            <Image src={user.avatarUrl} fluid roundedCircle />
+            <div className="d-flex flex-column justify-content-center">
+              <span>{user.name || user.username} {pinnedDiscussion && <span className="rectangle">Featured</span>}
+                {(!pinnedDiscussion && !mock) && (role && role === 'admin') &&
+                  <OverlayTrigger
+                    key={'top'}
+                    placement={'top'}
+                    overlay={
+                      <Tooltip >
+                        As an admin you can feature posts.
+                </Tooltip>
+                    }
+                  >
+                    <span className="rectangle gray">Set featured</span>
+                  </OverlayTrigger>
+                }
+              </span>
+
+              <span className="text-muted">{user.role} - {timeDisplay}</span>
+            </div>
           </div>
+          {mock && <strong className="pending-message">PENDING APPROVAL</strong>}
         </section>
 
-        <Image className="discussion-box__image" src={'data:image/jpeg;base64,' + discussion.base64} fluid />
+        <Image className="discussion-box__image" src={discussion.base64 ? ('data:image/jpeg;base64,' + discussion.base64) : mockImage} fluid />
         <Card.Text>
           {discussionContent.text}
         </Card.Text>
@@ -59,40 +80,97 @@ function DiscussionBox(props) {
 
 
         <div className="discussion-box__footer ">
-          <div className="d-flex align-items-center justify-content-between">
-            <div>
-              <button className="misc-button p-2">
-                <img src={thumbsUp} />
-              </button>
-              <span className="ml-2">{voteCount} Kudos</span>
+          {!mock ? <div>
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <button className="misc-button p-2">
+                  <img src={thumbsUp} />
+                </button>
+                <span className="ml-2">{voteCount} Kudos</span>
+              </div>
+
+              {(role && role === 'admin') &&
+
+                <OverlayTrigger
+                  key={'top'}
+                  placement={'top'}
+                  overlay={
+                    <Tooltip >
+                      As an admin you can pin posts.
+                  </Tooltip>
+                  }
+                >
+                  <div>
+
+                    <button className="misc-button p-2">
+                      <img src={pin} />
+                    </button>
+                    <span className="ml-2">Pin</span>
+                  </div>
+                </OverlayTrigger>
+              }
+
+              <Button onClick={() => {
+                setLgShow(true)
+                setDiscussion(discussion)
+              }
+              }>Comment</Button>
             </div>
-            <Button onClick={() => {
-              setLgShow(true)
-              setDiscussion(discussion)
-            }
-            }>Comment</Button>
-          </div>
-          {(opinions && opinions.length) ?
-            <div className="opinion-section">
-              <h4 className="mt-4 mb-3"><strong>{opinions.length} Comments</strong></h4>
-              {opinions.map((opinion) => {
-                return (
-                  <Opinion
-                    key={opinion._id}
-                    opinionId={opinion._id}
-                    userAvatar={opinion.user.avatarUrl}
-                    userName={opinion.user.name}
-                    userGitHandler={opinion.user.username}
-                    opDate={opinion.date}
-                    opContent={opinion.content}
-                    userId={opinion.user_id}
+            {(opinions && opinions.length) ?
+              <div className="opinion-section">
+                <h4 className="mt-4 mb-3"><strong>{opinions.length} Comments</strong></h4>
+                {opinions.map((opinion) => {
+                  return (
+                    <Opinion
+                      key={opinion._id}
+                      opinionId={opinion._id}
+                      userAvatar={opinion.user.avatarUrl}
+                      userName={opinion.user.name}
+                      userGitHandler={opinion.user.username}
+                      opDate={opinion.date}
+                      opContent={opinion.content}
+                      userId={opinion.user_id}
 
 
 
-                  />
-                );
-              })}
-            </div> : null}
+                    />
+                  );
+                })}
+              </div> : null}
+          </div> :
+            <div >
+
+              {(role && role === 'admin') &&
+
+                <div className="d-flex align-items-center justify-content-between">
+                  <OverlayTrigger
+                    key={'top'}
+                    placement={'top'}
+                    overlay={
+                      <Tooltip >
+                        As an admin you can reject posts.
+                </Tooltip>
+                    }
+                  >
+                    <Button >Reject</Button>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    key={'top'}
+                    placement={'top'}
+                    overlay={
+                      <Tooltip >
+                        As an admin you can approve posts.
+                </Tooltip>
+                    }
+                  >
+                    <Button variant="dark">Approve</Button>
+                  </OverlayTrigger>
+                </div>
+              }
+
+
+            </div>
+          }
         </div>
 
 
@@ -131,4 +209,14 @@ DiscussionBox.defaultProps = {
   userProfile: React.PropTypes.bool,
 }; */
 
-export default DiscussionBox;
+
+
+
+export default connect(
+  (state) => {
+    return {
+      role: state.user.role,
+
+    };
+  }
+)(DiscussionBox);

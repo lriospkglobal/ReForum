@@ -3,10 +3,13 @@ import Moment from 'moment';
 import DiscussionBox from './DiscussionBox';
 import { Modal, Image } from 'react-bootstrap';
 import SingleDiscussion from '../../Views/SingleDiscussion';
+import { connect } from 'react-redux';
+import { toApproveDiscussion } from './mock';
 
 function FeedBox(props) {
   const [lgShow, setLgShow] = useState(false);
   const [discussion, setDiscussion] = useState(null);
+
   const timeDisplay = (date) => {
     const postTime = Moment(date);
     return postTime.from(Moment());
@@ -15,6 +18,7 @@ function FeedBox(props) {
     const {
       activeSortingMethod,
       onChangeSortingMethod,
+      role
     } = props;
 
     if (props.type === 'general') {
@@ -56,6 +60,7 @@ function FeedBox(props) {
     discussions,
     currentForum,
     userProfile,
+    role
   } = props;
 
   let discussionBoxTitle = '';
@@ -73,8 +78,17 @@ function FeedBox(props) {
       {renderEmptyDiscussionLine(loading, discussions)}
       {!loading &&
         <div >
-          {(discussions && discussions.length) ? discussions.map((discussion) =>
-            <DiscussionBox
+          {(role && role === 'admin') && <DiscussionBox
+            discussion={toApproveDiscussion}
+            userProfile={userProfile}
+            discussionType={type}
+            mock={true}
+
+          />}
+
+          {(discussions && discussions.length) ? discussions.map((discussion) => {
+
+            return < DiscussionBox
               discussion={discussion}
               userProfile={userProfile}
               discussionType={type}
@@ -84,7 +98,7 @@ function FeedBox(props) {
               setLgShow={setLgShow}
 
             />
-          ) : null}
+          }) : null}
         </div>
       }
       {discussion && <Modal
@@ -145,4 +159,13 @@ FeedBox.defaultProps = {
   userProfile: React.PropTypes.bool,
 }; */
 
-export default FeedBox;
+
+export default connect(
+  (state) => {
+    return {
+      role: state.user.role,
+
+    };
+  }
+)(FeedBox);
+

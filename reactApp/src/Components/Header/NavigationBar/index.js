@@ -19,7 +19,7 @@ class NavigationBar extends Component {
             {navigationLinks.map(link => {
               if (link.id === 0) {
                 return (
-                  <li className={currentForum === link.name ? 'active' : ''} key={_.uniqueId('navLink_')}>
+                  <li className={currentForum === link.slug ? 'active' : ''} key={_.uniqueId('navLink_')}>
                     <IndexLink
 
 
@@ -32,7 +32,7 @@ class NavigationBar extends Component {
               }
 
               return (
-                <li className={currentForum === link.name ? 'active' : ''} key={_.uniqueId('navLink_')}>
+                <li className={currentForum === link.slug ? 'active' : ''} key={_.uniqueId('navLink_')}>
                   <Link
 
 

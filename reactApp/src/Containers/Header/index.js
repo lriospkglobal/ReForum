@@ -16,10 +16,12 @@ class Header extends Component {
 
     if (forums) {
       return forums.map((forum) => {
+
         return {
           id: forum._id,
           name: forum.forum_name,
           link: `/${forum.forum_slug}`,
+          slug: forum.forum_slug
         };
       });
     }

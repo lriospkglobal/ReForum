@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import NewDiscussion from '../NewDiscussion/index';
 import _ from 'lodash';
 import axios from 'axios';
-import { Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Carousel, Popover, Col, Row, Card } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip, Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Carousel, Popover, Col, Row, Card } from 'react-bootstrap';
 import SingleDiscussion from '../../Views/SingleDiscussion';
 import {
   getDiscussions,
@@ -15,6 +15,8 @@ import {
 } from './actions';
 
 import camera from '../../App/img/camera-icon.svg';
+import pencilWhite from '../../App/img/pencil-white.svg';
+import pencilBlack from '../../App/img/pencil-black.svg';
 import FeedBox from '../../Components/FeedBox';
 import SideBar from '../../Components/SideBar';
 
@@ -512,7 +514,8 @@ class ForumFeed extends Component {
       fetchingPinnedDiscussions,
       sortingMethod,
       error,
-      currentForumId
+      currentForumId,
+      role
     } = this.props;
 
     let { discussions } = this.props;
@@ -536,11 +539,37 @@ class ForumFeed extends Component {
         <Container className="forum-feed__canvas-container pt-5 pb-5" fluid>
           <Container className="justify-content-center d-flex flex-wrap">
             <section className="intro w-100 pb-4">
-              <h1><strong>Community Photo Mosaic: Ongoing Exercise</strong></h1>
+              <div className="d-flex align-items-center">
+                <h1><strong>Community Photo Mosaic: Ongoing Exercise</strong></h1>
+                {(role && role === 'admin') && <OverlayTrigger
+                  key={'top'}
+                  placement={'top'}
+                  overlay={
+                    <Tooltip >
+                      As an admin you can edit the title.
+        </Tooltip>
+                  }
+                >
+                  <ImageBootstrap className="ml-3 pencil" src={pencilWhite} />
+                </OverlayTrigger>}
+              </div>
               <div className="d-flex flex-wrap mt-4">
-                <strong className="w-100">
-                  Directions
+                <div className="w-100 align-items-center d-flex">
+                  <strong >
+                    Directions
                 </strong>
+                  {(role && role === 'admin') && <OverlayTrigger
+                    key={'top'}
+                    placement={'top'}
+                    overlay={
+                      <Tooltip >
+                        As an admin you can edit directions section.
+        </Tooltip>
+                    }
+                  >
+                    <ImageBootstrap className="ml-3 pencil" src={pencilWhite} />
+                  </OverlayTrigger>}
+                </div>
                 <p className="w-75 pr-5">
 
 
@@ -671,9 +700,53 @@ class ForumFeed extends Component {
         <Container className="pt-4">
           <Row>
             <Col md="8" >
-              <ButtonBootstrap className="camera mb-4" onClick={() => this.setState({ showDiscussionModal: true })}>
-                Post a Photo
+              <div className="mb-4 d-flex justify-content-between">
+                <ButtonBootstrap className="camera" onClick={() => this.setState({ showDiscussionModal: true })}>
+                  Post a Photo
           </ButtonBootstrap>
+
+                {(role && role === 'admin') && <OverlayTrigger placement={'top'}
+                  overlay={
+                    <Tooltip>
+                      As an admin you can comment from this section.
+        </Tooltip>
+                  }>
+                  <ButtonBootstrap >
+                    Comment
+          </ButtonBootstrap>
+                </OverlayTrigger>}
+
+
+                {(role && role === 'admin') && <OverlayTrigger placement={'top'}
+                  overlay={
+                    <Tooltip>
+                      As an admin you can filter posts.
+        </Tooltip>
+                  }>
+                  <label className="d-flex align-items-center">
+                    Filter
+                  <select className="select ml-3">
+                      <option defaultValue>View All</option>
+
+                    </select>
+                  </label>
+                </OverlayTrigger>}
+
+                <OverlayTrigger placement={'top'}
+                  overlay={
+                    <Tooltip>
+                      Sort by kudos.
+        </Tooltip>
+                  }>
+                  <label className="d-flex align-items-center">
+                    Sort
+                  <select className="select ml-3">
+                      <option defaultValue>Most Kudos</option>
+
+                    </select>
+                  </label>
+                </OverlayTrigger>
+              </div>
 
               <FeedBox
                 type='general'
@@ -688,35 +761,49 @@ class ForumFeed extends Component {
 
             </Col>
             <Col md="4">
-              <section className="forum-feed__social d-flex justify-content-around pr-4 pl-4 pb-4">
-                <span className="fa-stack fa-lg">
-                  <i className="fa fa-circle facebook fa-stack-2x"></i>
-                  <i className="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-lg ">
-                  <i className="fa fa-circle linkedin fa-stack-2x"></i>
-                  <i className="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-lg ">
-                  <i className="fa fa-circle twitter fa-stack-2x"></i>
-                  <i className="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-lg">
-                  <i className="fa fa-circle fa-stack-2x"></i>
-                  <i className="fa fa fa-envelope fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-lg">
-                  <i className="fa fa-circle fa-stack-2x"></i>
-                  <i className="fa fa-print fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-lg">
-                  <i className="fa fa-circle fa-stack-2x"></i>
-                  <i className="fa fa-user-plus fa-stack-1x fa-inverse"></i>
-                </span>
+              <OverlayTrigger placement={'top'}
+                overlay={
+                  <Tooltip>
+                    Share on social media.
+        </Tooltip>
+                }>
+                <section className="forum-feed__social d-flex justify-content-around pr-4 pl-4 pb-4">
+                  <span className="fa-stack fa-lg">
+                    <i className="fa fa-circle facebook fa-stack-2x"></i>
+                    <i className="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span className="fa-stack fa-lg ">
+                    <i className="fa fa-circle linkedin fa-stack-2x"></i>
+                    <i className="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span className="fa-stack fa-lg ">
+                    <i className="fa fa-circle twitter fa-stack-2x"></i>
+                    <i className="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span className="fa-stack fa-lg">
+                    <i className="fa fa-circle fa-stack-2x"></i>
+                    <i className="fa fa fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span className="fa-stack fa-lg">
+                    <i className="fa fa-circle fa-stack-2x"></i>
+                    <i className="fa fa-print fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span className="fa-stack fa-lg">
+                    <i className="fa fa-circle fa-stack-2x"></i>
+                    <i className="fa fa-user-plus fa-stack-1x fa-inverse"></i>
+                  </span>
 
-              </section>
-              <Card className="mb-3">
-                <Card.Header><h5>Mosaic Overview</h5></Card.Header>
+                </section>
+              </OverlayTrigger>
+              <Card className="mb-3 gray">
+                <Card.Header className="text-center"><h5 className="d-inline">Mosaic Overview</h5>{(role && role === 'admin') && <OverlayTrigger placement={'top'}
+                  overlay={
+                    <Tooltip>
+                      As an admin you can edit the mosaic overview.
+        </Tooltip>
+                  }>
+                  <ImageBootstrap className="float-right pencil" src={pencilBlack} />
+                </OverlayTrigger>}</Card.Header>
                 <Card.Body>
 
                   <Card.Text className="small mb-3">
@@ -728,8 +815,18 @@ class ForumFeed extends Component {
 
                 </Card.Body>
               </Card>
-              <Card>
-                <Card.Header><h5>About the Moderator</h5></Card.Header>
+              <Card className="gray">
+                <Card.Header className="text-center">
+                  <h5 className="d-inline">About the Moderator</h5>
+                  {(role && role === 'admin') && <OverlayTrigger placement={'top'}
+                    overlay={
+                      <Tooltip>
+                        As an admin you can edit the moderator info.
+        </Tooltip>
+                    }>
+                    <ImageBootstrap className="float-right pencil" src={pencilBlack} />
+                  </OverlayTrigger>}
+                </Card.Header>
                 <Card.Body>
                   <section className="moderator-card d-flex">
                     <div className="moderator-card__img-container w-25">
@@ -809,6 +906,7 @@ class ForumFeed extends Component {
 export default connect(
   (state) => {
     return {
+      role: state.user.role,
       currentForum: state.app.currentForum,
       currentForumId: () => {
         const currentForumObj = _.find(state.app.forums, { forum_slug: state.app.currentForum });

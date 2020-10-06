@@ -12,6 +12,7 @@ $linkedin: #0e76a8;
 $lighter-gray-two: #ced4da;
 $light-gray: #979797;
 $lighter-gray: #F1F1F1;
+$gray: #747474;
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -136,6 +137,10 @@ textarea.form-control {
 
 }
 
+label {
+  margin-bottom: 0;
+}
+
 input.apple-switch {
   cursor: pointer;
   position: relative;
@@ -191,8 +196,23 @@ input.apple-switch {
   }
 }
 
+.select {
+  border: 1px solid #979797;
+  border-radius: 4px;
+  padding: 0 15px;
+  height: 100%;
+}
+
+.pencil {
+  width: 20px;
+  height: auto;
+}
 
 .card {
+  &.gray {
+    background-color: $lighter-gray;
+  }
+
   .card-header {
     background: transparent;
 
@@ -227,7 +247,8 @@ input.apple-switch {
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-dark {
   font-weight: bold;
   padding: 8px 25px;
 }
@@ -688,6 +709,14 @@ header {
 .discussion-box {
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
 
+  .discussion-box__header {
+    .pending-message {
+      font-size: 20px;
+      letter-spacing: 0;
+      color: $aarp-red;
+    }
+  }
+
   .discussion-box__image {
     width: 100%;
     height: auto;
@@ -753,6 +782,10 @@ header {
     font-weight: bold;
     font-size: 10px;
     background-color: $aarp-blue;
+
+    &.gray {
+      background-color: $gray;
+    }
   }
 
 
