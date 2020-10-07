@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import moment from 'moment';
 import { Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
+import pin from './../../../App/img/pin-icon.svg';
 
 
 
@@ -11,7 +11,7 @@ class Opinion extends Component {
     const {
       opinionId,
       userAvatar,
-
+      pinned,
       opDate,
       opContent,
       userId,
@@ -37,12 +37,13 @@ class Opinion extends Component {
 
           </div>
 
-          <div className="opinion__comment-container px-3 py-2">
-            {opContent}
+          <div className="opinion__comment-container d-flex align-items-center px-3 py-2">
+            {pinned && <Image className="pin-image" src={pin} fluid />}
+            <p className="mb-0">{opContent}</p>
           </div>
         </section>
         <div className="opinion__options">
-          <ul className="d-flex">
+          <ul className="d-flex mb-0">
             <OverlayTrigger
 
               placement={'top'}

@@ -139,7 +139,21 @@ function DiscussionBox(props) {
             </div>
             {(discussion.opinions && discussion.opinions.length) ?
               <div className="opinion-section">
-                <h4 className="mt-4 mb-3"><strong>{discussion.opinions.length} Comments</strong></h4>
+                <h4 className="mt-4 mb-3"><strong>{discussion.opinions.length + 1} Comments</strong></h4>
+                <Opinion
+                  pinned={true}
+                  key={'hkjhfd25432'}
+                  opinionId={'hkjhfd25432'}
+                  userAvatar={'https://randomuser.me/api/portraits/men/34.jpg'}
+                  userName={'John Doe'}
+                  userGitHandler={'John Doe'}
+                  opDate={null}
+                  opContent={'Wow! What a fabulous photo, great job!'}
+                  userId={'hkjhfd25432'}
+
+
+
+                />
                 {discussion.opinions.map((opinion) => {
                   return (
                     <Opinion

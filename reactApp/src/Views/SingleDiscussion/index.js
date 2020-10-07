@@ -176,7 +176,23 @@ class SingleDiscussion extends Component {
           />
 
           <hr />
-          {opinions && opinions.length ? <p><strong>{opinions.length} Comments</strong></p> : null}
+          {opinions && opinions.length ? <p><strong>{opinions.length + 1} Comments</strong></p> : null}
+          {(opinions && opinions.length) &&
+            <Opinion
+              pinned={true}
+              key={'hkjhfd25432'}
+              opinionId={'hkjhfd25432'}
+              userAvatar={'https://randomuser.me/api/portraits/men/34.jpg'}
+              userName={'John Doe'}
+              userGitHandler={'John Doe'}
+              opDate={null}
+              opContent={'Wow! What a fabulous photo, great job!'}
+              userId={'hkjhfd25432'}
+
+
+
+            />
+          }
           {opinions && opinions.map((opinion) => {
             return (
               <Opinion

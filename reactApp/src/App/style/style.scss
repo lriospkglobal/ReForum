@@ -429,6 +429,10 @@ input.apple-switch {
     font-size: 14px;
     position: relative;
 
+    .pin-image {
+      margin-left: -12px;
+    }
+
     .delete {
       cursor: pointer;
       position: absolute;
