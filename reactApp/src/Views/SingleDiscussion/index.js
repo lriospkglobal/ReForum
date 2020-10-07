@@ -27,8 +27,11 @@ class SingleDiscussion extends Component {
   componentDidMount() {
     const {
 
-      discussionSlug
+      discussionSlug, discussion
     } = this.props;
+
+    if (!discussion)
+      this.props.getDiscussion(discussionSlug);
 
   }
 
@@ -98,8 +101,8 @@ class SingleDiscussion extends Component {
   }
 
   render() {
+    const discussion = this.props.discussionFromStore || this.props.discussion
     const {
-      discussion,
       toggleFavorite,
       toggleingFavorite,
       updateOpinionContent,
@@ -109,7 +112,7 @@ class SingleDiscussion extends Component {
       deletingDiscussion
 
     } = this.props;
-    console.log(discussion)
+
 
     if (discussion) {
       const {
@@ -215,6 +218,7 @@ export default connect(
       postingOpinion: state.discussion.postingOpinion,
       opinionError: state.discussion.opinionError,
       deletingOpinion: state.discussion.deletingOpinion,
+      discussionFromStore: state.discussion.discussion,
       error: state.discussion.error
 
     };

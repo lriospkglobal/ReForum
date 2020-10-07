@@ -28,7 +28,7 @@ class Opinion extends Component {
 
     return (
       <div className="opinion d-flex align-items-start flex-column mb-4">
-        <section className="d-flex align-items-start w-100">
+        <section className="d-flex align-items-center w-100">
           <div className="opinion__image-container">
             <Image src={userAvatar} fluid roundedCircle />
 

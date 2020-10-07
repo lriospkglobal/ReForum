@@ -591,7 +591,7 @@ class ForumFeed extends Component {
               </div>
               <section className="pt-2 pb-2 d-flex justify-content-between">
                 <div className="d-flex align-items-center">
-                  <input className={(this.state.currentForumObj && this.state.currentForumObj.mosaic ? 'visible ' : 'invisible ') + 'apple-switch mr-4'} checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong>Highlight duplicate photos on rollover</strong>
+                  <input className={(this.state.currentForumObj && this.state.currentForumObj.mosaic ? 'visible ' : 'invisible ') + 'apple-switch mr-4'} checked={this.state.highlights} onChange={() => this.setState({ highlights: !this.state.highlights })} type="checkbox" /> <strong className={(this.state.currentForumObj && this.state.currentForumObj.mosaic ? 'visible ' : 'invisible ')}>Highlight duplicate photos on rollover</strong>
                 </div>
                 <div className="d-flex align-items-center">
                   <strong>Photos Posted: </strong>
@@ -869,10 +869,10 @@ class ForumFeed extends Component {
         >
 
           <Modal.Body className="p-0 d-flex">
-            <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.currentDiscussion.base64 + ')' }}>
+            <div className="w-70 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.currentDiscussion.base64 + ')' }}>
 
             </div>
-            <div className="w-25 p-3">
+            <div className="w-40 p-3">
               <section className="discussion-box__header d-flex mb-3">
 
 

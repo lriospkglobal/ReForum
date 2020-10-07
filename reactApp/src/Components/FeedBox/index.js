@@ -117,10 +117,10 @@ function FeedBox(props) {
         <Modal.Body className="p-0 h-100">
 
           <section className="d-flex h-100">
-            <div className="w-75 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
+            <div className="w-70 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + discussion.base64 + ')' }}>
 
             </div>
-            <div className="overflow-auto w-25 p-3">
+            <div className="overflow-auto w-40 p-3">
               <section className="discussion-box__header d-flex mb-3">
 
 

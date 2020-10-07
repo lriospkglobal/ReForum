@@ -54,7 +54,7 @@ export const getDiscussions = (forumId, feedChanged = false, sortingChanged = fa
       // start fetching discussions
       fetchDiscussions(forumId, sortingMethod).then(
         data => {
-          console.log(data)
+
           return dispatch({ type: FETCHING_DISCUSSIONS_SUCCESS, payload: data.data, forumId })
         },
         error => dispatch({ type: FETCHING_DISCUSSIONS_FAILURE })
