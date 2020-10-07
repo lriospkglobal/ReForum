@@ -31,7 +31,7 @@ const getDiscussion = (discussion_slug, discussion_id) => {
           // add opinions to the discussion object
           getAllOpinions(result._id).then(
             (opinions) => {
-              result.opinions = opinions;
+              result.opinions = opinions;              
               resolve(result);
             },
             (error) => { { console.log(error); reject(error); } }

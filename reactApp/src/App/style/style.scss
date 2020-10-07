@@ -384,6 +384,35 @@ input.apple-switch {
     margin-right: 15px;
   }
 
+  .opinion__options {
+    margin-left: 40px;
+    ;
+
+    ul {
+      li {
+        color: $aarp-blue;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 15px;
+        position: relative;
+
+        &:first-child {
+          list-style: none
+        }
+
+
+        span {
+          position: relative;
+          left: -6px;
+          cursor: pointer;
+        }
+
+
+      }
+
+    }
+  }
+
   .opinion__comment-container {
     width: calc(85% - 15px);
     border-color: $lighter-gray;

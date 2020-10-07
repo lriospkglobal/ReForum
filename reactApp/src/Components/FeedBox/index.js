@@ -78,8 +78,10 @@ function FeedBox(props) {
       {renderEmptyDiscussionLine(loading, discussions)}
       {!loading &&
         <div >
-          {(role && role === 'admin') && <DiscussionBox
+          {(role && role === 'admin' && discussions && discussions.length) && <DiscussionBox
             discussion={toApproveDiscussion}
+            key={toApproveDiscussion._id}
+            idKey={toApproveDiscussion._id}
             userProfile={userProfile}
             discussionType={type}
             mock={true}
@@ -129,7 +131,7 @@ function FeedBox(props) {
                   <span className="text-muted">{timeDisplay(discussion.date)}</span>
                 </div>
               </section>
-              <SingleDiscussion discussionSlug={discussion.discussion_slug} />
+              <SingleDiscussion discussion={discussion} discussionSlug={discussion.discussion_slug} />
             </div>
           </section>
         </Modal.Body>

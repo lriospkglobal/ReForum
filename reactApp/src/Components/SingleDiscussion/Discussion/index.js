@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import RichEditor from '../../../Components/RichEditor';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
+import flag from './../../../App/img/flag-icon.svg';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 class Discussion extends Component {
   render() {
@@ -16,7 +17,8 @@ class Discussion extends Component {
       toggleingFavorite,
       allowDelete,
       deletingDiscussion,
-      deleteAction
+      deleteAction, 
+      userRole
 
     } = this.props;
 
@@ -40,7 +42,20 @@ class Discussion extends Component {
 
 
         <div className="mt-3 mb-3 d-flex single-discussion__tools align-items-center justify-content-between">
-          <div ><button onClick={() => { !toggleingFavorite && favoriteAction(id); }} className={userFavorited ? 'active misc-button p-2' : 'misc-button p-2'} ><img src={thumbsUp} /></button> <span className="ml-2">{favoriteCount} Kudos</span></div>
+          <div >
+            <button onClick={() => { !toggleingFavorite && favoriteAction(id); }}
+              className={userFavorited ? 'active misc-button p-2' : 'misc-button p-2'} >
+              <img src={thumbsUp} />
+            </button>
+            <span className="ml-2">{favoriteCount} Kudos</span>
+          </div>
+          {(userRole === 'user') && <div >
+            <button
+              className={'misc-button p-2'} >
+              <img src={flag} />
+            </button>
+            <span className="ml-2">Report Content</span>
+          </div>}
           <Dropdown className="extra-options">
             <Dropdown.Toggle id="dropdown-basic">
               <strong>. . .</strong>

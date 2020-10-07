@@ -30,7 +30,6 @@ class SingleDiscussion extends Component {
       discussionSlug
     } = this.props;
 
-    this.props.getDiscussion(discussionSlug);
   }
 
 
@@ -110,6 +109,8 @@ class SingleDiscussion extends Component {
       deletingDiscussion
 
     } = this.props;
+    console.log(discussion)
+
     if (discussion) {
       const {
         _id,
@@ -135,6 +136,7 @@ class SingleDiscussion extends Component {
         this.props.userRole === 'admin'
       ) allowDelete = true;
 
+
       // check if user favorated the discussion
       const userFavorited = this.userFavoritedDiscussion(this.props.userId, favorites);
 
@@ -143,6 +145,7 @@ class SingleDiscussion extends Component {
 
           <Discussion
             id={_id}
+            userRole={this.props.userRole}
             userAvatar={avatarUrl}
             userName={name || username}
             userGitHandler={username}
@@ -186,6 +189,7 @@ class SingleDiscussion extends Component {
                 currentUserRole={this.props.userRole}
                 deleteAction={this.deleteOpinion.bind(this)}
                 deletingOpinion={deletingOpinion}
+                allowDelete={allowDelete}
               />
             );
           })}
@@ -211,8 +215,8 @@ export default connect(
       postingOpinion: state.discussion.postingOpinion,
       opinionError: state.discussion.opinionError,
       deletingOpinion: state.discussion.deletingOpinion,
-      error: state.discussion.error,
-      discussion: state.discussion.discussion,
+      error: state.discussion.error
+
     };
   },
   (dispatch) => {

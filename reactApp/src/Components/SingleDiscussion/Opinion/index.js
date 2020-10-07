@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import moment from 'moment';
-import { Image, Button } from 'react-bootstrap';
+import { Image, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 
 
@@ -19,27 +19,72 @@ class Opinion extends Component {
       currentUserRole,
       deleteAction,
       deletingOpinion,
+      allowDelete
     } = this.props;
 
 
 
-    const allowDelete = (userId === currentUserId) || (currentUserRole === 'admin');
+
 
     return (
-      <div className="opinion d-flex align-items-start mb-4">
-        <div className="opinion__image-container">
-          <Image src={userAvatar} fluid roundedCircle />
+      <div className="opinion d-flex align-items-start flex-column mb-4">
+        <section className="d-flex align-items-start w-100">
+          <div className="opinion__image-container">
+            <Image src={userAvatar} fluid roundedCircle />
 
 
 
 
-        </div>
+          </div>
 
-        <div className="opinion__comment-container p-2">
-          {allowDelete &&
-            <i onClick={() => { deleteAction(opinionId); }} className="delete fa fa-minus-circle" aria-hidden="true"></i>
-          }
-          {opContent}
+          <div className="opinion__comment-container px-3 py-2">
+            {opContent}
+          </div>
+        </section>
+        <div className="opinion__options">
+          <ul className="d-flex">
+            <OverlayTrigger
+
+              placement={'top'}
+              overlay={
+                <Tooltip>
+                  As a user you can kudos this comment.
+        </Tooltip>
+              }
+            >
+              <li><span>Kudos</span></li>
+            </OverlayTrigger>
+            {(currentUserRole === 'user') &&
+              <OverlayTrigger
+
+                placement={'top'}
+                overlay={
+                  <Tooltip>
+                    As a user you can report this comment.
+        </Tooltip>
+                }
+              >
+                <li><span>Report Content</span></li>
+              </OverlayTrigger>
+
+            }
+            <OverlayTrigger
+
+              placement={'top'}
+              overlay={
+                <Tooltip>
+                  As a user you can reply to this comment.
+</Tooltip>
+              }
+            >
+              <li><span>Comment</span></li>
+            </OverlayTrigger>
+
+            {allowDelete &&
+              <li><span onClick={() => { deleteAction(opinionId); }}>Delete</span></li>
+            }
+
+          </ul>
         </div>
 
         {(deletingOpinion === opinionId) && <div >Deleting Opinion ...</div>}

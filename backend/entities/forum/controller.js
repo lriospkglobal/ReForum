@@ -56,6 +56,7 @@ const getDiscussions = (client, forum_id, pinned, sorting_method = 'date') => {
               (opinions) => {
                 // add opinion count to discussion doc
                 eachDiscussion.opinion_count = opinions ? opinions.length : 0;
+                eachDiscussion.opinions = opinions ? opinions : [];
                 // get individual tile
                 return new Promise((resolve, reject) => {
 

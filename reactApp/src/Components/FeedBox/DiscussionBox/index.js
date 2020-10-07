@@ -5,11 +5,11 @@ import Moment from 'moment';
 import Opinion from '../../../Components/SingleDiscussion/Opinion';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
 import pin from './../../../App/img/pin-icon.svg';
+import flag from './../../../App/img/flag-icon.svg';
 import { connect } from 'react-redux';
 import mockImage from '../mock-img.jpg';
 import axios from 'axios';
 function DiscussionBox(props) {
-  const [opinions, setOpinions] = useState([]);
 
   const user = props.discussion.user
 
@@ -23,7 +23,7 @@ function DiscussionBox(props) {
   const voteCount = props.discussion.favorites.length
 
 
-  const { discussion, id, setDiscussion, setLgShow, role, mock } = props;
+  const { discussion, id, setDiscussion, setLgShow, role, mock, key } = props;
 
   const postTime = Moment(time);
   const timeDisplay = postTime.from(Moment());
@@ -110,16 +110,37 @@ function DiscussionBox(props) {
                 </OverlayTrigger>
               }
 
+              {(role && role === 'user') &&
+
+                <OverlayTrigger
+                  key={'top'}
+                  placement={'top'}
+                  overlay={
+                    <Tooltip >
+                      As a user you can report posts.
+  </Tooltip>
+                  }
+                >
+                  <div>
+
+                    <button className="misc-button p-2">
+                      <img src={flag} />
+                    </button>
+                    <span className="ml-2">Report Content</span>
+                  </div>
+                </OverlayTrigger>
+              }
+
               <Button onClick={() => {
                 setLgShow(true)
                 setDiscussion(discussion)
               }
               }>Comment</Button>
             </div>
-            {(opinions && opinions.length) ?
+            {(discussion.opinions && discussion.opinions.length) ?
               <div className="opinion-section">
-                <h4 className="mt-4 mb-3"><strong>{opinions.length} Comments</strong></h4>
-                {opinions.map((opinion) => {
+                <h4 className="mt-4 mb-3"><strong>{discussion.opinions.length} Comments</strong></h4>
+                {discussion.opinions.map((opinion) => {
                   return (
                     <Opinion
                       key={opinion._id}
@@ -144,7 +165,7 @@ function DiscussionBox(props) {
 
                 <div className="d-flex align-items-center justify-content-between">
                   <OverlayTrigger
-                    key={'top'}
+
                     placement={'top'}
                     overlay={
                       <Tooltip >
@@ -155,7 +176,7 @@ function DiscussionBox(props) {
                     <Button >Reject</Button>
                   </OverlayTrigger>
                   <OverlayTrigger
-                    key={'top'}
+
                     placement={'top'}
                     overlay={
                       <Tooltip >
