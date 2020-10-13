@@ -31,7 +31,7 @@ const getDiscussion = (discussion_slug, discussion_id) => {
           // add opinions to the discussion object
           getAllOpinions(result._id).then(
             (opinions) => {
-              result.opinions = opinions;              
+              result.opinions = opinions;
               resolve(result);
             },
             (error) => { { console.log(error); reject(error); } }
@@ -72,7 +72,9 @@ const createDiscussion = (discussion, client, file) => {
         tile_id: obj.photoName,
         camera: discussion.camera,
         photo_location: discussion.photoLocation,
-        rights: discussion.rights
+        rights: discussion.rights,
+        photo_date: discussion.date,
+        photo_time: discussion.time
       });
 
       newDiscussion.save((error) => {
@@ -178,7 +180,7 @@ const deleteDiscussion = (discussion_slug, forumName, client, email) => {
 
               });
             } else { */
-              removeOpinions(discussion_id, discussion_slug, forum_id)
+            removeOpinions(discussion_id, discussion_slug, forum_id)
             //}
           })
 

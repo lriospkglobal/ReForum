@@ -12,7 +12,7 @@ import {
   DELETE_FORUM_FAILURE,
 } from './constants';
 
-import {FETCHING_DISCUSSIONS_FAILURE} from '../ForumFeed/constants'
+import { FETCHING_DISCUSSIONS_FAILURE } from '../ForumFeed/constants'
 
 import {
   getAdminDashboardInfoAPI,
@@ -54,10 +54,10 @@ export const createForum = (forumObj, cb) => {
             dispatch({ type: GET_ALL_INFO_SUCCESS, payload: data.data });
 
             // check if the forum was created
-            if (forumData.data.created) { 
+            if (forumData.data.created) {
 
-              dispatch({ type: CREATE_FORUM_SUCCESS }); 
-              if(cb) cb()
+              dispatch({ type: CREATE_FORUM_SUCCESS });
+              if (cb) cb(forumData.data)
             }
             else dispatch({ type: CREATE_FORUM_FAILURE });
           },

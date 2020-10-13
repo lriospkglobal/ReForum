@@ -19,7 +19,9 @@ const discussionSchema = mongoose.Schema({
   tile_base64: String,
   camera: String,
   photo_location: String,
-  rights: Boolean
+  rights: Boolean,
+  photo_date: Date,
+  photo_time: String
 });
 
 module.exports = mongoose.model('discussion', discussionSchema);

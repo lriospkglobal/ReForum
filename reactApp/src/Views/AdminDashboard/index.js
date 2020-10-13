@@ -36,9 +36,9 @@ class Dashboard extends Component {
       deletingForumError,
     } = this.props;
 
-    const forumsArray = forums.map((forum) => {
+    const forumsArray = forums ? forums.map((forum) => {
       return { id: forum._id, name: forum.forum_name, slug: forum.forum_slug };
-    });
+    }) : [];
 
     return (
       <Container className="admin-dashboard mb-4 pb-4">
@@ -79,36 +79,27 @@ class Dashboard extends Component {
                   </thead>
                   <tbody>
 
-                    {forums.map(forum => (
+                    {forums && forums.map(forum => (
                       <tr key={forum._id}>
                         <td><Image fluid src={'data:image/jpeg;base64,' + forum.base64} /></td>
                         <td>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                          Nunc et nibh a risus sodales faucibus id sed nulla.
-                          Nam erat mi, volutpat id lobortis in, congue nec ante.
-                          Proin eu enim sed enim molestie accumsan fermentum at nisi.
-                          Donec et ultrices nulla. In et euismod odio, in consectetur tellus.
+                          <p>{forum.forum_description ? forum.forum_description : ''}
 
-        </p>
+                          </p>
                         </td>
                         <td>
-                          <p>{forum.mentor}</p>
+                          <p>{forum.mentor_name ? forum.mentor_name : ''}</p>
                         </td>
                         <td>
                           <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            Nunc et nibh a risus sodales faucibus id sed nulla.
-                            Nam erat mi, volutpat id lobortis in, congue nec ante.
-                            Proin eu enim sed enim molestie accumsan fermentum at nisi.
-                            Nunc et nibh a risus sodales faucibus id sed nulla.
-                            Nunc et nibh a risus sodales faucibus.
+                            {forum.mentor_biography ? forum.mentor_biography : ''}
                           </p>
                         </td>
                         <td className="text-center">
                           <input type="checkbox" />
                         </td>
                         <td>
-                          <Button variant="dark"><strong>Open</strong></Button>
+                          <a className="btn-dark" href={`/${forum.forum_slug}`}><strong>Open</strong></a>
                         </td>
                       </tr>
                     ))}

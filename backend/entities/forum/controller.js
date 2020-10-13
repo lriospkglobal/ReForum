@@ -16,7 +16,7 @@ const getUser = require('../user/controller').getUser;
 const getAllForums = () => {
   return new Promise((resolve, reject) => {
     Forum
-      .find({})
+      .find({archived: false})
       .exec((error, results) => {
         if (error) { console.log(error); reject(error); }
         else if (!results) reject(null);

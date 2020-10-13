@@ -55,11 +55,11 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       });
     }
 
-    if (title === null || title.length < 10) {
+    if (title === null) {
       validated = false;
       return dispatch({
         type: POSTING_DISCUSSION_FAILURE,
-        payload: 'Title should be at least 10 characters.',
+        payload: 'Please provide a title.',
       });
     }
     if (date === null) {
@@ -88,7 +88,7 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       validated = false;
       return dispatch({
         type: POSTING_DISCUSSION_FAILURE,
-        payload: 'Please add a tile .',
+        payload: 'Please add a tile.',
       });
     }
 
@@ -142,7 +142,7 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
           if (data.data.postCreated === true) {
             dispatch({ type: POSTING_DISCUSSION_SUCCESS });
             setTimeout(() => { dispatch({ type: CLEAR_SUCCESS_MESSAGE }); }, 2000);
-            cb()
+            cb(data.data)
             // issue a redirect to the newly reacted discussion
             //browserHistory.push(`/${currentForum}/discussion/${data.data.discussion_slug}`);
           } else {

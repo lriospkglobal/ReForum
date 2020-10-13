@@ -11,6 +11,7 @@ const mongodb = require('mongodb');
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage });
 
+
 const adminAPI = (app, client) => {
   // get all info for admin dashboard
   app.get('/api/admin/admin_dashboard_info', (req, res) => {
@@ -24,28 +25,40 @@ const adminAPI = (app, client) => {
   });
 
   // create a forum
-  app.post('/api/admin/create_forum', upload.single('img'), (req, res) => {
+  app.post('/api/admin/create_forum', upload.single('mosaicImage'), (req, res) => {
 
     if (req.user && req.user.role === 'admin') {
       const {
         title,
-        slug
+        slug,
+        newForumDescription,
+        newForumDirections,
+        mentorName,
+        mentorBiography,
+        uploadedBase64mentorImage,
+
+
       } = req.body;
+
+
 
 
       gridFsSave('reforum', 'mosaicImages', req.file.buffer, req.file.fieldname + Date.now() + '.jpg', client)
         .then((obj) =>
           createForum({
             forum_name: title, forum_slug: slug, original_img_id: obj.id, base64: base64encodeBuffer(req.file.buffer), admin: {
-              name: req.user.name, avatarUrl: req.user.avatarUrl
-            }
+              name: req.user.name, avatarUrl: req.user.avatarUrl,
+            },
+            forum_description: newForumDescription,
+            forum_directions: newForumDirections,
+            mentor_name: mentorName,
+            mentor_biography: mentorBiography,
+            mentor_base64: uploadedBase64mentorImage
           })
-        ).then(data => res.send(data)
-
-        ).catch(obj => res.status(500).json(obj));
+        ).then(data => res.send(data)).catch(obj => res.status(500).json(obj));
 
     }
-    else return res.send({ error: 'You are not admin buddy 😛' });
+    else return res.send({ error: 'You are not an admin' });
   });
 
   // delete a forum

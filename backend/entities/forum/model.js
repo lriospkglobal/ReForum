@@ -11,9 +11,15 @@ const forumSchema = mongoose.Schema({
   mosaic: Object,
   coordinates: Array,
   base64: String,
-  admin: Object
+  admin: Object,
+  forum_description: String,
+  forum_directions: String,
+  mentor_name: String,
+  mentor_biography: String,
+  mentor_base64: String,
+  archived: Boolean
 
-  
+
 });
 
 module.exports = mongoose.model('forum', forumSchema);

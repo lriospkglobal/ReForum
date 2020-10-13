@@ -228,7 +228,7 @@ class NewDiscussion extends Component {
 
               <Form.Label><strong>Description</strong></Form.Label>
               <Form.Text className="mb-2">
-                Describe how your sharp photo connects to the Staying Sharp Pillar Ongoing Exercise?
+              Describe how your Sharp Shot connects to the Staying Sharp pillar ongoing exercise.
   </Form.Text>
               {/* <RichEditor
                 key={'content'}

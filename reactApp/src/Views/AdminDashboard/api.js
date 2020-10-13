@@ -7,10 +7,14 @@ export const getAdminDashboardInfoAPI = () => {
 
 export const createForumAPI = (forum_obj) => {
   const formData = new FormData();
-  
-  formData.append('img', forum_obj.mosaicImage);
-  formData.append('title', forum_obj.title);
-  formData.append('slug', forum_obj.slug);
+
+  for (let attr in forum_obj) {
+    if (attr === 'tileObject')
+      formData.append(attr, JSON.stringify(forum_obj[attr]))
+    else
+      formData.append(attr, forum_obj[attr])
+  }
+
 
   return (axios.post('/api/admin/create_forum', formData, {
     headers: {

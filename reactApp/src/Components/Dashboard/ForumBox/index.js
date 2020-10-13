@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { Button, Form, Image, Col, Row, Alert } from 'react-bootstrap';
 import Dropzone from 'react-dropzone';
 import UploadImage from '../../../App/img/Photo-Upload-Box.png';
+import UploadImageMentor from '../../../App/img/Bio-Photo-Upload@2x.png';
 import CreatableSelect from 'react-select/creatable'
 import DatePicker from "react-datepicker";
+import { postDiscussionApi } from '../../../Views/NewDiscussion/api';
+import { connect } from 'react-redux';
 
 const options = [
   { value: 'smartphone', label: 'Smartphone' },
@@ -18,15 +21,30 @@ class ForumBox extends Component {
     this.state = {
       newForumTitle: '',
       newForumSlug: '',
+      newForumDirections: '',
+      newForumDescription: '',
+      newMosaicImageOwner: false,
       errorMsg: null,
       mosaicImage: null,
-      startDate: new Date(),
+      photoDate: new Date(),
       uploadedBase64mosaicImage: null,
-      uploadedBase64tileImage: null,
+      uploadedBase64tileImage: '',
       tileImage: null,
       uploadedBase64mentorImage: null,
       mentorImage: null,
-      success: false
+      success: false,
+      tileTitle: '',
+      tileCamera: '',
+      tileLocation: '',
+      tileDescription: '',
+      tileTags: ['aarp'],
+      mentorName: '',
+      mentorBiography: '',
+      photoTime: 'Morning',
+      tileRights: false,
+      tileFeatured: false,
+      tileObj: false
+
     };
 
     this.originalState = this.state;
@@ -34,18 +52,82 @@ class ForumBox extends Component {
     this.handleCreateForum = this.handleCreateForum.bind(this);
   }
 
-  creatForumSuccess = () => {
-    this.setState({ ...this.originalState, success: true })
+  creatForumSuccess = (newForum) => {
+
+    const {
+      tileTitle,
+      tileTags,
+      tileCamera,
+      tileDescription,
+      tileLocation,
+      tileRights,
+      tileFeatured,
+      photoDate,
+      photoTime,
+      tileImage,
+      tileObj
+
+    } = this.state
+    const { user } = this.props
+
+    if (tileObj) {
+      postDiscussionApi({
+        userId: user._id,
+        forumId: newForum._doc._id,
+        title: tileTitle,
+        content: tileDescription,
+        tags: tileTags,
+        pinned: tileFeatured,
+        tile: tileImage,
+        photoLocation: tileLocation,
+        camera: tileCamera,
+        rights: tileRights,
+        date: photoDate,
+        time: photoTime
+      }).then(
+        (data) => {
+          if (data.data.postCreated === true) {
+            this.setState({ ...this.originalState, success: true })
+          }
+        },
+        (error) => {
+          this.setState({ errorMsg: 'Mosaic created but tile wasn\'t added' })
+        }
+      );
+    } else {
+      this.setState({ ...this.originalState, success: true })
+    }
+
+
+
   }
 
   handleCreateForum() {
     // remove any error messages
-    this.setState({ errorMsg: null });
+    this.setState({ errorMsg: null, success: false });
 
     const {
       newForumTitle,
       newForumSlug,
-      mosaicImage
+      mosaicImage,
+      newForumDirections,
+      newForumDescription,
+      newMosaicImageOwner,
+      tileTitle,
+      tileCamera,
+      tileLocation,
+      tileDescription,
+
+      tileRights,
+      uploadedBase64tileImage,
+      tileFeatured,
+
+      mentorName,
+      mentorBiography,
+      mentorImage,
+      uploadedBase64mentorImage,
+
+
     } = this.state;
 
     let convertedTitle = null;
@@ -79,10 +161,86 @@ class ForumBox extends Component {
       return this.setState({ errorMsg: 'Forum slug is empty. Please provide a valid forum slug.' });
     }
 
+    if (!newForumDescription.length) return this.setState({ errorMsg: 'Mosaic description is empty.' })
+    if (!newForumDirections.length) return this.setState({ errorMsg: 'Mosaic directions empty.' })
+    if (!newMosaicImageOwner) return this.setState({ errorMsg: 'Please check mosaic photo rights.' })
+
+    if (!mentorName.length) return this.setState({ errorMsg: 'Please add a mentor name.' })
+    if (!mentorBiography.length) return this.setState({ errorMsg: 'Please add a mentor biography.' })
+    if (!mentorImage) return this.setState({ errorMsg: 'Please add a mentor image.' })
+
     if (!convertedTitle) { return this.setState({ errorMsg: 'Please provide a valid Forum Title.' }); }
     if (!convertedSlug) { return this.setState({ errorMsg: 'Please provide a valid Forum Slug. Slug can only contain small case alphabets and underscore.' }); }
 
-    if (convertedTitle && convertedSlug) { this.props.createAction({ title: convertedTitle, slug: convertedSlug, mosaicImage }, this.creatForumSuccess); }
+
+    let tileObj = false
+    if (tileTitle.length || tileFeatured || tileCamera.length || tileDescription.length || tileLocation.length || tileRights || uploadedBase64tileImage.length) {
+      tileObj = true
+      const newTileAttributes = ['tileTitle', 'tileCamera', 'tileDescription', 'tileLocation', 'tileRights', 'uploadedBase64tileImage']
+
+      let errorMsg
+      for (let i = 0; i < newTileAttributes.length; i++) {
+        if (typeof this.state[newTileAttributes[i]] === 'string') {
+          if (!this.state[newTileAttributes[i]].length) {
+            switch (newTileAttributes[i]) {
+
+              case 'tileTitle':
+                errorMsg = 'Please provide a tile title.'
+              case 'tileCamera':
+                errorMsg = 'Please add a tile camera.'
+              case 'tileDescription':
+                errorMsg = 'Please write some tile description.'
+              case 'tileLocation':
+                errorMsg = 'Please add a tile location.'
+              case 'uploadedBase64tileImage':
+                errorMsg = 'Please add a tile image.'
+            }
+
+
+            return this.setState({ errorMsg })
+
+          }
+        }
+
+
+        if (typeof this.state[newTileAttributes[i]] === 'boolean') {
+          if (!this.state[newTileAttributes[i]]) {
+
+            switch (newTileAttributes[i]) {
+              case 'tileRights':
+                errorMsg = 'Please check tile photo rights.'
+            }
+
+            return this.setState({ errorMsg })
+
+          }
+        }
+      }
+
+
+    }
+
+    this.setState({ tileObj }, () => {
+      if (convertedTitle && convertedSlug) {
+        this.props.createAction(
+          {
+            title: convertedTitle,
+            slug: convertedSlug,
+            mosaicImage,
+            newForumDescription,
+            newForumDirections,
+            newMosaicImageOwner,
+            mentorName,
+            mentorBiography,
+            uploadedBase64mentorImage
+
+
+          }, this.creatForumSuccess);
+      }
+    })
+
+
+
   }
   processImage = (image) => {
     this.encodeImage(image).then(base64 => {
@@ -93,16 +251,12 @@ class ForumBox extends Component {
   }
   encodeImage = (image) => new Promise((resolve, reject) => {
     const reader = new FileReader();
-    console.log(this.state)
+
     reader.readAsDataURL(this.state[image]);
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
-  handleChange = date => {
-    this.setState({
-      startDate: date
-    });
-  };
+
 
   render() {
     const {
@@ -142,21 +296,21 @@ class ForumBox extends Component {
 
 
               <Form.Label>Forum Title</Form.Label>
-              <Form.Control value={this.state.newForumTitle} onChange={(e) => { this.setState({ newForumTitle: e.target.value }); }} type="text" />
+              <Form.Control value={this.state.newForumTitle} onChange={(e) => { this.setState({ newForumTitle: e.target.value, success: false }); }} type="text" />
 
             </Form.Group>
             <Form.Group className="directions">
 
 
               <Form.Label>Directions</Form.Label>
-              <Form.Control as="textarea" defaultValue="View the mosiac image below. Rollover individual images to see a larger thumbnail view, or click to view the full image with description and comments. Post your own photo and be part of the community." rows="2" />
+              <Form.Control value={this.state.newForumDirections} as="textarea" onChange={(e) => this.setState({ newForumDirections: e.target.value, success: false })} />
 
             </Form.Group>
             <Form.Group className="slug">
 
 
               <Form.Label>Forum Slug</Form.Label>
-              <Form.Control value={this.state.newForumSlug} onChange={(e) => { this.setState({ newForumSlug: e.target.value }); }} type="text" />
+              <Form.Control value={this.state.newForumSlug} onChange={(e) => { this.setState({ newForumSlug: e.target.value, success: false }); }} type="text" />
 
             </Form.Group>
             <Form.Group className="form-card">
@@ -167,7 +321,7 @@ class ForumBox extends Component {
                     {this.state.uploadedBase64mosaicImage ? <div className="forum-box__uploaded-image-container" style={{ backgroundImage: 'url(' + this.state.uploadedBase64mosaicImage + ')' }} ></div> :
                       <Dropzone accept="image/jpeg, image/png" maxSize={5000000}
                         onDrop={acceptedFiles => {
-                          this.setState({ mosaicImage: acceptedFiles[0] }, () =>
+                          this.setState({ mosaicImage: acceptedFiles[0], success: false }, () =>
                             this.processImage('mosaicImage')
                           )
 
@@ -196,9 +350,16 @@ class ForumBox extends Component {
                     <Form.Label>
                       Description
                   </Form.Label>
-                    <Form.Control className="description" as="textarea" maxLength="500" placeholder="Why did you choose this photo for the mosaic?" />
+                    <Form.Control
+                      value={this.state.newForumDescription}
+                      onChange={(e) => this.setState({ newForumDescription: e.target.value, success: false })}
+                      className="description"
+                      as="textarea"
+                      maxLength="500"
+                      placeholder="Why did you choose this photo for the mosaic?" />
                   </div>
                   <Form.Check
+                    checked={this.state.newMosaicImageOwner} onChange={(e) => { this.setState({ newMosaicImageOwner: e.target.checked, success: false }); }}
                     type="checkbox" className="small" label="I am the owner of this photo or have permission to use it. AARP may use this photo without permission or attribution. (Required)" />
                 </Col>
               </Row>
@@ -206,14 +367,14 @@ class ForumBox extends Component {
 
             </Form.Group>
             <Form.Group className="form-card">
-              <Form.Label>Photo Tile Upload</Form.Label>
+              <Form.Label>Photo Tile Upload (Optional)</Form.Label>
               <Row>
                 <Col md="7">
                   <div className="forum-box__dropzone-container d-flex">
                     {this.state.uploadedBase64tileImage ? <div className="forum-box__uploaded-image-container" style={{ backgroundImage: 'url(' + this.state.uploadedBase64tileImage + ')' }} ></div> :
                       <Dropzone accept="image/jpeg, image/png" maxSize={5000000}
                         onDrop={acceptedFiles => {
-                          this.setState({ tileImage: acceptedFiles[0] }, () =>
+                          this.setState({ tileImage: acceptedFiles[0], success: false }, () =>
                             this.processImage('tileImage')
                           )
 
@@ -243,10 +404,14 @@ class ForumBox extends Component {
                     <Form.Label>Photo Title</Form.Label>
                     <Form.Control key={'title'}
                       type="text"
-
+                      value={this.state.tileTitle}
+                      onChange={(e) => this.setState({ tileTitle: e.target.value, success: false })}
                     />
                   </Form.Group>
-
+                  <Form.Group className="small">
+                    <Form.Check checked={this.state.tileFeatured} onChange={(e) => { this.setState({ tileFeatured: e.target.checked, success: false }); }}
+                      type="checkbox" label="Is it a featured discussion?" />
+                  </Form.Group>
 
 
 
@@ -255,8 +420,8 @@ class ForumBox extends Component {
 
                     <CreatableSelect
                       isClearable
-                      //onChange={obj => obj.value && updateCamera(obj.value)}
-                      //onInputChange={obj => obj.value && updateCamera(obj.value)}
+                      onChange={obj => obj.value && this.setState({ tileCamera: obj.value, success: false })}
+                      onInputChange={obj => obj.value && this.setState({ tileCamera: obj.value, success: false })}
                       options={options}
                       placeholder="Select or input..."
                     />
@@ -267,7 +432,8 @@ class ForumBox extends Component {
                     <Form.Label>Location</Form.Label>
                     <Form.Control
                       type="text"
-
+                      value={this.state.tileLocation}
+                      onChange={(e) => this.setState({ tileLocation: e.target.value, success: false })}
                     />
                   </Form.Group>
 
@@ -275,9 +441,9 @@ class ForumBox extends Component {
 
                     <Form.Label>Description</Form.Label>
                     <Form.Text className="mb-2">
-                      Describe how your sharp photo connects to the Staying Sharp Pillar Ongoing Exercise?
+                      Describe how your Sharp Shot connects to the Staying Sharp pillar ongoing exercise.
   </Form.Text>
-                    <Form.Control as="textarea"></Form.Control>
+                    <Form.Control value={this.state.tileDescription} onChange={(e) => this.setState({ tileDescription: e.target.value, success: false })} as="textarea"></Form.Control>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Date</Form.Label>
@@ -285,8 +451,12 @@ class ForumBox extends Component {
                       Date when picture was taken
               </Form.Text>
                     <DatePicker
-                      selected={this.state.startDate}
-                      onChange={this.handleChange}
+                      selected={this.state.photoDate}
+                      onChange={date => {
+                        this.setState({
+                          photoDate: date, success: false
+                        })
+                      }}
                     />
                   </Form.Group>
                   <Form.Group>
@@ -294,7 +464,10 @@ class ForumBox extends Component {
                     <Form.Text className="mb-2">
                       Time of day photo was taken
               </Form.Text>
-                    <Form.Control as="select">
+                    <Form.Control as="select" value={this.state.photoTime} onChange={e => {
+
+                      this.setState({ photoTime: e.target.value, success: false })
+                    }}>
                       <option>Morning</option>
                       <option>Noon</option>
                       <option>Evening</option>
@@ -304,6 +477,7 @@ class ForumBox extends Component {
                   </Form.Group>
                   <Form.Group className="small">
                     <Form.Check
+                      checked={this.state.tileRights} onChange={(e) => this.setState({ tileRights: e.target.checked, success: false })}
                       type="checkbox" label="I am the owner of this photo. AARP may use this photo without permission or attribution. (Required)" />
                   </Form.Group>
 
@@ -323,7 +497,7 @@ class ForumBox extends Component {
                     {this.state.uploadedBase64mentorImage ? <div className="forum-box__uploaded-image-container" style={{ backgroundImage: 'url(' + this.state.uploadedBase64mentorImage + ')' }} ></div> :
                       <Dropzone accept="image/jpeg, image/png" maxSize={5000000}
                         onDrop={acceptedFiles => {
-                          this.setState({ mentorImage: acceptedFiles[0] }, () =>
+                          this.setState({ mentorImage: acceptedFiles[0], success: false }, () =>
                             this.processImage('mentorImage')
                           )
 
@@ -334,10 +508,8 @@ class ForumBox extends Component {
                             <div className="d-flex" {...getRootProps()} >
                               <input name="tile" {...getInputProps()} />
                               <div className="p-3 justify-content-center align-items-center w-100 flex-column d-flex">
-                                <Image className="upload-image" src={UploadImage} />
-                                <small className="w-100 text-center mt-3">Maximum upload file size: 5MB<br />
-                        (.JPG, .PNG)
-                        </small>
+                                <Image className="upload-image" src={UploadImageMentor} />
+
                               </div>
                             </div>
                           </section>
@@ -353,13 +525,15 @@ class ForumBox extends Component {
                     <Form.Label>
                       Name
                   </Form.Label>
-                    <Form.Control className="mentor-name" type="text" />
+                    <Form.Control value={this.state.mentorName} onChange={e => this.setState({ mentorName: e.target.value, success: false })} className="mentor-name" type="text" />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>
                       Biography
                   </Form.Label>
-                    <Form.Control className="biography" as="textarea" maxLength="500" placeholder="Tell a brief background about the Mentor" />
+                    <Form.Control
+                      value={this.state.mentorBiography} onChange={e => this.setState({ mentorBiography: e.target.value, success: false })}
+                      className="biography" as="textarea" maxLength="500" placeholder="Tell a brief background about the Mentor" />
                   </Form.Group>
 
                 </Col>
@@ -403,4 +577,12 @@ ForumBox.defaultProps = {
   createAction: React.PropTypes.func,
 }; */
 
-export default ForumBox;
+
+export default connect(
+  (state) => {
+    return {
+      user: state.user
+    };
+  }
+
+)(ForumBox);

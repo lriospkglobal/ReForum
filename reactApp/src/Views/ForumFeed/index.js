@@ -573,9 +573,9 @@ class ForumFeed extends Component {
                 <p className="w-75 pr-5">
 
 
-                  View the mosiac image below. Rollover individual images to see a larger thumbnail view, or click to view the full image with description and comments. Post your own photo and be part of the community.
+                  {(this.state.currentForumObj && this.state.currentForumObj.forum_directions) ? this.state.currentForumObj.forum_directions : ''}
 
-              </p>
+                </p>
                 <div className="w-25 overflow-auto">
 
 
@@ -808,7 +808,7 @@ class ForumFeed extends Component {
 
                   <Card.Text className="small mb-3">
                     {this.state.currentForumObj ? <ImageBootstrap src={'data:image/jpeg;base64, ' + this.state.currentForumObj.base64} fluid /> : null}
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nibh a risus sodales faucibus id sed nulla. Nam erat mi, volutpat id lobortis in, congue nec ante. Proin eu enim sed enim molestie accumsan fermentum at nisi. Donec et ultrices nulla. In et euismod odio, in consectetur tellus. Maecenas a vulputate orci. Proin venenatis hendrerit urna.
+                    {(this.state.currentForumObj && this.state.currentForumObj.forum_description) ? this.state.currentForumObj.forum_description : ''}
 
 
                   </Card.Text>
@@ -830,24 +830,21 @@ class ForumFeed extends Component {
                 <Card.Body>
                   <section className="moderator-card d-flex">
                     <div className="moderator-card__img-container w-25">
-                      {this.state.currentForumObj && this.state.currentForumObj.admin ? <ImageBootstrap src={this.state.currentForumObj.admin.avatarUrl} fluid /> : null}
+                      {this.state.currentForumObj && this.state.currentForumObj.mentor_base64 ? <ImageBootstrap src={this.state.currentForumObj.mentor_base64} fluid /> : null}
                     </div>
                     <div className="w-75">
                       <div className="w-100">
                         <strong>NAME: </strong>
 
-                        <p className="mb-0"> {this.state.currentForumObj && this.state.currentForumObj.admin ? this.state.currentForumObj.admin.name : null}</p>
+                        <p className="mb-0"> {this.state.currentForumObj && this.state.currentForumObj.mentor_name ? this.state.currentForumObj.mentor_name : null}</p>
                       </div>
 
-                      <div className="w-100">
-                        <strong>Nunc et nibh:</strong>
-                        <p>a risus sodales faucibus id sed nulla. </p>
-                      </div>
+
                     </div>
 
                   </section>
                   <Card.Text className="small mb-3">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nibh a risus sodales faucibus id sed nulla. Nam erat mi, volutpat id lobortis in, congue nec ante. Proin eu enim sed enim molestie accumsan fermentum at nisi. Donec et ultrices nulla. In et euismod odio, in consectetur tellus. Maecenas a vulputate orci. Proin venenatis hendrerit urna.
+                    {this.state.currentForumObj && this.state.currentForumObj.mentor_biography ? this.state.currentForumObj.mentor_biography : ''}
                   </Card.Text>
 
                 </Card.Body>

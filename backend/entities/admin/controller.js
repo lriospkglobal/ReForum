@@ -39,6 +39,7 @@ const getAdminDashInfo = () => {
           .sort({ date: -1 })
           .lean()
           .exec((error, forums) => {
+
             callback(null, Object.assign(lastResult, { forums }));
           });
       },
@@ -55,7 +56,10 @@ const getAdminDashInfo = () => {
  * @param  {String} forum_slug
  * @return {Promise}
  */
-const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin }) => {
+const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin, forum_description, forum_directions,
+  mentor_name,
+  mentor_biography,
+  mentor_base64 }) => {
   return new Promise((resolve, reject) => {
     // check if the forum exists
     Forum
@@ -71,7 +75,13 @@ const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin })
             original_img_id,
             mosaic_img_id: null,
             base64,
-            admin
+            admin,
+            forum_description,
+            forum_directions,
+            mentor_name,
+            mentor_biography,
+            mentor_base64,
+            archived: false
           });
 
           newForum.save((error) => {
