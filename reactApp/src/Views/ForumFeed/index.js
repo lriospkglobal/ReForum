@@ -291,9 +291,9 @@ class ForumFeed extends Component {
           state.widthGrowth > 0 ? state.newHeight : that.state.canvasHeight)
 
 
-        if (that.props.location.query.forumId && that.props.location.query.tileId) {
+        if (that.props.location.query.tileId) {
 
-          that.openFromUrl(that.props.location.query.forumId, that.props.location.query.tileId)
+          that.openFromUrl(that.props.location.query.tileId)
         }
 
 
@@ -306,7 +306,7 @@ class ForumFeed extends Component {
     this.canvas.current.style.backgroundImage = 'url(' + 'data:image/jpeg;base64,' + currentForumObj.mosaic.base64 + ')'
   }
 
-  openFromUrl = (forumId, tileId) => {
+  openFromUrl = (tileId) => {
 
     let coordinates
 
@@ -634,12 +634,12 @@ class ForumFeed extends Component {
                 onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
             </section>
 
-            {this.state.previousMosaics[forumId] ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
-              {this.state.previousMosaics[forumId].length && <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>}
+            {(this.state.previousMosaics && this.state.previousMosaics[forumId] && this.state.previousMosaics[forumId].length) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
+              <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
               {
                 this.state.previousMosaics[forumId].map((prevMosaic, index) => {
                   return (
-                    <div className="previous-mosaic d-flex justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
+                    <div className="previous-mosaic d-flex align-items-start justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
                       <ImageBootstrap onClick={() => {
                         this.setState({
                           showPrevMosaicModal: true,

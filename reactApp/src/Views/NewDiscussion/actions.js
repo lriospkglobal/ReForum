@@ -41,7 +41,7 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       photoLocation,
       rights,
       camera,
-      date, 
+      date,
       time
     } = getState().newDiscussion;
 
@@ -125,6 +125,7 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
     // make api call if post is validated
     if (validated) {
       postDiscussionApi({
+        forumName: currentForum,
         userId,
         forumId,
         title,
@@ -134,8 +135,8 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
         tile,
         photoLocation,
         camera,
-        rights, 
-        date, 
+        rights,
+        date,
         time
       }).then(
         (data) => {
