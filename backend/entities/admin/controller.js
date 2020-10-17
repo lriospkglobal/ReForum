@@ -93,6 +93,23 @@ const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin, f
   });
 };
 
+
+/**
+ * archive a forum
+ * @param  {String} forum_id
+ * @param  {Boolean} archived
+ * @return {Promise}
+ */
+const archiveForum = (forum_id, archived) => {
+  return new Promise((resolve, reject) => {
+    Forum.findOneAndUpdate({ _id: forum_id }, { archived }, { new: true, useFindAndModify: false }, (err, doc) => {
+      if (err) return reject(err)
+      resolve(doc)
+    })
+
+  });
+};
+
 /**
  * delete an entire forum
  * @param  {String} forum_id
@@ -174,4 +191,5 @@ module.exports = {
   deleteForum,
   deleteUser,
   deleteDiscussion,
+  archiveForum
 };

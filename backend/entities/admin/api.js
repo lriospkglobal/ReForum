@@ -3,6 +3,7 @@ const getAdminDashInfo = require('./controller').getAdminDashInfo;
 const createForum = require('./controller').createForum;
 const deleteForum = require('./controller').deleteForum;
 const deleteUser = require('./controller').deleteUser;
+const archiveForum = require('./controller').archiveForum;
 const deleteDiscussion = require('./controller').deleteDiscussion;
 const { gridFsSave, base64encodeBuffer } = require('../helpers')
 const multer = require('multer');
@@ -21,7 +22,17 @@ const adminAPI = (app, client) => {
         (error) => { res.send(error); }
       );
     }
-    else res.send({ error: 'You are not admin buddy 😛' });
+    else res.send({ error: 'You are not an admin' });
+  });
+
+  // archive a foroum
+  app.post('/api/admin/archive', (req, res) => {
+    if (!req.query.forumId || !req.query.archived) return res.send({ error: 'Missing params' })
+
+    if (req.user && req.user.role === 'admin') {
+      archiveForum(req.query.forumId, req.query.archived).then(doc => res.send(doc.archived)).catch(err => res.send(err))
+    }
+    else res.send({ error: 'You are not an admin' });
   });
 
   // create a forum
@@ -69,7 +80,7 @@ const adminAPI = (app, client) => {
         (error) => { res.send(error); }
       );
     }
-    else res.send({ error: 'You are not admin buddy 😛' });
+    else res.send({ error: 'You are not an admin' });
   });
 
   // delete an user
@@ -80,7 +91,7 @@ const adminAPI = (app, client) => {
         (error) => { res.send(error); }
       );
     }
-    else res.send({ error: 'You are not admin buddy 😛' });
+    else res.send({ error: 'You are not an admin' });
   });
 
   // delete a discussion
@@ -91,7 +102,7 @@ const adminAPI = (app, client) => {
         (error) => { res.send(error); }
       );
     }
-    else res.send({ error: 'You are not admin buddy 😛' });
+    else res.send({ error: 'You are not an admin' });
   });
 };
 

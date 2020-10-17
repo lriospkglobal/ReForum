@@ -257,6 +257,12 @@ class ForumBox extends Component {
     reader.onerror = error => reject(error);
   });
 
+  setTitle = (e) => {
+    const title = e.target.value
+    let newForumSlug = title.replace(/\s/g, "_").toLowerCase()
+    this.setState({ newForumTitle: title, newForumSlug, success: false })
+  }
+
 
   render() {
     const {
@@ -296,7 +302,7 @@ class ForumBox extends Component {
 
 
               <Form.Label>Forum Title</Form.Label>
-              <Form.Control value={this.state.newForumTitle} onChange={(e) => { this.setState({ newForumTitle: e.target.value, success: false }); }} type="text" />
+              <Form.Control value={newForumTitle} onChange={this.setTitle} type="text" />
 
             </Form.Group>
             <Form.Group className="directions">
@@ -306,13 +312,7 @@ class ForumBox extends Component {
               <Form.Control value={this.state.newForumDirections} as="textarea" onChange={(e) => this.setState({ newForumDirections: e.target.value, success: false })} />
 
             </Form.Group>
-            <Form.Group className="slug">
 
-
-              <Form.Label>Forum Slug</Form.Label>
-              <Form.Control value={this.state.newForumSlug} onChange={(e) => { this.setState({ newForumSlug: e.target.value, success: false }); }} type="text" />
-
-            </Form.Group>
             <Form.Group className="form-card">
               <Form.Label>Mosaic Photo</Form.Label>
               <Row>
