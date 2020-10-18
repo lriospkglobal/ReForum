@@ -15,6 +15,7 @@ import {
 } from './actions';
 
 import camera from '../../App/img/camera-icon.svg';
+import comingSoon from '../../App/img/comingSoon.png';
 import pencilWhite from '../../App/img/pencil-white.svg';
 import pencilBlack from '../../App/img/pencil-black.svg';
 import FeedBox from '../../Components/FeedBox';
@@ -39,7 +40,7 @@ class ForumFeed extends Component {
       successMessage: '',
       tileSize: null,
       tileSizeOriginal: null,
-      previousMosaics: {},
+      previousMosaics: [],
       quality: 100,
       showTooltip: false,
       currentForumId: null,
@@ -290,9 +291,8 @@ class ForumFeed extends Component {
           ? canvasContainerWidth : that.state.canvasWidth,
           state.widthGrowth > 0 ? state.newHeight : that.state.canvasHeight)
 
-
-        if (that.props.location.query.tileId) {
-
+          
+        if (that.props.location.query.tileId) {          
           that.openFromUrl(that.props.location.query.tileId)
         }
 
@@ -355,10 +355,19 @@ class ForumFeed extends Component {
 
     axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
       .then(response => {
-        const previousMosaics = {}
-        previousMosaics[this.state.currentForumId] = response.data.length ? response.data : []
+        const previousMosaics = response.data.length ? response.data : []
+        let steps = [5, 10, 25, 50, 100, 200, 500, 1000]
+        if (previousMosaics.length) {
+          steps = steps.slice(previousMosaics.length, steps.length)
+        }
+        const empty = steps.map(x => {
+          return { _id: x, nTiles: x };
+        });
+
+
+
         this.setState({
-          previousMosaics
+          previousMosaics: [...previousMosaics, ...empty]
 
         })
       })
@@ -432,7 +441,7 @@ class ForumFeed extends Component {
               this.getPreviousMosaics()
             })
           } else
-            this.setState({ currentForumId, previousMosaics: {} })
+            this.setState({ currentForumId, previousMosaics: [] })
 
 
         })
@@ -634,10 +643,10 @@ class ForumFeed extends Component {
                 onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
             </section>
 
-            {(this.state.previousMosaics && this.state.previousMosaics[forumId] && this.state.previousMosaics[forumId].length) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
+            {(this.state.previousMosaics && this.state.previousMosaics.length) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
               <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
               {
-                this.state.previousMosaics[forumId].map((prevMosaic, index) => {
+                this.state.previousMosaics.map((prevMosaic, index) => {
                   return (
                     <div className="previous-mosaic d-flex align-items-start justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
                       <ImageBootstrap onClick={() => {
@@ -645,7 +654,7 @@ class ForumFeed extends Component {
                           showPrevMosaicModal: true,
                           prevMosaicImage: index
                         })
-                      }} thumbnail src={'data:image/jpeg;base64, ' + prevMosaic.base64} />
+                      }} thumbnail src={prevMosaic.base64 ? 'data:image/jpeg;base64, ' + prevMosaic.base64 : comingSoon} />
                       <strong className="text-white text-center w-100 mt-2">{prevMosaic.nTiles} PHOTOS</strong>
                     </div>
                   )
@@ -666,14 +675,14 @@ class ForumFeed extends Component {
                   <Container>
                     <Carousel activeIndex={this.state.prevMosaicImage} indicators={false}
                       onSelect={(selectedIndex) => this.setState({ prevMosaicImage: selectedIndex })}>
-                      {this.state.previousMosaics[forumId].map(prevMosaic => {
+                      {this.state.previousMosaics.map(prevMosaic => {
                         return (
                           <Carousel.Item key={prevMosaic._id}>
                             <ImageBootstrap
                               fluid
                               thumbnail
                               className="d-block w-100"
-                              src={'data:image/jpeg;base64, ' + prevMosaic.base64}
+                              src={prevMosaic.base64 ? 'data:image/jpeg;base64, ' + prevMosaic.base64 : comingSoon}
                               alt="slide"
                             />
                             <Carousel.Caption>

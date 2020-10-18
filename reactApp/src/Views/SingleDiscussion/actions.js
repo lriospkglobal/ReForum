@@ -42,7 +42,7 @@ export const getDiscussion = (discussionSlug) => {
     fetchSingleDiscussion(discussionSlug).then(
 
       data => {
-        console.log(data)
+
         if (data.data) dispatch({ type: FETCHING_SINGLE_DISC_SUCCESS, payload: data.data });
         else dispatch({ type: FETCHING_SINGLE_DISC_FAILURE });
       },

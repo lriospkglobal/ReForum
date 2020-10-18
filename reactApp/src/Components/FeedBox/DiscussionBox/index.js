@@ -154,7 +154,7 @@ function DiscussionBox(props) {
 
 
                 />
-                {discussion.opinions.map((opinion) => {
+                {discussion.opinions.length && discussion.opinions.map((opinion) => {
                   return (
                     <Opinion
                       key={opinion._id}

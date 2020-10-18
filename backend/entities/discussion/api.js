@@ -43,7 +43,7 @@ const discussionAPI = (app, client) => {
   //create new mosaic
   app.post('/api/discussion/newMosaic', (req, res) => {
     return new Promise((resolve, reject) => {
-      //axios.post('http://localhost:5500/api-mosaic/build-mosaic?tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=socialdist92%40gmail.com')
+      //return axios.post('http://localhost:5500/api-mosaic/build-mosaic?forumName=' + req.body.forumName + '&tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.body.user.email))
       return axios.post('http://mosaic-python-api.herokuapp.com/api-mosaic/build-mosaic?forumName=' + req.body.forumName + '&tileId=' + req.body.tileId + '&forumId=' + req.body.forumId + '&tileSize=3&enlargement=1&quality=100&email=' + encodeURIComponent(req.body.user.email))
         .then(req => {
           resolve(res.send(req.data.message))
@@ -54,7 +54,7 @@ const discussionAPI = (app, client) => {
   app.post('/api/discussion/newDiscussion', upload.single('tile'), (req, res) => {
     let tileId
     if (req.user) {
-
+      console.log(req.body)
       createDiscussion(req.body, client, req.file).then(
         (result) => {
           tileId = result._doc.tile_id
@@ -68,6 +68,7 @@ const discussionAPI = (app, client) => {
 
       });
       res.on('finish', () => {
+        //return axios.post('http://localhost:5000/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId, forumName: req.body.forumName })
         return axios.post('https://mosaic-forum.herokuapp.com/api/discussion/newMosaic', { forumId: req.body.forumId, user: req.user, tileId, forumName: req.forumName })
           .then(() => console.log('Success!')).catch(err => console.error(err))
       });
