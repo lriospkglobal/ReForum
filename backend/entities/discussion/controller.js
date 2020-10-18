@@ -48,7 +48,7 @@ const getDiscussion = (discussion_slug, discussion_id) => {
  */
 const createDiscussion = (discussion, client, file) => {
   return new Promise((resolve, reject) => {
-
+    
     gridFsSave('reforum', discussion.forumId, file.buffer, file.fieldname + Date.now() + '.jpg', client)
       .then(obj => resolve(obj)).catch(err => reject(err))
 

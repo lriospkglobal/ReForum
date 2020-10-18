@@ -291,8 +291,8 @@ class ForumFeed extends Component {
           ? canvasContainerWidth : that.state.canvasWidth,
           state.widthGrowth > 0 ? state.newHeight : that.state.canvasHeight)
 
-          
-        if (that.props.location.query.tileId) {          
+
+        if (that.props.location.query.tileId) {
           that.openFromUrl(that.props.location.query.tileId)
         }
 
@@ -586,8 +586,17 @@ class ForumFeed extends Component {
 
                 </p>
                 <div className="w-25 overflow-auto">
-
-
+                  {(role && role === 'moderator') && <OverlayTrigger placement={'top'}
+                    overlay={
+                      <Tooltip>
+                        As a moderator you can post photos.
+        </Tooltip>
+                    }>
+                    <ButtonBootstrap className="camera float-right" >
+                      Post a Photo
+          </ButtonBootstrap>
+                  </OverlayTrigger>}
+                    {role}
 
                   <ButtonBootstrap className="camera float-right" onClick={() => this.setState({ showDiscussionModal: true })}>
                     Post a Photo

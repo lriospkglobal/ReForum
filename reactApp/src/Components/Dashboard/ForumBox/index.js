@@ -65,13 +65,15 @@ class ForumBox extends Component {
       photoDate,
       photoTime,
       tileImage,
-      tileObj
+      tileObj,
+      newForumSlug
 
     } = this.state
     const { user } = this.props
 
     if (tileObj) {
       postDiscussionApi({
+        forumName: newForumSlug,
         userId: user._id,
         forumId: newForum._doc._id,
         title: tileTitle,

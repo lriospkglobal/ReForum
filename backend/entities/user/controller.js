@@ -39,9 +39,7 @@ const signInViaGithub = (username, email) => {
     User.findOne({ username, email }, (error, user) => {
       if (error) { console.log(error); reject(error); }
       else {
-
-
-
+        
         // user existed on db
         if (user) {
           resolve(user);

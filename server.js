@@ -20,6 +20,8 @@ app.use(cors());
 MongoClient.connect(serverConfigs.DBURL, function (err, client) {
   if (err) throw err;
   require('./backend/express')(app, serverConfigs, client);
+  require('./backend/createMentor')(client)
+
 });
 
 
