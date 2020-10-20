@@ -123,7 +123,7 @@ export const postDiscussion = (userId, forumId, currentForum, cb) => {
       });
     }
     // make api call if post is validated
-    if (validated) {
+    if (validated) {      
       postDiscussionApi({
         forumName: currentForum,
         userId,
