@@ -78,7 +78,7 @@ function FeedBox(props) {
       {renderEmptyDiscussionLine(loading, discussions)}
       {!loading &&
         <div >
-          {(role && role === 'admin' && discussions && discussions.length) && <DiscussionBox
+          {(role && role === 'admin' && discussions && discussions.length > 1) && <DiscussionBox
             discussion={toApproveDiscussion}
             key={toApproveDiscussion._id}
             idKey={toApproveDiscussion._id}

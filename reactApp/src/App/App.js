@@ -67,7 +67,7 @@ class AppContainer extends Component {
     }
 
     return (
-      <Container >
+      <Container className="h-100 d-flex align-items-center mt-5 justify-content-center">
         <div className="spinner-border" role="status">
           <span className="sr-only">Loading...</span>
         </div>

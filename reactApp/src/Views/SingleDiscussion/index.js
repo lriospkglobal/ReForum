@@ -30,8 +30,11 @@ class SingleDiscussion extends Component {
       discussionSlug, discussion
     } = this.props;
 
-    if (!discussion)
+    if (!discussion) {
+      console.log(discussionSlug)
       this.props.getDiscussion(discussionSlug);
+    }
+
 
   }
 
@@ -69,13 +72,13 @@ class SingleDiscussion extends Component {
 
     const {
       postOpinion,
-      discussion,
       opinionContent,
       userId,
     } = this.props;
 
-    const discussion_slug = this.props.discussion.discussion_slug;
-    const forumId = this.props.discussion.forum._id;
+    const discussion = this.props.discussionFromStore || this.props.discussion
+    const discussion_slug = this.props.discussionSlug;
+    const forumId = discussion.forum._id;
 
     postOpinion(
       {
@@ -102,6 +105,7 @@ class SingleDiscussion extends Component {
 
   render() {
     const discussion = this.props.discussionFromStore || this.props.discussion
+
     const {
       toggleFavorite,
       toggleingFavorite,
@@ -177,7 +181,7 @@ class SingleDiscussion extends Component {
 
           <hr />
           {opinions && opinions.length ? <p><strong>{opinions.length + 1} Comments</strong></p> : null}
-          {(opinions && opinions.length) &&
+          {(opinions && opinions.length > 0) &&
             <Opinion
               pinned={true}
               key={'hkjhfd25432'}
@@ -193,7 +197,7 @@ class SingleDiscussion extends Component {
 
             />
           }
-          {opinions && opinions.map((opinion) => {
+          {opinions && opinions.length > 0 && opinions.map((opinion) => {
             return (
               <Opinion
                 key={opinion._id}
