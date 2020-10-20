@@ -596,7 +596,7 @@ class ForumFeed extends Component {
                       Post a Photo
           </ButtonBootstrap>
                   </OverlayTrigger>}
-                    {role}
+                    
 
                   <ButtonBootstrap className="camera float-right" onClick={() => this.setState({ showDiscussionModal: true })}>
                     Post a Photo
