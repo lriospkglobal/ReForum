@@ -342,23 +342,7 @@ class ForumBox extends Component {
               <Form.Control value={this.state.newForumDirections} as="textarea" onChange={(e) => this.setState({ newForumDirections: e.target.value, success: false })} />
 
             </Form.Group>
-            <Form.Group>
 
-
-              <Form.Label>Snapshot increments</Form.Label>
-              <div className="input-tag">
-                <ul className="input-tag__tags">
-                  {tags.map((tag, i) => (
-                    <li key={tag}>
-                      {tag}
-                      <button type="button" onClick={() => { this.removeTag(i); }}>+</button>
-                    </li>
-                  ))}
-                  <li className="input-tag__tags__input"><input type="text" onKeyDown={this.inputKeyDown} ref={c => { this.tagInput = c; }} /></li>
-                </ul>
-              </div>
-
-            </Form.Group>
 
             <Form.Group className="form-card">
               <Form.Label>Mosaic Photo</Form.Label>
@@ -410,6 +394,28 @@ class ForumBox extends Component {
                     type="checkbox" className="small" label="I am the owner of this photo or have permission to use it. AARP may use this photo without permission or attribution. (Required)" />
                 </Col>
               </Row>
+
+
+            </Form.Group>
+
+
+            <Form.Group className="form-card">
+              <Form.Label>Mosaic Progress</Form.Label>
+
+
+
+              <p>Display progress snapshots</p>
+              <div className="input-tag">
+                <ul className="input-tag__tags">
+                  {tags.map((tag, i) => (
+                    <li key={tag}>
+                      {tag}
+                      <button type="button" onClick={() => { this.removeTag(i); }}>+</button>
+                    </li>
+                  ))}
+                  <li className="input-tag__tags__input"><input type="text" onKeyDown={this.inputKeyDown} ref={c => { this.tagInput = c; }} /></li>
+                </ul>
+              </div>
 
 
             </Form.Group>

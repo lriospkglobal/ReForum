@@ -28,8 +28,13 @@ class Dashboard extends Component {
 
       forums,
     } = this.props.adminInfo.info;
-    if (prevProps.adminInfo && (prevProps.adminInfo.info.forums.length !== forums.length))
-      this.setState({ forums })
+    if (prevProps.adminInfo && forums) {
+      if (prevProps.adminInfo.info.forums.length !== forums.length) {
+        this.setState({ forums })
+      }
+    }
+
+
 
 
   }
