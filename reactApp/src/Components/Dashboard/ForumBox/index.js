@@ -45,14 +45,16 @@ class ForumBox extends Component {
       tileFeatured: false,
       tileObj: false,
       tags: [
-        '5',
-        '10',
-        '25',
-        '50',
-        '100',
-        '200',
-        '500',
-        '1000'
+        { value: '5', checked: false, disabled: false },
+        { value: '10', checked: false, disabled: false },
+        { value: '25', checked: false, disabled: false },
+        { value: '50', checked: false, disabled: false },
+        { value: '100', checked: false, disabled: false },
+        { value: '200', checked: false, disabled: false },
+        { value: '500', checked: false, disabled: false },
+        { value: '1000', checked: false, disabled: false }
+
+
       ]
 
     };
@@ -61,24 +63,7 @@ class ForumBox extends Component {
 
     this.handleCreateForum = this.handleCreateForum.bind(this);
   }
-  removeTag = (i) => {
-    const newTags = [...this.state.tags];
-    newTags.splice(i, 1);
-    this.setState({ tags: newTags });
-  }
 
-  inputKeyDown = (e) => {
-    const val = e.target.value;
-    if (e.key === 'Enter' && val) {
-      if (this.state.tags.find(tag => tag.toLowerCase() === val.toLowerCase())) {
-        return;
-      }
-      this.setState({ tags: [...this.state.tags, val] });
-      this.tagInput.value = null;
-    } else if (e.key === 'Backspace' && !val) {
-      this.removeTag(this.state.tags.length - 1);
-    }
-  }
   creatForumSuccess = (newForum) => {
 
     const {
@@ -292,6 +277,35 @@ class ForumBox extends Component {
     this.setState({ newForumTitle: title, newForumSlug, success: false })
   }
 
+  checkProgress = (value, index, e) => {
+    const checked = e.target.checked
+    let nChecked = this.state.tags.filter(tag => tag.checked).length
+    if (checked) nChecked += 1
+    else nChecked -= 1
+
+    const tags = [...this.state.tags]
+
+
+    if (nChecked <= 7)
+      tags[index].checked = checked
+
+    this.setState({
+      tags: tags.map(tag => {
+        if (nChecked >= 7) {
+          if (!tag.checked && !tag.disabled) {
+            tag.disabled = true;
+          }
+        }
+        else if (nChecked < 8) {
+          if (tag.disabled) {
+            tag.disabled = false;
+          }
+        }
+        return tag
+      })
+    })
+  }
+
 
   render() {
     const {
@@ -377,7 +391,7 @@ class ForumBox extends Component {
                   </div>
                 </Col>
                 <Col md="5" className="d-flex flex-column justify-content-between">
-                  <div>
+                  <div className="mb-3">
                     <Form.Label>
                       Description
                   </Form.Label>
@@ -388,6 +402,17 @@ class ForumBox extends Component {
                       as="textarea"
                       maxLength="500"
                       placeholder="Why did you choose this photo for the mosaic?" />
+                    <Form.Label className="mt-3">
+                      Pillar
+                  </Form.Label>
+                    <Form.Control as="select">
+
+                      <option>Connect</option>
+                      <option>Discover</option>
+                      <option>Move</option>
+                      <option>Nourish</option>
+                      <option>Relax</option>
+                    </Form.Control>
                   </div>
                   <Form.Check
                     checked={this.state.newMosaicImageOwner} onChange={(e) => { this.setState({ newMosaicImageOwner: e.target.checked, success: false }); }}
@@ -405,17 +430,12 @@ class ForumBox extends Component {
 
 
               <p>Display progress snapshots</p>
-              <div className="input-tag">
-                <ul className="input-tag__tags">
-                  {tags.map((tag, i) => (
-                    <li key={tag}>
-                      {tag}
-                      <button type="button" onClick={() => { this.removeTag(i); }}>+</button>
-                    </li>
-                  ))}
-                  <li className="input-tag__tags__input"><input type="text" disabled ref={c => { this.tagInput = c; }} /></li>
-                </ul>
-              </div>
+              {tags.map((obj, index) => (
+
+                <Form.Check inline label={obj.value} disabled={obj.disabled} checked={obj.checked} type="checkbox" onChange={this.checkProgress.bind(this, obj.value, index)} key={obj.value} />
+
+
+              ))}
 
 
             </Form.Group>
