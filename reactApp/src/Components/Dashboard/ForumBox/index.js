@@ -43,7 +43,17 @@ class ForumBox extends Component {
       photoTime: 'Morning',
       tileRights: false,
       tileFeatured: false,
-      tileObj: false
+      tileObj: false,
+      tags: [
+        '5',
+        '10',
+        '25',
+        '50',
+        '100',
+        '200',
+        '500',
+        '1000'
+      ]
 
     };
 
@@ -51,7 +61,24 @@ class ForumBox extends Component {
 
     this.handleCreateForum = this.handleCreateForum.bind(this);
   }
+  removeTag = (i) => {
+    const newTags = [...this.state.tags];
+    newTags.splice(i, 1);
+    this.setState({ tags: newTags });
+  }
 
+  inputKeyDown = (e) => {
+    const val = e.target.value;
+    if (e.key === 'Enter' && val) {
+      if (this.state.tags.find(tag => tag.toLowerCase() === val.toLowerCase())) {
+        return;
+      }
+      this.setState({ tags: [...this.state.tags, val] });
+      this.tagInput.value = null;
+    } else if (e.key === 'Backspace' && !val) {
+      this.removeTag(this.state.tags.length - 1);
+    }
+  }
   creatForumSuccess = (newForum) => {
 
     const {
@@ -278,6 +305,7 @@ class ForumBox extends Component {
       newForumTitle,
       newForumSlug,
       errorMsg,
+      tags
     } = this.state;
 
     return (
@@ -312,6 +340,23 @@ class ForumBox extends Component {
 
               <Form.Label>Directions</Form.Label>
               <Form.Control value={this.state.newForumDirections} as="textarea" onChange={(e) => this.setState({ newForumDirections: e.target.value, success: false })} />
+
+            </Form.Group>
+            <Form.Group>
+
+
+              <Form.Label>Snapshot increments</Form.Label>
+              <div className="input-tag">
+                <ul className="input-tag__tags">
+                  {tags.map((tag, i) => (
+                    <li key={tag}>
+                      {tag}
+                      <button type="button" onClick={() => { this.removeTag(i); }}>+</button>
+                    </li>
+                  ))}
+                  <li className="input-tag__tags__input"><input type="text" onKeyDown={this.inputKeyDown} ref={c => { this.tagInput = c; }} /></li>
+                </ul>
+              </div>
 
             </Form.Group>
 
