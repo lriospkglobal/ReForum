@@ -23,7 +23,8 @@ function DiscussionBox(props) {
   const voteCount = props.discussion.favorites.length
 
 
-  const { discussion, id, setDiscussion, setLgShow, role, mock, key } = props;
+  const { openFromUrl, discussion, setDiscussion, setLgShow, role, mock, key, idKey, tileId } = props;
+
 
   const postTime = Moment(time);
   const timeDisplay = postTime.from(Moment());
@@ -31,7 +32,7 @@ function DiscussionBox(props) {
 
 
   return (
-    <Card key={id} className="discussion-box mb-3">
+    <Card key={key} className="discussion-box mb-3">
       <Card.Body>
         <section className="discussion-box__header d-flex mb-3 align-items-center justify-content-between">
           <div className="d-flex align-items-center h-100">
@@ -130,6 +131,14 @@ function DiscussionBox(props) {
                   </div>
                 </OverlayTrigger>
               }
+
+
+              <div>
+                <button onClick={() => openFromUrl(tileId)} className="misc-button p-2">
+                  <img src={thumbsUp} />
+                </button>
+                <span className="ml-2">View in mosaic</span>
+              </div>
 
               <Button onClick={() => {
                 setLgShow(true)

@@ -307,11 +307,11 @@ class ForumFeed extends Component {
   }
 
   openFromUrl = (tileId) => {
-
+    
     let coordinates
 
     for (let attr in this.state.coordinates) {
-      if (this.state.coordinates[attr] === tileId) {
+      if (this.state.coordinates[attr] === tileId) {        
         coordinates = attr
 
         break
@@ -596,7 +596,7 @@ class ForumFeed extends Component {
                       Post a Photo
           </ButtonBootstrap>
                   </OverlayTrigger>}
-                    
+
 
                   <ButtonBootstrap className="camera float-right" onClick={() => this.setState({ showDiscussionModal: true })}>
                     Post a Photo
@@ -774,6 +774,7 @@ class ForumFeed extends Component {
                 onChangeSortingMethod={this.handleSortingChange.bind(this)}
                 activeSortingMethod={sortingMethod}
                 setDiscussionOpenModal={this.setDiscussionOpenModal}
+                openFromUrl={this.openFromUrl}
               />
 
 

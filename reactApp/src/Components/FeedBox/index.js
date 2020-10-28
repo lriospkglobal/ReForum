@@ -60,7 +60,8 @@ function FeedBox(props) {
     discussions,
     currentForum,
     userProfile,
-    role
+    role,
+    openFromUrl
   } = props;
 
   let discussionBoxTitle = '';
@@ -88,7 +89,7 @@ function FeedBox(props) {
 
           />}
 
-          {(discussions && discussions.length ) ? discussions.map((discussion) => {
+          {(discussions && discussions.length) ? discussions.map((discussion) => {
 
             return < DiscussionBox
               discussion={discussion}
@@ -96,8 +97,10 @@ function FeedBox(props) {
               discussionType={type}
               key={discussion._id}
               idKey={discussion._id}
+              tileId={discussion.tile_id}
               setDiscussion={setDiscussion}
               setLgShow={setLgShow}
+              openFromUrl={openFromUrl}
 
             />
           }) : null}
