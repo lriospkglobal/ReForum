@@ -19,6 +19,7 @@ function DiscussionBox(props) {
   const pinnedDiscussion = props.discussion.pinned
   const discussion_slug = props.discussion.discussion_slug
   const time = props.discussion.date
+  const setPinned = props.discussion.setPinned
   const photoTime = props.discussion.photo_time
   const camera = props.discussion.camera ? props.discussion.camera : ''
   const location = props.discussion.photo_location ? props.discussion.photo_location : ''
@@ -63,17 +64,17 @@ function DiscussionBox(props) {
         </section>
 
         <Image className="discussion-box__image" src={discussion.base64 ? ('data:image/jpeg;base64,' + discussion.base64) : mockImage} fluid />
-       
 
-        
+
+
         <Container className="mt-4">
-        <Row>
+          <Row>
             <Col className="pl-0">
               <p>{discussionTitle}</p>
-            </Col>  
+            </Col>
             <Col className="pr-0">
               <p><strong>Time of Day: </strong> {photoTime}</p>
-            </Col>          
+            </Col>
           </Row>
           <Row>
             <Col className="pl-0">
@@ -83,9 +84,9 @@ function DiscussionBox(props) {
               <p><strong>LOCATION: </strong> {location}</p>
             </Col>
           </Row>
-          
-          
-          
+
+
+
 
         </Container>
         <p>{discussionContent}</p>
@@ -113,7 +114,7 @@ function DiscussionBox(props) {
                 >
                   <div>
 
-                    <button className="misc-button p-2">
+                    <button className={(setPinned ? 'active ' : '') + 'misc-button p-2'}>
                       <img src={pin} />
                     </button>
                     <span className="ml-2">Pin</span>

@@ -37,7 +37,7 @@ const optionsTime = [
   { value: 'afternoon', label: 'Afternoon' },
   { value: 'sunset', label: 'Sunset' },
   { value: 'evening', label: 'Evening' },
-  
+
 ]
 
 
@@ -238,7 +238,7 @@ class NewDiscussion extends Component {
 
               <Form.Label><strong>Description</strong></Form.Label>
               <Form.Text className="mb-2">
-                Describe how your Sharp Shot connects to the Staying Sharp pillar ongoing exercise.
+                Describe how your Sharp Shot connects to the theme of this photomosaic.
   </Form.Text>
               {/* <RichEditor
                 key={'content'}

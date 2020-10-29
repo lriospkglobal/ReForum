@@ -89,7 +89,8 @@ function FeedBox(props) {
 
           />}
 
-          {(discussions && discussions.length) ? discussions.map((discussion) => {
+          {          
+          (discussions && discussions.length) ? discussions.map((discussion) => {
 
             return < DiscussionBox
               discussion={discussion}
@@ -101,7 +102,7 @@ function FeedBox(props) {
               setDiscussion={setDiscussion}
               setLgShow={setLgShow}
               openFromUrl={openFromUrl}
-
+              
             />
           }) : null}
         </div>

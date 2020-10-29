@@ -468,7 +468,12 @@ header {
       .navbar-nav {
         .dropdown {
           >a {
+            color: white;
             font-weight: bold;
+
+            &:hover {
+              color: white;
+            }
           }
         }
       }

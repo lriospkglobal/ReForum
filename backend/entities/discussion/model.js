@@ -21,7 +21,8 @@ const discussionSchema = mongoose.Schema({
   photo_location: String,
   rights: Boolean,
   photo_date: Date,
-  photo_time: String
+  photo_time: String,
+  setPinned: Boolean
 });
 
 module.exports = mongoose.model('discussion', discussionSchema);
