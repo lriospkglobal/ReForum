@@ -42,6 +42,7 @@ function DiscussionBox(props) {
             <Image src={user.avatarUrl} fluid roundedCircle />
             <div className="d-flex flex-column justify-content-center">
               <span>{user.name || user.username} {pinnedDiscussion && <span className="rectangle">Featured</span>}
+                {setPinned && <img className="pin" src={pin} />}
                 {(!pinnedDiscussion && !mock) && (role && role === 'admin') &&
                   <OverlayTrigger
                     key={'top'}

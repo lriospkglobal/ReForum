@@ -768,6 +768,15 @@ header {
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
 
   .discussion-box__header {
+    position: relative;
+
+    .pin {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 30px;
+      width: auto;
+    }
 
     .pending-message {
       font-size: 20px;
