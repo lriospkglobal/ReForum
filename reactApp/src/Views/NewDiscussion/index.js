@@ -30,6 +30,16 @@ const options = [
   { value: 'slr and dslr', label: 'SLR and DSLR' }
 ]
 
+const optionsTime = [
+  { value: 'dawn', label: 'Dawn' },
+  { value: 'morning', label: 'Morning' },
+  { value: 'midday', label: 'Midday' },
+  { value: 'afternoon', label: 'Afternoon' },
+  { value: 'sunset', label: 'Sunset' },
+  { value: 'evening', label: 'Evening' },
+  
+]
+
 
 
 class NewDiscussion extends Component {
@@ -228,7 +238,7 @@ class NewDiscussion extends Component {
 
               <Form.Label><strong>Description</strong></Form.Label>
               <Form.Text className="mb-2">
-              Describe how your Sharp Shot connects to the Staying Sharp pillar ongoing exercise.
+                Describe how your Sharp Shot connects to the Staying Sharp pillar ongoing exercise.
   </Form.Text>
               {/* <RichEditor
                 key={'content'}
@@ -254,13 +264,14 @@ class NewDiscussion extends Component {
               <Form.Text className="mb-2">
                 Time of day photo was taken
               </Form.Text>
-              <Form.Control value={time} onChange={e => updateTime(e.target.value)} as="select">
-                <option>Morning</option>
-                <option>Noon</option>
-                <option>Evening</option>
-                <option>Night</option>
+              <CreatableSelect
+                isClearable
+                onChange={obj => obj.value && updateTime(obj.value)}
+                onInputChange={obj => obj.value && updateTime(obj.value)}
+                options={optionsTime}
+                placeholder="Select or input..."
+              />
 
-              </Form.Control>
             </Form.Group>
             <Form.Group className="small">
               <Form.Check checked={rights} onChange={(e) => { updateRights(e.target.checked); }}
@@ -272,7 +283,7 @@ class NewDiscussion extends Component {
                 {errorMsg}
               </Alert>}
               {postingSuccess && <Alert variant="success">
-                Discussion created!
+                Successfully created post.
           </Alert>}
 
 

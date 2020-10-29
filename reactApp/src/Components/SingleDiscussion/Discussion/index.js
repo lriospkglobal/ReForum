@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-
+import moment from 'moment';
 import RichEditor from '../../../Components/RichEditor';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
 import flag from './../../../App/img/flag-icon.svg';
-import { Form, Button, Dropdown } from 'react-bootstrap';
+import { Form, Button, Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 class Discussion extends Component {
   render() {
     const {
@@ -17,8 +17,12 @@ class Discussion extends Component {
       toggleingFavorite,
       allowDelete,
       deletingDiscussion,
-      deleteAction, 
-      userRole
+      deleteAction,
+      userRole,
+      camera,
+      photoLocation,
+      photoDate,
+      photoTime
 
     } = this.props;
 
@@ -37,6 +41,12 @@ class Discussion extends Component {
           <strong >{discTitle}</strong><br />
           {discContent}
         </p>
+        <div className="d-flex flex-column">
+          <span><strong>CAMERA: </strong>{camera}</span>
+          <span><strong>LOCATION: </strong>{photoLocation}</span>
+          <span><strong>DATE: </strong>{moment(photoDate).format("MMM Do YY")}</span>
+          <span><strong>TIME OF DAY: </strong>{photoTime}</span>
+        </div>
 
 
 
@@ -49,13 +59,22 @@ class Discussion extends Component {
             </button>
             <span className="ml-2">{favoriteCount} Kudos</span>
           </div>
-          {(userRole === 'user') && <div >
-            <button
-              className={'misc-button p-2'} >
-              <img src={flag} />
-            </button>
-            <span className="ml-2">Report Content</span>
-          </div>}
+          {(userRole === 'user') &&
+            <OverlayTrigger placement={'top'}
+              overlay={
+                <Tooltip>
+                  As a user you can report posts.
+              </Tooltip>
+              }>
+              <div >
+                <button
+                  className={'misc-button p-2'} >
+                  <img src={flag} />
+                </button>
+                <span className="ml-2">Report Content</span>
+              </div>
+            </OverlayTrigger>
+          }
           <Dropdown className="extra-options">
             <Dropdown.Toggle id="dropdown-basic">
               <strong>. . .</strong>

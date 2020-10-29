@@ -307,11 +307,11 @@ class ForumFeed extends Component {
   }
 
   openFromUrl = (tileId) => {
-    
+
     let coordinates
 
     for (let attr in this.state.coordinates) {
-      if (this.state.coordinates[attr] === tileId) {        
+      if (this.state.coordinates[attr] === tileId) {
         coordinates = attr
 
         break
@@ -454,7 +454,7 @@ class ForumFeed extends Component {
   }
 
   successCallback = () => {
-    window.location = "/"
+    window.location = "/" + this.props.currentForum
   }
 
   handleSortingChange(newSortingMethod) {
@@ -893,10 +893,17 @@ class ForumFeed extends Component {
 
 
                 <ImageBootstrap src={this.state.currentDiscussion.user.avatarUrl} roundedCircle />
+
                 <div className="d-flex flex-column justify-content-center">
                   <span>{this.state.currentDiscussion.user.name || this.state.currentDiscussion.user.username} </span>
                   <span className="text-muted">{this.state.currentDiscussion && this.timeDisplay()}</span>
                 </div>
+                <button
+                  onClick={() =>
+                    this.setState({ lgShow: false, currentDiscussion: null })
+
+                  }
+                  className="close"><span>×</span><span className="sr-only">Close</span></button>
               </section>
               <SingleDiscussion discussionSlug={this.state.currentDiscussion.discussion_slug} />
             </div>

@@ -127,6 +127,10 @@ class SingleDiscussion extends Component {
         title,
         tags,
         opinions,
+        camera,
+        photo_location,
+        photo_date,
+        photo_time
       } = discussion;
 
 
@@ -167,7 +171,10 @@ class SingleDiscussion extends Component {
             allowDelete={allowDelete}
             deletingDiscussion={deletingDiscussion}
             deleteAction={this.deleteDiscussion.bind(this)}
-
+            camera={camera}
+            photoLocation={photo_location}
+            photoDate={photo_date}
+            photoTime={photo_time}
           />
 
           {opinionError && <div >{opinionError}</div>}

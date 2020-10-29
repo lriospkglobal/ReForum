@@ -4,6 +4,7 @@ import Moment from 'moment';
 
 import Opinion from '../../../Components/SingleDiscussion/Opinion';
 import thumbsUp from './../../../App/img/thumbsup-icon.svg';
+import eye from './../../../App/img/eye-icon.svg';
 import pin from './../../../App/img/pin-icon.svg';
 import flag from './../../../App/img/flag-icon.svg';
 import { connect } from 'react-redux';
@@ -18,6 +19,7 @@ function DiscussionBox(props) {
   const pinnedDiscussion = props.discussion.pinned
   const discussion_slug = props.discussion.discussion_slug
   const time = props.discussion.date
+  const photoTime = props.discussion.photo_time
   const camera = props.discussion.camera ? props.discussion.camera : ''
   const location = props.discussion.photo_location ? props.discussion.photo_location : ''
   const voteCount = props.discussion.favorites.length
@@ -61,13 +63,18 @@ function DiscussionBox(props) {
         </section>
 
         <Image className="discussion-box__image" src={discussion.base64 ? ('data:image/jpeg;base64,' + discussion.base64) : mockImage} fluid />
-        <Card.Text>
-          {discussionContent.text}
-        </Card.Text>
+       
 
-        <p className="mb-2">{discussionTitle}</p>
-        <Container>
-
+        
+        <Container className="mt-4">
+        <Row>
+            <Col className="pl-0">
+              <p>{discussionTitle}</p>
+            </Col>  
+            <Col className="pr-0">
+              <p><strong>Time of Day: </strong> {photoTime}</p>
+            </Col>          
+          </Row>
           <Row>
             <Col className="pl-0">
               <p><strong>CAMERA: </strong> {camera}</p>
@@ -76,9 +83,12 @@ function DiscussionBox(props) {
               <p><strong>LOCATION: </strong> {location}</p>
             </Col>
           </Row>
+          
+          
+          
 
         </Container>
-
+        <p>{discussionContent}</p>
 
         <div className="discussion-box__footer ">
           {!mock ? <div>
@@ -135,7 +145,7 @@ function DiscussionBox(props) {
 
               <div>
                 <button onClick={() => openFromUrl(tileId)} className="misc-button p-2">
-                  <img src={thumbsUp} />
+                  <img src={eye} />
                 </button>
                 <span className="ml-2">View in mosaic</span>
               </div>

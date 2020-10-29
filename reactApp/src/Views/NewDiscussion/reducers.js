@@ -30,7 +30,7 @@ const initialState = {
   photoLocation: '',
   rights: false,
   date: null,
-  time: 'Morning'
+  time: 'morning'
 };
 
 export const newDiscussionReducer = (state = initialState, action) => {

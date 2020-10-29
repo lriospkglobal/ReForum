@@ -14,6 +14,16 @@ const options = [
   { value: 'point and shoot', label: 'Point and Shoot' },
   { value: 'slr and dslr', label: 'SLR and DSLR' }
 ]
+const optionsTime = [
+  { value: 'dawn', label: 'Dawn' },
+  { value: 'morning', label: 'Morning' },
+  { value: 'midday', label: 'Midday' },
+  { value: 'afternoon', label: 'Afternoon' },
+  { value: 'sunset', label: 'Sunset' },
+  { value: 'evening', label: 'Evening' },
+  
+]
+
 
 class ForumBox extends Component {
   constructor(props) {
@@ -40,7 +50,7 @@ class ForumBox extends Component {
       tileTags: ['aarp'],
       mentorName: '',
       mentorBiography: '',
-      photoTime: 'Morning',
+      photoTime: 'morning',
       tileRights: false,
       tileFeatured: false,
       tileObj: false,
@@ -537,16 +547,14 @@ class ForumBox extends Component {
                     <Form.Text className="mb-2">
                       Time of day photo was taken
               </Form.Text>
-                    <Form.Control as="select" value={this.state.photoTime} onChange={e => {
+                    <CreatableSelect
+                      isClearable
+                      onChange={obj => obj.value && this.setState({ photoTime: obj.value, success: false })}
+                      onInputChange={obj => obj.value && this.setState({ photoTime: obj.value, success: false })}
+                      options={optionsTime}
+                      placeholder="Select or input..."
+                    />
 
-                      this.setState({ photoTime: e.target.value, success: false })
-                    }}>
-                      <option>Morning</option>
-                      <option>Noon</option>
-                      <option>Evening</option>
-                      <option>Night</option>
-
-                    </Form.Control>
                   </Form.Group>
                   <Form.Group className="small">
                     <Form.Check

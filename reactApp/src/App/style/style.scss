@@ -464,6 +464,16 @@ header {
     padding-bottom: 40px;
     background: $aarp-red;
 
+    .navbar-collapse {
+      .navbar-nav {
+        .dropdown {
+          >a {
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
     .navigation-bar {
       background-color: white;
       position: absolute;
@@ -753,6 +763,7 @@ header {
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
 
   .discussion-box__header {
+
     .pending-message {
       font-size: 20px;
       letter-spacing: 0;
@@ -895,7 +906,7 @@ header {
     .extra-options {
       cursor: pointer;
       position: absolute;
-      top: 7px;
+      top: 30px;
       right: 1rem;
       font-size: x-large;
       color: $aarp-red;
@@ -934,6 +945,16 @@ header {
     }
   }
 
+}
+
+.discussion-box__header {
+
+
+  .close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
 }
 
 .discussion-box__header,

@@ -133,6 +133,12 @@ function FeedBox(props) {
                   <span>{discussion.user.name || discussion.user.username} </span>
                   <span className="text-muted">{timeDisplay(discussion.date)}</span>
                 </div>
+                <button
+                  onClick={() => {
+                    setLgShow(false)
+                    setDiscussion(null)
+                  }}
+                  className="close"><span>×</span><span className="sr-only">Close</span></button>
               </section>
               <SingleDiscussion discussion={discussion} discussionSlug={discussion.discussion_slug} />
             </div>
