@@ -212,7 +212,7 @@ class NewDiscussion extends Component {
 
             {(role === 'admin') && <Form.Group className="small">
               <Form.Check checked={pinned} onChange={(e) => { updateDiscussionPinStatus(e.target.checked); }}
-                type="checkbox" label="Is it a featured discussion?" />
+                type="checkbox" label="Feature this post." />
             </Form.Group>}
             <Form.Group >
               <Form.Label><strong>Camera</strong></Form.Label>

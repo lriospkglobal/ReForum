@@ -47,7 +47,8 @@ const adminAPI = (app, client) => {
         mentorName,
         mentorBiography,
         uploadedBase64mentorImage,
-        pillar
+        pillar,
+        mosaicProgressSteps
 
       } = req.body;
 
@@ -65,7 +66,8 @@ const adminAPI = (app, client) => {
             mentor_name: mentorName,
             mentor_biography: mentorBiography,
             mentor_base64: uploadedBase64mentorImage,
-            pillar
+            pillar,
+            mosaicProgressSteps
           })
         ).then(data => res.send(data)).catch(obj => res.status(500).json(obj));
 

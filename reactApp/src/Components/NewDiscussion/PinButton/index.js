@@ -25,7 +25,7 @@ class PinButton extends Component {
 
     return (
       <div >
-        <div >Is it a featured discussion?</div>
+        <div >Feature this post.</div>
 
         <div >
           <Button

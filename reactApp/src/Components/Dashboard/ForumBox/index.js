@@ -21,7 +21,7 @@ const optionsTime = [
   { value: 'afternoon', label: 'Afternoon' },
   { value: 'sunset', label: 'Sunset' },
   { value: 'evening', label: 'Evening' },
-  
+
 ]
 
 
@@ -248,6 +248,12 @@ class ForumBox extends Component {
 
     this.setState({ tileObj }, () => {
       if (convertedTitle && convertedSlug) {
+
+        const mosaicProgressSteps = []
+        this.state.tags.forEach(tag => {
+          if (tag.checked) mosaicProgressSteps.push(tag.value)
+        })
+
         this.props.createAction(
           {
             title: convertedTitle,
@@ -259,7 +265,8 @@ class ForumBox extends Component {
             mentorName,
             mentorBiography,
             uploadedBase64mentorImage,
-            pillar
+            pillar,
+            mosaicProgressSteps
 
 
           }, this.creatForumSuccess);
@@ -497,7 +504,7 @@ class ForumBox extends Component {
                   </Form.Group>
                   <Form.Group className="small">
                     <Form.Check checked={this.state.tileFeatured} onChange={(e) => { this.setState({ tileFeatured: e.target.checked, success: false }); }}
-                      type="checkbox" label="Is it a featured discussion?" />
+                      type="checkbox" label="Feature this post." />
                   </Form.Group>
 
 
@@ -528,7 +535,7 @@ class ForumBox extends Component {
 
                     <Form.Label>Description</Form.Label>
                     <Form.Text className="mb-2">
-                    Describe how your Sharp Shot connects to the theme of this photomosaic.
+                      Describe how your Sharp Shot connects to the theme of this photomosaic.
   </Form.Text>
                     <Form.Control value={this.state.tileDescription} onChange={(e) => this.setState({ tileDescription: e.target.value, success: false })} as="textarea"></Form.Control>
                   </Form.Group>

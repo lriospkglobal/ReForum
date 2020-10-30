@@ -3,6 +3,7 @@ const getAllForums = require('./controller').getAllForums;
 const getDiscussions = require('./controller').getDiscussions;
 const { getImageFromGridFs, base64encode } = require('../helpers');
 const fs = require('fs');
+const Forum = require('./model');
 /**
  * forum apis
  */
@@ -20,35 +21,52 @@ const forumAPI = (app, client) => {
 
   //get past mosaics from forum
   app.get('/api/forum/:forum_id/past-mosaics', (req, res) => {
-    const db = client.db('reforum');
-    db.collection('previous' + req.params.forum_id + '.files').find({}).toArray(function (err, result) {
-      if (err) throw err;
-      if (result.length) {
-        const allPromises = []
-        result.forEach((object) => {
 
-          allPromises.push(
-            getImageFromGridFs({ filename: object.filename }, 'reforum', 'previous' + req.params.forum_id, client, req.params.forum_id)
-          )
+    Forum
+      .findOne({ _id: req.params.forum_id }, { _id: 0, mosaic_progress_steps: 1 })
+      .exec((error, result) => {
+        if (error) return res.send([])
+        const steps = result.mosaic_progress_steps
 
+        const db = client.db('reforum');
+        db.collection('previous' + req.params.forum_id + '.files').find({}).toArray(function (err, result) {
+          if (err) throw err;
+          if (result.length) {
+            const allPromises = []
+            result.forEach((object) => {
 
-        });
-        Promise.all(allPromises).then(values => {
-
-          /* Add base64 mosaic */
-          values.forEach((value, index) => {
-
-            result[index]['base64'] = base64encode(value.savedFsFilename)
-            fs.unlinkSync(value.savedFsFilename)
-
-          })
-
-          return res.send(result);
-        });
-      } else res.send([]);
+              allPromises.push(
+                getImageFromGridFs({ filename: object.filename }, 'reforum', 'previous' + req.params.forum_id, client, req.params.forum_id)
+              )
 
 
-    })
+            });
+            Promise.all(allPromises).then(values => {
+
+              /* Add base64 mosaic */
+              values.forEach((value, index) => {
+
+                result[index]['base64'] = base64encode(value.savedFsFilename)
+                fs.unlinkSync(value.savedFsFilename)
+
+              })
+
+              return res.send(
+                {
+                  steps,
+                  previousMosaics: result.filter(el => steps.includes(el.nTiles))
+                }
+              );
+            });
+          } else res.send({ steps, previousMosaics: [] });
+
+
+        })
+      });
+
+
+
+
 
   })
   // get all forums

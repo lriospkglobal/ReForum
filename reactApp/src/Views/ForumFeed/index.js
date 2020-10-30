@@ -355,8 +355,8 @@ class ForumFeed extends Component {
 
     axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
       .then(response => {
-        const previousMosaics = response.data.length ? response.data : []
-        let steps = [5, 10, 25, 50, 100, 200, 500, 1000]
+        const previousMosaics = response.data.previousMosaics
+        let steps = response.data.steps
         if (previousMosaics.length) {
           steps = steps.slice(previousMosaics.length, steps.length)
         }
@@ -652,7 +652,7 @@ class ForumFeed extends Component {
                 onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
             </section>
 
-            {(this.state.previousMosaics && this.state.previousMosaics.length) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
+            {(this.state.previousMosaics) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
               <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
               {
                 this.state.previousMosaics.map((prevMosaic, index) => {
@@ -744,7 +744,12 @@ class ForumFeed extends Component {
                   <label className="d-flex align-items-center">
                     Filter
                   <select className="select ml-3">
-                      <option defaultValue>View All</option>
+
+                      <option>Pending</option>
+                      <option>Approved</option>
+                      <option>Reported</option>
+                      <option>Featured</option>
+                      <option>Pinned</option>
 
                     </select>
                   </label>
@@ -759,7 +764,13 @@ class ForumFeed extends Component {
                   <label className="d-flex align-items-center">
                     Sort
                   <select className="select ml-3">
-                      <option defaultValue>Most Kudos</option>
+
+                      <option defaultValue>Newest</option>
+                      <option>Oldest</option>
+                      <option>User Name</option>
+                      <option>Camera Type</option>
+                      <option>Time of Day</option>
+
 
                     </select>
                   </label>

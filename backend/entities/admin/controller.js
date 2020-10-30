@@ -59,7 +59,7 @@ const getAdminDashInfo = () => {
 const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin, forum_description, forum_directions,
   mentor_name,
   mentor_biography,
-  mentor_base64, pillar }) => {
+  mentor_base64, pillar, mosaicProgressSteps }) => {
   return new Promise((resolve, reject) => {
     // check if the forum exists
     Forum
@@ -82,7 +82,8 @@ const createForum = ({ forum_name, forum_slug, original_img_id, base64, admin, f
             mentor_biography,
             mentor_base64,
             archived: false,
-            pillar
+            pillar,
+            mosaic_progress_steps: mosaicProgressSteps
           });
 
           newForum.save((error) => {

@@ -18,7 +18,8 @@ const forumSchema = mongoose.Schema({
   mentor_biography: String,
   mentor_base64: String,
   archived: Boolean,
-  pillar: String
+  pillar: String,
+  mosaic_progress_steps: Array
 
 });
 
