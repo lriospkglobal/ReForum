@@ -47,7 +47,7 @@ const adminAPI = (app, client) => {
         mentorName,
         mentorBiography,
         uploadedBase64mentorImage,
-
+        pillar
 
       } = req.body;
 
@@ -64,7 +64,8 @@ const adminAPI = (app, client) => {
             forum_directions: newForumDirections,
             mentor_name: mentorName,
             mentor_biography: mentorBiography,
-            mentor_base64: uploadedBase64mentorImage
+            mentor_base64: uploadedBase64mentorImage,
+            pillar
           })
         ).then(data => res.send(data)).catch(obj => res.status(500).json(obj));
 

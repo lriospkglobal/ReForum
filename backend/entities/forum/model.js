@@ -17,8 +17,8 @@ const forumSchema = mongoose.Schema({
   mentor_name: String,
   mentor_biography: String,
   mentor_base64: String,
-  archived: Boolean
-
+  archived: Boolean,
+  pillar: String
 
 });
 

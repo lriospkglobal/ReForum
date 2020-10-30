@@ -48,6 +48,7 @@ class ForumBox extends Component {
       tileLocation: '',
       tileDescription: '',
       tileTags: ['aarp'],
+      pillar: 'connect',
       mentorName: '',
       mentorBiography: '',
       photoTime: 'morning',
@@ -150,6 +151,7 @@ class ForumBox extends Component {
       mentorBiography,
       mentorImage,
       uploadedBase64mentorImage,
+      pillar
 
 
     } = this.state;
@@ -256,7 +258,8 @@ class ForumBox extends Component {
             newMosaicImageOwner,
             mentorName,
             mentorBiography,
-            uploadedBase64mentorImage
+            uploadedBase64mentorImage,
+            pillar
 
 
           }, this.creatForumSuccess);
@@ -415,13 +418,14 @@ class ForumBox extends Component {
                     <Form.Label className="mt-3">
                       Pillar
                   </Form.Label>
-                    <Form.Control as="select">
+                    <Form.Control as="select" value={this.state.pillar}
+                      onChange={(e) => this.setState({ pillar: e.target.value, success: false })}>
 
-                      <option>Connect</option>
-                      <option>Discover</option>
-                      <option>Move</option>
-                      <option>Nourish</option>
-                      <option>Relax</option>
+                      <option defaultValue value="connect">Connect</option>
+                      <option value="discover">Discover</option>
+                      <option value="move">Move</option>
+                      <option value="nourish">Nourish</option>
+                      <option value="relax">Relax</option>
                     </Form.Control>
                   </div>
                   <Form.Check

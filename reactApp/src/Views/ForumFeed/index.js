@@ -917,7 +917,7 @@ class ForumFeed extends Component {
             <Modal.Title className="d-flex align-items-center"><ImageBootstrap src={camera} className="mr-2" /><strong>Post a Photo</strong></Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
-            <NewDiscussion closeModal={() => this.setState({ showDiscussionModal: false })} successCallback={this.successCallback} />
+            <NewDiscussion closeModal={() => this.setState({ showDiscussionModal: false })} pillar={this.state.currentForumObj ? this.state.currentForumObj.pillar : ''} successCallback={this.successCallback} />
           </Modal.Body>
 
         </Modal>

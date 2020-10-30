@@ -41,6 +41,7 @@ const getDiscussions = (client, forum_id, pinned, sorting_method = 'date') => {
     // match discussion id 
     Discussion
       .find({ forum_id: forum_id, pinned: true })
+      .sort({ date: -1 })
       .populate('forum')
       .populate('user')
       .lean()

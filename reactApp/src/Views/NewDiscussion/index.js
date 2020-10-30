@@ -145,7 +145,8 @@ class NewDiscussion extends Component {
       currentForum,
       successCallback,
       closeModal,
-      updateTime
+      updateTime,
+      pillar
     } = this.props;
 
     const {
@@ -238,7 +239,8 @@ class NewDiscussion extends Component {
 
               <Form.Label><strong>Description</strong></Form.Label>
               <Form.Text className="mb-2">
-                Describe how your Sharp Shot connects to the theme of this photomosaic.
+                Describe how your Sharp Shot connects to the Staying Sharp pillar <span className="text-capitalize">{pillar}</span>.
+
   </Form.Text>
               {/* <RichEditor
                 key={'content'}
