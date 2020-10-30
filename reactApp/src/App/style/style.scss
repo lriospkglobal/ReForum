@@ -467,13 +467,20 @@ header {
     .navbar-collapse {
       .navbar-nav {
         .dropdown {
-          >a {
+          .dropdown-menu {
+
+            .close {
+              right: 10px;
+              position: absolute;
+            }
+          }
+
+          >span {
+            cursor: pointer;
             color: white;
             font-weight: bold;
 
-            &:hover {
-              color: white;
-            }
+
           }
         }
       }
