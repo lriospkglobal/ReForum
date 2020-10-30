@@ -50,7 +50,7 @@ class UserMenu extends Component {
       <div>
         <Navbar.Collapse>
           <Nav className="mr-auto">            
-            <NavDropdown title={signedIn ? userName : 'Sign Up / Sign In'} id="basic-nav-dropdown">
+            <NavDropdown title={signedIn ? userName : 'Sign Up / Sign In'} id="basic">
               {!signedIn && <Form className="p-3">
                 <Form.Group>
                   <Form.Label>Username</Form.Label>
