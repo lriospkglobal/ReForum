@@ -10,7 +10,7 @@ import {
   FETCHING_PINNED_DISCUSSIONS_FAILURE,
 
   UPDATE_SORTING_METHOD,
-  INVALID_FORUM,
+  INVALID_FORUM
 } from './constants';
 
 const initialState = {

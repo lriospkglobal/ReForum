@@ -4,6 +4,9 @@ import Moment from 'moment';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import NewDiscussion from '../NewDiscussion/index';
+import TextEdit from '../../Components/TextEdit/index';
+import CheckBoxEdit from '../../Components/CheckBoxEdit/index';
+
 import _ from 'lodash';
 import axios from 'axios';
 import { OverlayTrigger, Tooltip, Button as ButtonBootstrap, Container, Modal, Image as ImageBootstrap, Carousel, Popover, Col, Row, Card } from 'react-bootstrap';
@@ -11,7 +14,8 @@ import SingleDiscussion from '../../Views/SingleDiscussion';
 import {
   getDiscussions,
   updateSortingMethod,
-  stopLoading
+  stopLoading,
+  updateForum
 } from './actions';
 
 import camera from '../../App/img/camera-icon.svg';
@@ -50,7 +54,7 @@ class ForumFeed extends Component {
       currentDiscussion: null,
       highlights: false,
       widthGrowth: null,
-      showPrevMosaicModal: false,
+      loadingPreviousMosaics: false,
       prevMosaicImage: null,
       vertical: { width: '200px', height: '280px' },
       horizontal: { width: '280px', height: '200px' },
@@ -352,25 +356,27 @@ class ForumFeed extends Component {
   }
 
   getPreviousMosaics = () => {
+    this.setState({ loadingPreviousMosaics: true }, () => {
+      axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
+        .then(response => {
+          const previousMosaics = response.data.previousMosaics
+          let steps = response.data.steps
+          if (previousMosaics.length) {
+            steps = steps.slice(previousMosaics.length, steps.length)
+          }
+          const empty = steps.map(x => {
+            return { _id: x, nTiles: x };
+          });
 
-    axios.get(`/api/forum/${this.state.currentForumId}/past-mosaics`)
-      .then(response => {
-        const previousMosaics = response.data.previousMosaics
-        let steps = response.data.steps
-        if (previousMosaics.length) {
-          steps = steps.slice(previousMosaics.length, steps.length)
-        }
-        const empty = steps.map(x => {
-          return { _id: x, nTiles: x };
-        });
 
 
+          this.setState({
+            previousMosaics: [...previousMosaics, ...empty], loadingPreviousMosaics: false
 
-        this.setState({
-          previousMosaics: [...previousMosaics, ...empty]
-
+          })
         })
-      })
+
+    })
 
   }
   componentDidMount() {
@@ -515,6 +521,14 @@ class ForumFeed extends Component {
     else return 0
   }
 
+  changeForumAttribute = (value, attr, pastMosaics) => {
+    this.props.updateForum(this.state.currentForumId, { [attr]: value }, () => {
+      if (pastMosaics) this.getPreviousMosaics()
+
+    })
+
+  }
+
   render() {
     const {
       currentForum,
@@ -528,6 +542,7 @@ class ForumFeed extends Component {
     } = this.props;
 
     let { discussions } = this.props;
+
     const forumId = currentForumId()
     if (discussions && discussions[forumId])
       discussions = discussions[forumId]
@@ -550,17 +565,8 @@ class ForumFeed extends Component {
             <section className="intro w-100 pb-4">
               <div className="d-flex align-items-center">
                 <h1><strong>Community Photo Mosaic: Ongoing Exercise</strong></h1>
-                {(role && role === 'admin') && <OverlayTrigger
-                  key={'top'}
-                  placement={'top'}
-                  overlay={
-                    <Tooltip >
-                      As an admin you can edit the title.
-        </Tooltip>
-                  }
-                >
-                  <ImageBootstrap className="ml-3 pencil" src={pencilWhite} />
-                </OverlayTrigger>}
+
+
               </div>
               <div className="d-flex flex-wrap mt-4">
                 <div className="w-100 align-items-center d-flex">
@@ -572,19 +578,26 @@ class ForumFeed extends Component {
                     placement={'top'}
                     overlay={
                       <Tooltip >
-                        As an admin you can edit directions section.
-        </Tooltip>
+                        As an admin you can edit directions section (double click on text to edit, enter to save changes or esc to exit).
+                    </Tooltip>
                     }
                   >
                     <ImageBootstrap className="ml-3 pencil" src={pencilWhite} />
                   </OverlayTrigger>}
                 </div>
-                <p className="w-75 pr-5">
+                <div className="w-75 pr-5">
 
 
-                  {(this.state.currentForumObj && this.state.currentForumObj.forum_directions) ? this.state.currentForumObj.forum_directions : ''}
+                  {(this.state.currentForumObj && this.state.currentForumObj.forum_directions) ?
 
-                </p>
+
+
+                    < TextEdit text={this.state.currentForumObj.forum_directions} attr={'forum_directions'} role={role} callback={this.changeForumAttribute} styleClass="" />
+
+
+                    : ''}
+
+                </div>
                 <div className="w-25 overflow-auto">
                   {(role && role === 'moderator') && <OverlayTrigger placement={'top'}
                     overlay={
@@ -652,66 +665,22 @@ class ForumFeed extends Component {
                 onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
             </section>
 
-            {(this.state.previousMosaics) ? <section className="previous-mosaics mt-4 mb-3 d-flex flex-wrap justify-content-center">
-              <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
-              {
-                this.state.previousMosaics.map((prevMosaic, index) => {
-                  return (
-                    <div className="previous-mosaic d-flex align-items-start justify-content-center flex-wrap mr-3 ml-3" key={prevMosaic._id}>
-                      <ImageBootstrap onClick={() => {
-                        this.setState({
-                          showPrevMosaicModal: true,
-                          prevMosaicImage: index
-                        })
-                      }} thumbnail src={prevMosaic.base64 ? 'data:image/jpeg;base64, ' + prevMosaic.base64 : comingSoon} />
-                      <strong className="text-white text-center w-100 mt-2">{prevMosaic.nTiles} PHOTOS</strong>
-                    </div>
-                  )
-                })
-              }
+            <div className={(this.state.loadingPreviousMosaics ? 'd-block' : 'd-none') + " spinner-grow text-light mt-4 mb-3"} role="status">
+              <span className="sr-only">Loading...</span>
+            </div>
+
+            <div className={(this.state.loadingPreviousMosaics ? 'd-none' : 'd-block')}>
+              {(this.state.previousMosaics) ? <section className="previous-mosaics mt-4 mb-3">
+                <h5 className="w-100 text-white d-flex justify-content-center mb-3"><strong>View images of the mosaic at different stages of development:</strong></h5>
+                <CheckBoxEdit attr={'mosaic_progress_steps'} callback={this.changeForumAttribute} previousMosaics={this.state.previousMosaics} role={role} />
 
 
 
+              </section> : null}
+            </div>
 
 
-              <Modal show={this.state.showPrevMosaicModal} className="full" onHide={() => this.setState({ showPrevMosaicModal: false })}>
-                <Modal.Header closeButton>
 
-                </Modal.Header>
-                <Modal.Body>
-
-                  {/* <ImageBootstrap src={this.state.prevMosaicImage} fluid /> */}
-                  <Container>
-                    <Carousel activeIndex={this.state.prevMosaicImage} indicators={false}
-                      onSelect={(selectedIndex) => this.setState({ prevMosaicImage: selectedIndex })}>
-                      {this.state.previousMosaics.map(prevMosaic => {
-                        return (
-                          <Carousel.Item key={prevMosaic._id}>
-                            <ImageBootstrap
-                              fluid
-                              thumbnail
-                              className="d-block w-100"
-                              src={prevMosaic.base64 ? 'data:image/jpeg;base64, ' + prevMosaic.base64 : comingSoon}
-                              alt="slide"
-                            />
-                            <Carousel.Caption>
-                              <h5><strong>{prevMosaic.nTiles} Photos</strong></h5>
-                              <p>This is a static image of the mosaic built with {prevMosaic.nTiles} photos,
-                              to view current interactive mosaic please exit this window.
-                              </p>
-                            </Carousel.Caption>
-                          </Carousel.Item>
-                        )
-                      })}
-
-
-                    </Carousel>
-                  </Container>
-                </Modal.Body>
-
-              </Modal>
-
-            </section> : null}
 
           </Container>
         </Container>
@@ -780,7 +749,7 @@ class ForumFeed extends Component {
               <FeedBox
                 type='general'
                 loading={fetchingDiscussions}
-                discussions={discussions}
+                discussions={discussions ? discussions : []}
                 currentForum={currentForum}
                 onChangeSortingMethod={this.handleSortingChange.bind(this)}
                 activeSortingMethod={sortingMethod}
@@ -829,7 +798,7 @@ class ForumFeed extends Component {
                 <Card.Header className="text-center"><h5 className="d-inline">Mosaic Overview</h5>{(role && role === 'admin') && <OverlayTrigger placement={'top'}
                   overlay={
                     <Tooltip>
-                      As an admin you can edit the mosaic overview.
+                      As an admin you can edit the mosaic overview (double click on text to edit, enter to save changes or esc to exit).
         </Tooltip>
                   }>
                   <ImageBootstrap className="float-right pencil" src={pencilBlack} />
@@ -838,7 +807,9 @@ class ForumFeed extends Component {
 
                   <Card.Text className="small mb-3">
                     {this.state.currentForumObj ? <ImageBootstrap src={'data:image/jpeg;base64, ' + this.state.currentForumObj.base64} fluid /> : null}
-                    {(this.state.currentForumObj && this.state.currentForumObj.forum_description) ? this.state.currentForumObj.forum_description : ''}
+                    {(this.state.currentForumObj && this.state.currentForumObj.forum_description) ?
+                      < TextEdit text={this.state.currentForumObj.forum_description} attr={'forum_description'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                      : ''}
 
 
                   </Card.Text>
@@ -851,7 +822,7 @@ class ForumFeed extends Component {
                   {(role && role === 'admin') && <OverlayTrigger placement={'top'}
                     overlay={
                       <Tooltip>
-                        As an admin you can edit the moderator info.
+                        As an admin you can edit the moderator info (double click on text to edit, enter to save changes or esc to exit).
         </Tooltip>
                     }>
                     <ImageBootstrap className="float-right pencil" src={pencilBlack} />
@@ -866,7 +837,10 @@ class ForumFeed extends Component {
                       <div className="w-100">
                         <strong>NAME: </strong>
 
-                        <p className="mb-0"> {this.state.currentForumObj && this.state.currentForumObj.mentor_name ? this.state.currentForumObj.mentor_name : null}</p>
+                        <p className="mb-0"> {this.state.currentForumObj && this.state.currentForumObj.mentor_name ?
+
+                          < TextEdit text={this.state.currentForumObj.mentor_name} attr={'mentor_name'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                          : null}</p>
                       </div>
 
 
@@ -874,7 +848,8 @@ class ForumFeed extends Component {
 
                   </section>
                   <Card.Text className="small mb-3">
-                    {this.state.currentForumObj && this.state.currentForumObj.mentor_biography ? this.state.currentForumObj.mentor_biography : ''}
+                    {this.state.currentForumObj && this.state.currentForumObj.mentor_biography ?
+                      < TextEdit text={this.state.currentForumObj.mentor_biography} attr={'mentor_biography'} role={role} callback={this.changeForumAttribute} styleClass="" /> : ''}
                   </Card.Text>
 
                 </Card.Body>
@@ -962,7 +937,7 @@ export default connect(
   (dispatch) => {
     return {
       getDiscussions: (currentForumId, feedChanged, sortingMethod, sortingChanged) => { dispatch(getDiscussions(currentForumId, feedChanged, sortingMethod, sortingChanged)); },
-
+      updateForum: (id, toUpdate, cb) => dispatch(updateForum(id, toUpdate, cb)),
       updateSortingMethod: (method) => { dispatch(updateSortingMethod(method)); },
       stopLoading: () => dispatch(stopLoading())
     };

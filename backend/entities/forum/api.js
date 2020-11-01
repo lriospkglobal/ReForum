@@ -123,6 +123,12 @@ const forumAPI = (app, client) => {
       (error) => { res.send([]); }
     );
   });
+
+
+  // update forum
+  app.put('/api/forum/:forum_id/update', (req, res) => {
+    Forum.findByIdAndUpdate({ _id: req.body.forum_id }, req.body.toUpdate).then(document => res.send(document)).catch(err => res.status(500).send(err))
+  });
 };
 
 module.exports = forumAPI;

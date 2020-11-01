@@ -388,6 +388,27 @@ input.apple-switch {
 }
 
 //Components
+.text-edit {
+  background-color: transparent;
+  border: none;
+
+  &.h1 {
+    font-size: 2.5rem;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 0;
+  }
+
+  &.strong {
+    font-weight: bolder;
+  }
+
+  &.white {
+    color: white;
+  }
+}
+
 .opinion {
   .opinion__image-container {
     width: 15%;

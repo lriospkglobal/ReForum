@@ -10,3 +10,7 @@ export const fetchDiscussions = (forum_id, sortingMethod) => {
 export const fetchPinnedDiscussions = (forum_id) => {
   return axios.get(`/api/forum/${forum_id}/pinned_discussions`);
 };
+
+export const updateForum = (forum_id, toUpdate) => {
+  return axios.put(`/api/forum/${forum_id}/update`, { forum_id, toUpdate });
+};

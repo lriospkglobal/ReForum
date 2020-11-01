@@ -7,6 +7,7 @@ import {
   START_FETCHING_USER,
   FETCHING_USER_SUCCESS,
   FETCHING_USER_FAILURE,
+  UPDATED_FORUM
 } from './constants';
 
 const initialState = {
@@ -20,7 +21,12 @@ const initialState = {
  * reducer for top level app state
  */
 export const appReducer = (state = initialState, action) => {
+
   switch (action.type) {
+    case UPDATED_FORUM:
+      return Object.assign({}, state, {
+        forums: action.forums,
+      })
     case START_FETCHING_FORUMS:
       return Object.assign({}, state, {
         fetchingForums: true,

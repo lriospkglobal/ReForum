@@ -12,10 +12,12 @@ import {
 
   UPDATE_SORTING_METHOD,
   INVALID_FORUM,
+  UPDATED_FORUM
 } from './constants';
 import {
   fetchDiscussions,
   fetchPinnedDiscussions,
+  updateForum as updateForumApi
 } from './api';
 
 /**
@@ -96,6 +98,33 @@ export const updateSortingMethod = (method) => {
   return { type: UPDATE_SORTING_METHOD, payload: method };
 };
 
+
+/**
+ * Update forum
+ * @param  {String} id
+ * @param  {Object} toUpdate
+ * @return {action}
+ */
+export const updateForum = (id, toUpdate, successCb) => {
+  return ((dispatch, getState) => {
+
+
+
+    updateForumApi(id, toUpdate).then(() => {
+      let forums = getState().app.forums;
+      forums = forums.map(forum => {
+        if (forum._id === id) {
+          forum = { ...forum, ...toUpdate }
+        }
+
+        return forum
+      })
+      successCb()
+      return dispatch({ type: UPDATED_FORUM, forums })
+    }).catch(err => console.error(err))
+  })
+
+};
 
 /**
  * Stop loading
