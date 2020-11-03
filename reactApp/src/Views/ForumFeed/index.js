@@ -110,10 +110,11 @@ class ForumFeed extends Component {
   requestImage = (imgName, cb) => {
     this.setState({ loadingImage: true }, () => {
       axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
+
         this.setState({
           loadedEncodedImages: {
             ...this.state.loadedEncodedImages,
-            [imgName]: response.data.base64
+            [imgName]: response.data
 
           }
         }, cb

@@ -33,7 +33,9 @@ module.exports = {
       });
     })
   },
-  
+
+
+
   getImageFromGridFs: (obj, dbName, bucketName, client, forumId) => {
     return new Promise((resolve, reject) => {
       const db = client.db(dbName);

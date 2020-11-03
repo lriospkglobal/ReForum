@@ -1,6 +1,7 @@
 // forum controllers
 const getAllForums = require('./controller').getAllForums;
 const getDiscussions = require('./controller').getDiscussions;
+const mongodb = require('mongodb');
 const { getImageFromGridFs, base64encode } = require('../helpers');
 const fs = require('fs');
 const Forum = require('./model');
@@ -10,13 +11,33 @@ const Forum = require('./model');
 const forumAPI = (app, client) => {
   // get forum mosaic tile
   app.get('/api/forum/tile', (req, res) => {
-    getImageFromGridFs({ filename: req.query.tileFileName }, 'reforum', req.query.forumId, client, req.query.forumId).then(img => {
-      const base64 = base64encode(img.savedFsFilename)
-      fs.unlinkSync(img.savedFsFilename)
+    const db = client.db('reforum');
+    const bucket = new mongodb.GridFSBucket(db, {
+      chunkSizeBytes: 1024,
+      bucketName: req.query.forumId
+    });
+    const readstream = bucket.createReadStream(req.query.tileFileName);
+    readstream.on('data', (chunk) => {
+      res.send(chunk.toString('base64'));
+    })
 
-      return res.send({ base64 })
+    /* bucket.find({ filename: req.query.tileFileName }).toArray((err, files) => {
+      if (err) return res.status(500).send(err)
 
-    }).catch(err => res.send(err))
+
+
+
+      //bucket.openDownloadStreamByName(req.query.tileFileName).pipe(res)
+    }) */
+
+
+    /* getImageFromGridFs({ filename: req.query.tileFileName }, 'reforum', req.query.forumId, client, req.query.forumId).then(img => {
+      //const base64 = base64encode(img.savedFsFilename)
+      //fs.unlinkSync(img.savedFsFilename)
+
+      return res.send({ img })
+
+    }).catch(err => res.send(err)) */
   });
 
   //get past mosaics from forum
