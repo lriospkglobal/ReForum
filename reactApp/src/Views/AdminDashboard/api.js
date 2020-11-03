@@ -26,3 +26,7 @@ export const createForumAPI = (forum_obj) => {
 export const deleteForumAPI = (forum_id) => {
   return (axios.post('/api/admin/delete_forum', { forum_id }));
 };
+
+export const updateForum = (forum_id, toUpdate) => {
+  return axios.put(`/api/forum/${forum_id}/update`, { forum_id, toUpdate });
+};

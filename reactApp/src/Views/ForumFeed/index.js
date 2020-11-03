@@ -564,7 +564,29 @@ class ForumFeed extends Component {
           <Container className="justify-content-center d-flex flex-wrap">
             <section className="intro w-100 pb-4">
               <div className="d-flex align-items-center">
-                <h1><strong>Community Photo Mosaic: Ongoing Exercise</strong></h1>
+
+                <h1><strong>Community Photo Mosaic:&nbsp;
+                {(this.state.currentForumObj && this.state.currentForumObj.forum_name) ?
+
+
+
+                    < TextEdit text={this.state.currentForumObj.forum_name} attr={'forum_name'} role={role} callback={this.changeForumAttribute} styleClass="" />
+
+
+                    : ''}
+
+                </strong></h1>
+                {(role && role === 'admin') && <OverlayTrigger
+                  key={'top'}
+                  placement={'top'}
+                  overlay={
+                    <Tooltip >
+                      As an admin you can edit the mosaic title (double click on text to edit, enter to save changes or esc to exit).
+                    </Tooltip>
+                  }
+                >
+                  <ImageBootstrap className="ml-3 pencil" src={pencilWhite} />
+                </OverlayTrigger>}
 
 
               </div>

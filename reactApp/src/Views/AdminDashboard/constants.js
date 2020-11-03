@@ -9,3 +9,4 @@ export const CREATE_FORUM_FAILURE = 'create_forum_failure';
 export const DELETE_FORUM = 'delete_forum';
 export const DELETE_FORUM_SUCCESS = 'delete_forum_success';
 export const DELETE_FORUM_FAILURE = 'delete_forum_failure';
+export const UPDATED_FORUM = 'updated_forum';

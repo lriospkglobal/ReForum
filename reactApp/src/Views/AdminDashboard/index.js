@@ -9,14 +9,21 @@ import {
   getAdminDashboardInfo,
   createForum,
   deleteForum,
+  updateForum
 } from './actions';
 import Counts from '../../Components/Dashboard/Counts';
 import ForumBox from '../../Components/Dashboard/ForumBox';
+import TextEdit from '../../Components/TextEdit/index';
+
+
 
 class Dashboard extends Component {
   constructor(props) {
     super(props)
-    this.state = { forums: [] }
+    this.state = {
+      forums: [],
+      key: 'new'
+    }
   }
   componentDidMount() {
     // get information needed for dashboard
@@ -53,6 +60,10 @@ class Dashboard extends Component {
     ).catch(err => console.error(err)))
 
   }
+  changeForumAttribute = (value, attr, id) => {
+    this.props.updateForum(id, { [attr]: value })
+
+  }
 
   render() {
     const {
@@ -66,6 +77,7 @@ class Dashboard extends Component {
     const {
 
       forums,
+      key
     } = this.state;
     const {
       loadingInfo,
@@ -73,6 +85,7 @@ class Dashboard extends Component {
       creatingForumError,
       deletingForum,
       deletingForumError,
+      role
     } = this.props;
 
     const forumsArray = forums ? forums.map((forum) => {
@@ -83,7 +96,10 @@ class Dashboard extends Component {
       <Container className="admin-dashboard mb-4 pb-4">
         <div >
 
-          <Tabs defaultActiveKey="new" >
+          <Tabs defaultActiveKey="new"
+            activeKey={key}
+            onSelect={(key) => this.setState({ key })}
+          >
             <Tab eventKey="new" title="New Mosaic">
               <section className="admin-dashboard__forum-box pt-4">
                 <ForumBox
@@ -110,13 +126,14 @@ class Dashboard extends Component {
               <section className="admin-dashboard_table-dashboard pt-2">
 
                 <section className="my-4">
-                  <strong className="text-uppercase">Directions:</strong> Edit, or archive a community photo mosaic below.
+                  <strong className="text-uppercase">Directions:</strong> Edit (double click on text, enter to save or esc to exit), or archive a community photo mosaic below.
 </section>
-                {(forums && forums.length > 0) &&
+                {(key === 'dashboard' && forums && forums.length > 0) &&
                   <Table bordered>
                     <thead>
                       <tr>
                         <th>Photo</th>
+                        <th>Title</th>
                         <th>Mosaic Overview</th>
                         <th>Mentor</th>
                         <th>Mentor Bio</th>
@@ -130,16 +147,33 @@ class Dashboard extends Component {
                         <tr key={forum._id}>
                           <td><Image fluid src={'data:image/jpeg;base64,' + forum.base64} /></td>
                           <td>
-                            <p>{forum.forum_description ? forum.forum_description : ''}
+                            <p>{forum.forum_name ?
+
+                              < TextEdit text={forum.forum_name} id={forum._id} attr={'forum_name'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                              : ''}
 
                             </p>
                           </td>
                           <td>
-                            <p>{forum.mentor_name ? forum.mentor_name : ''}</p>
+                            <p>{forum.forum_description ?
+
+                              < TextEdit text={forum.forum_description} id={forum._id} attr={'forum_description'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                              : ''}
+
+                            </p>
+                          </td>
+                          <td>
+                            <p>{forum.mentor_name ?
+
+                              < TextEdit text={forum.mentor_name} id={forum._id} attr={'mentor_name'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                              : ''}</p>
                           </td>
                           <td>
                             <p>
-                              {forum.mentor_biography ? forum.mentor_biography : ''}
+                              {forum.mentor_biography ?
+
+                                < TextEdit text={forum.mentor_biography} id={forum._id} attr={'mentor_biography'} role={role} callback={this.changeForumAttribute} styleClass="" />
+                                : ''}
                             </p>
                           </td>
                           <td className="text-center">
@@ -175,6 +209,7 @@ class Dashboard extends Component {
 export default connect(
   (state) => {
     return {
+      role: state.user.role,
       adminInfo: state.adminInfo,
       loadingInfo: state.adminInfo.loadingInfo,
       creatingForum: state.adminInfo.creatingForum,
@@ -189,6 +224,7 @@ export default connect(
       getForums: () => { dispatch(getForums()); },
       deleteForum: (forumId) => { dispatch(deleteForum(forumId)); },
       createForum: (forumObj, cb) => { dispatch(createForum(forumObj, cb)); },
+      updateForum: (id, toUpdate, cb) => dispatch(updateForum(id, toUpdate, cb))
     };
   }
 )(Dashboard);
