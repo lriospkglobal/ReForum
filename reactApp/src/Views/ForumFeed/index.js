@@ -680,8 +680,8 @@ class ForumFeed extends Component {
 
             <Popover
               onMouseMove={() => {
-
                 insidePopUp = true
+                if (this.state.viewLock) this.setState({ viewLock: false })
               }} onMouseOut={() => {
                 insidePopUp = false
 
@@ -927,7 +927,7 @@ class ForumFeed extends Component {
           size="xl"
           show={this.state.lgShow}
           onHide={() =>
-            this.setState({ lgShow: false, currentDiscussion: null })
+            this.setState({ lgShow: false, currentDiscussion: null, viewLock: false })
 
           }
           aria-labelledby="example-modal-sizes-title-lg"
@@ -949,7 +949,7 @@ class ForumFeed extends Component {
                 </div>
                 <button
                   onClick={() =>
-                    this.setState({ lgShow: false, currentDiscussion: null })
+                    this.setState({ lgShow: false, currentDiscussion: null, viewLock: false })
 
                   }
                   className="close"><span>×</span><span className="sr-only">Close</span></button>
