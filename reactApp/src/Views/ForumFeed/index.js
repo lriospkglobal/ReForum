@@ -25,6 +25,8 @@ import pencilBlack from '../../App/img/pencil-black.svg';
 import FeedBox from '../../Components/FeedBox';
 import SideBar from '../../Components/SideBar';
 
+let id, insidePopUp, xCanvas, yCanvas
+let loadedEncodedImages = {}
 
 class ForumFeed extends Component {
   constructor(props) {
@@ -34,7 +36,6 @@ class ForumFeed extends Component {
       canvasHeight: 0,
       canvasWidth: 0,
       coordinates: null,
-      loadedEncodedImages: {},
       imageOnModal: '',
       showUploadTilesButton: false,
       showUploadMosaicImageButton: false,
@@ -58,7 +59,11 @@ class ForumFeed extends Component {
       prevMosaicImage: null,
       vertical: { width: '200px', height: '280px' },
       horizontal: { width: '280px', height: '200px' },
-      popupOrientation: null
+      popupOrientation: null,
+      viewLock: false,
+      insidePopUp: false,
+      xCanvas: null,
+      yCanvas: null
 
 
     }
@@ -68,7 +73,7 @@ class ForumFeed extends Component {
 
   setImageModalPopover = (imgName) => {
 
-    if (this.state.loadedEncodedImages[imgName]) {
+    if (loadedEncodedImages[imgName]) {
       const image = new Image()
 
       image.onload = () => {
@@ -81,7 +86,7 @@ class ForumFeed extends Component {
         } else
           popupOrientation = this.state.vertical
         this.setState({
-          imageOnModal: this.state.loadedEncodedImages[imgName],
+          imageOnModal: loadedEncodedImages[imgName],
           loadingImage: false,
           popupOrientation
         }, () => {
@@ -100,7 +105,7 @@ class ForumFeed extends Component {
 
       }
 
-      image.src = 'data:image/jpeg;base64, ' + this.state.loadedEncodedImages[imgName]
+      image.src = 'data:image/jpeg;base64, ' + loadedEncodedImages[imgName]
 
     }
 
@@ -110,15 +115,12 @@ class ForumFeed extends Component {
   requestImage = (imgName, cb) => {
     this.setState({ loadingImage: true }, () => {
       axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
-        this.setState({
-          loadedEncodedImages: {
-            ...this.state.loadedEncodedImages,
-            [imgName]: response.data.base64
+        loadedEncodedImages = {
+          ...loadedEncodedImages,
+          [imgName]: response.data.base64
 
-          }
-        }, cb
-
-        )
+        }
+        cb()
       }).catch(e => console.error(e))
     })
   }
@@ -133,7 +135,7 @@ class ForumFeed extends Component {
       if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
         imgName = this.state.coordinates[attr]
 
-        if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName]) {
+        if (Object.keys(loadedEncodedImages).includes(imgName) && loadedEncodedImages[imgName]) {
 
           this.setImageModalPopover(imgName)
         } else {
@@ -176,10 +178,12 @@ class ForumFeed extends Component {
     const forumId = currentForumId()
     if (discussions && discussions[forumId]) {
       discussions = discussions[forumId]
-      const el = e.target;
+      const el = e ? e.target : this.canvas.current;
       const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      //const x = e.clientX - rect.left;
+      //const y = e.clientY - rect.top;
+      const x = this.state.xCanvas;
+      const y = this.state.yCanvas;
       let matchedDiscussion;
       //this.getIndividualImage(xCanvas, yCanvas)
       for (let attr in this.state.coordinates) {
@@ -223,12 +227,14 @@ class ForumFeed extends Component {
     top = top - 16
     left = left + 11
 
-    const xCanvas = e.clientX - rect.left
-    const yCanvas = e.clientY - rect.top
+    xCanvas = e.clientX - rect.left
+    yCanvas = e.clientY - rect.top
 
 
 
-    this.setState({ x: left + xCanvas, y: top + yCanvas, showPopover: false }, () => this.getIndividualImage(xCanvas, yCanvas))
+    this.setState({ x: left + xCanvas, y: top + yCanvas, xCanvas, yCanvas, showPopover: false }, () => this.getIndividualImage(xCanvas, yCanvas))
+
+
 
   }
 
@@ -341,8 +347,8 @@ class ForumFeed extends Component {
 
 
 
-      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true }, () => {
-        if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName])
+      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true, viewLock: true }, () => {
+        if (Object.keys(loadedEncodedImages).includes(imgName) && loadedEncodedImages[imgName])
           this.setImageModalPopover(imgName)
         else
           this.requestImage(imgName, () => this.setImageModalPopover(imgName))
@@ -511,6 +517,18 @@ class ForumFeed extends Component {
 
   }
 
+  moving = (e) => {
+    clearTimeout(id)
+    id = setTimeout(() => {
+      if (!insidePopUp)
+        this.getCoordenate(e)
+
+    }, 500)
+
+
+
+  }
+
   getPercent = () => {
     let { discussions, currentForumId } = this.props;
     const forumId = currentForumId()
@@ -658,11 +676,20 @@ class ForumFeed extends Component {
             </section>
 
             <Popover
+              onMouseMove={() => {
+
+                insidePopUp = true
+              }} onMouseOut={() => {
+                insidePopUp = false
+
+              }}
+              onClick={this.clickedTile}
               className={(this.state.showPopover && (this.state.x && this.state.y) ? 'visible' : 'invisible') + (this.checkPopoverLeft() ? ' left' : '')}
               style={{ top: this.state.y + 'px', left: this.state.x + 'px', ...this.state.popupOrientation }} ref={this.popover}
+
             >
 
-              <Popover.Content>
+              <Popover.Content >
                 {this.state.loadingImage ? <div className="d-flex mt-2 justify-content-center align-items-center"><div className="spinner-border" role="status">
                   <span className="sr-only">Loading...</span>
                 </div></div> : <div className="image-container" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.imageOnModal + ')' }} ></div>}
@@ -676,15 +703,26 @@ class ForumFeed extends Component {
                 height: (this.state.newHeight || this.state.canvasHeight) + 10 + 'px'
               }}>
               <div className="canvas-background"></div>
+
               <canvas
                 className="canvas"
                 style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
-                onMouseOut={() => this.setState({
-                  showPopover: false,
-                  x: null, y: null
-                }, () => this.clearAllHighlights())}
+                onMouseOut={this.state.viewLock ? null : () => {
+
+                  setTimeout(200, () => {
+
+                    if (!insidePopUp) {
+                      this.setState({
+                        showPopover: false,
+                        x: null, y: null
+                      }, () => this.clearAllHighlights())
+                    }
+                  })
+
+                }}
                 onClick={this.clickedTile}
-                onMouseMove={this.getCoordenate} ref={this.canvas}></canvas>
+                onMouseMove={(e) => this.state.viewLock ? null : this.moving(e)} ref={this.canvas}></canvas>
+
             </section>
 
             <div className={(this.state.loadingPreviousMosaics ? 'd-block' : 'd-none') + " spinner-grow text-light mt-4 mb-3"} role="status">
