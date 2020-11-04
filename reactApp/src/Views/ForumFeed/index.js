@@ -347,7 +347,10 @@ class ForumFeed extends Component {
 
 
 
-      this.setState({ x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true, viewLock: true }, () => {
+      this.setState({
+        x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true, viewLock: true,
+        xCanvas: imageCoordinatesX, yCanvas: imageCoordinatesY
+      }, () => {
         if (Object.keys(loadedEncodedImages).includes(imgName) && loadedEncodedImages[imgName])
           this.setImageModalPopover(imgName)
         else
