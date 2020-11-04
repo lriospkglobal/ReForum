@@ -47,6 +47,15 @@ class Discussion extends Component {
           <span><strong>DATE: </strong>{moment(photoDate).format("MMM Do YY")}</span>
           <span><strong>TIME OF DAY: </strong>{photoTime}</span>
         </div>
+        <div className="mt-3">
+          {allowDelete &&
+
+            <a href="" className="bold" onClick={(e) => {
+              e.preventDefault()
+              deleteAction()
+            }}>Delete post</a>
+          }
+        </div>
 
 
 
@@ -75,23 +84,6 @@ class Discussion extends Component {
               </div>
             </OverlayTrigger>
           }
-          <Dropdown className="extra-options">
-            <Dropdown.Toggle id="dropdown-basic">
-              <strong>. . .</strong>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              {allowDelete &&
-
-                <Dropdown.Item href="" onClick={(e) => {
-                  e.preventDefault()
-                  deleteAction()
-                }}>Delete post</Dropdown.Item>
-              }
-
-
-            </Dropdown.Menu>
-          </Dropdown>
 
         </div>
 

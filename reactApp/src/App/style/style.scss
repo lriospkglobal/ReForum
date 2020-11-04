@@ -256,6 +256,15 @@ input.apple-switch {
 
 }
 
+a {
+  color: $aarp-blue;
+  text-decoration: none;
+
+  &.bold {
+    font-weight: bold;
+  }
+}
+
 .btn-primary,
 .btn-secondary,
 .btn-dark {
