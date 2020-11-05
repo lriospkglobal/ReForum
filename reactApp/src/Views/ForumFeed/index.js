@@ -37,6 +37,7 @@ class ForumFeed extends Component {
       canvasWidth: 0,
       coordinates: null,
       imageOnModal: '',
+      imageOnModalId: null,
       showUploadTilesButton: false,
       showUploadMosaicImageButton: false,
       toUploadTilesList: null,
@@ -74,7 +75,6 @@ class ForumFeed extends Component {
   }
 
   setImageModalPopover = (imgName) => {
-
     if (this.state.loadedEncodedImages[imgName]) {
       const image = new Image()
 
@@ -89,6 +89,7 @@ class ForumFeed extends Component {
           popupOrientation = this.state.vertical
         this.setState({
           imageOnModal: this.state.loadedEncodedImages[imgName],
+          imageOnModalId: imgName,
           loadingImage: false,
           popupOrientation
         }, () => {
@@ -183,9 +184,9 @@ class ForumFeed extends Component {
   clickedTile = (e) => {
     let { discussions, currentForumId } = this.props;
     const forumId = currentForumId()
-    if (discussions && discussions[forumId]) {
+    if (discussions && discussions[forumId] && this.state.imageOnModalId) {
       discussions = discussions[forumId]
-      const el = e ? e.target : this.canvas.current;
+      /* const el = e ? e.target : this.canvas.current;
       const rect = el.getBoundingClientRect();
       //const x = e.clientX - rect.left;
       //const y = e.clientY - rect.top;
@@ -198,19 +199,20 @@ class ForumFeed extends Component {
         const imageCoordinatesX = parseInt(imageCoordinates[0])
         const imageCoordinatesY = parseInt(imageCoordinates[1])
         if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
-          const tileId = this.state.coordinates[attr]
-          for (let i = 0; i < discussions.length; i++) {
-            const discussion = discussions[i];
-            if (discussion.tile_id === tileId) {
-              matchedDiscussion = discussion;
-              break;
-            }
-          }
+          const tileId = this.state.coordinates[attr] */
+      let matchedDiscussion;
+      for (let i = 0; i < discussions.length; i++) {
+        const discussion = discussions[i];
+        if (discussion.tile_id === this.state.imageOnModalId) {
+          matchedDiscussion = discussion;
+          break;
         }
-
-
-
       }
+      /* }
+
+
+
+    } */
       this.setState({ currentDiscussion: matchedDiscussion, lgShow: true })
     }
 
