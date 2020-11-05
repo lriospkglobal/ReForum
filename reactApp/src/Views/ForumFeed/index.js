@@ -606,7 +606,7 @@ class ForumFeed extends Component {
             <section className="intro w-100 pb-4">
               <div className="d-flex align-items-center">
 
-                <h1><strong>Community Photo Mosaic:&nbsp;
+                <h1><strong>Community PhotoMosaic:&nbsp;
                 {(this.state.currentForumObj && this.state.currentForumObj.forum_name) ?
 
 

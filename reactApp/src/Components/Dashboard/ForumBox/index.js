@@ -12,7 +12,7 @@ const options = [
   { value: 'smartphone', label: 'Smartphone' },
   { value: 'tablet', label: 'Tablet' },
   { value: 'point and shoot', label: 'Point and Shoot' },
-  { value: 'slr and dslr', label: 'SLR and DSLR' }
+  { value: 'SLR and DSLR', label: 'SLR and DSLR' }
 ]
 const optionsTime = [
   { value: 'dawn', label: 'Dawn' },
