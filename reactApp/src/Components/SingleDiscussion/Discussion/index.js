@@ -39,16 +39,16 @@ class Discussion extends Component {
 
 
         <p>
-          <strong >{discTitle}</strong><br />
+          <strong className="text-capitalize">{discTitle}</strong><br />
           {discContent}
         </p>
         <div className="d-flex flex-column">
-          <span><strong>CAMERA: </strong>{camera}</span>
-          <span><strong>LOCATION: </strong>{photoLocation}</span>
+          <span className="text-capitalize"><strong>CAMERA: </strong>{camera}</span>
+          <span className="text-capitalize"><strong>LOCATION: </strong>{photoLocation}</span>
           <span><strong>DATE: </strong>{moment(photoDate).format("MMM Do YY")}</span>
-          <span><strong>TIME OF DAY: </strong>{photoTime}</span>
+          <span className="text-capitalize"><strong>TIME OF DAY: </strong>{photoTime}</span>
         </div>
-        <div className="mt-3">
+        <div className="mt-3 single-discussion__link-tools">
 
           {allowEdit &&
             <OverlayTrigger
@@ -60,9 +60,9 @@ class Discussion extends Component {
               </Tooltip>
               }
             >
-              <a href="" className="bold mx-1" onClick={(e) => {
+              <a href="" className="bold" onClick={(e) => {
                 e.preventDefault()
-                deleteAction()
+
               }}>Edit Post</a>
             </OverlayTrigger>
 
@@ -70,9 +70,9 @@ class Discussion extends Component {
 
           {allowDelete &&
 
-            <a href="" className="bold mx-1" onClick={(e) => {
+            <a href="" className="bold" onClick={(e) => {
               e.preventDefault()
-
+              deleteAction()
             }}>Delete Post</a>
           }
         </div>

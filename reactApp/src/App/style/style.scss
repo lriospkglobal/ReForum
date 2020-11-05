@@ -232,7 +232,7 @@ input.apple-switch {
       }
 
       &.small {
-        font-size: 12px;
+        font-size: 14px;
         letter-spacing: 0;
         line-height: 17px;
       }
@@ -954,6 +954,24 @@ header {
 }
 
 .single-discussion {
+  .single-discussion__link-tools {
+    >a {
+
+
+      /* two items */
+      &:first-child:nth-last-child(2),
+      &:first-child:nth-last-child(2)~a {
+        &:first-child {
+          &::after {
+            content: '\25CF';
+            display: inline-block;
+            margin: 0 5px;
+          }
+        }
+      }
+    }
+  }
+
   .single-discussion__tools {
     font-size: 16px;
     font-weight: bold;

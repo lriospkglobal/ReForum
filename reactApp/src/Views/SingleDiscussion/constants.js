@@ -21,3 +21,4 @@ export const DELETE_DISC_REDIRECT = 'delete_disc_redirect';
 export const DELETE_OPINION_START = 'delete_opinion_start';
 export const DELETE_OPINION_SUCCESS = 'delete_opinion_success';
 export const DELETE_OPINION_FAILURE = 'delete_opinion_failure';
+export const CLEAR_DISCUSSION = 'clear_discussion';

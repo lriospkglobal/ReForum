@@ -71,18 +71,18 @@ function DiscussionBox(props) {
         <Container className="mt-4">
           <Row>
             <Col className="pl-0">
-              <p><strong>TITLE: </strong> {discussionTitle}</p>
+              <p className="text-capitalize"><strong>TITLE: </strong> {discussionTitle}</p>
             </Col>
             <Col className="pr-0">
-              <p><strong>TIME OF DAY: </strong> {photoTime}</p>
+              <p className="text-capitalize"><strong>TIME OF DAY: </strong> {photoTime}</p>
             </Col>
           </Row>
           <Row>
             <Col className="pl-0">
-              <p><strong>CAMERA: </strong> {camera}</p>
+              <p className="text-capitalize"><strong>CAMERA: </strong> {camera}</p>
             </Col>
             <Col className="pr-0">
-              <p><strong>LOCATION: </strong> {location}</p>
+              <p className="text-capitalize"><strong>LOCATION: </strong> {location}</p>
             </Col>
           </Row>
 

@@ -22,6 +22,7 @@ import {
   DELETE_OPINION_START,
   DELETE_OPINION_SUCCESS,
   DELETE_OPINION_FAILURE,
+  CLEAR_DISCUSSION
 } from './constants';
 
 const initialState = {
@@ -38,7 +39,11 @@ const initialState = {
 };
 
 export const singleDiscussionReducer = (state = initialState, action) => {
-  switch(action.type) {
+  switch (action.type) {
+    case CLEAR_DISCUSSION:
+      return Object.assign({}, state, {
+        discussion: null
+      })
     case FETCHING_SINGLE_DISC_START:
       return Object.assign({}, state, {
         fetchingDiscussion: true,
@@ -50,7 +55,7 @@ export const singleDiscussionReducer = (state = initialState, action) => {
       });
 
     case FETCHING_SINGLE_DISC_SUCCESS:
-      
+
       return Object.assign({}, state, {
         discussion: action.payload,
         fetchingDiscussion: false,

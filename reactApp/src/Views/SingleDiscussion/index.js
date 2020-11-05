@@ -10,7 +10,8 @@ import {
   deletePost,
   deletedDiscussionRedirect,
   deleteOpinion,
-  getDiscussion
+  getDiscussion,
+  clearDiscussion
 } from './actions';
 
 import Discussion from '../../Components/SingleDiscussion/Discussion';
@@ -27,11 +28,11 @@ class SingleDiscussion extends Component {
   componentDidMount() {
     const {
 
-      discussionSlug, discussion
+      discussionSlug, discussion, discussions
     } = this.props;
 
     if (!discussion) {
-      console.log(discussionSlug)
+
       this.props.getDiscussion(discussionSlug);
     }
 
@@ -58,6 +59,8 @@ class SingleDiscussion extends Component {
   componentWillUnmount() {
     // remove any existing opinion texts
     this.props.updateOpinionContent(null);
+
+    this.props.clearDiscussion()
   }
 
   userFavoritedDiscussion(userId, favorites) {
@@ -230,7 +233,11 @@ class SingleDiscussion extends Component {
       );
     }
 
-    else return null
+    else return <div className="d-flex h-100 align-items-center justify-content-center">
+      <div className="spinner-grow" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+    </div>
   }
 }
 
@@ -255,6 +262,7 @@ export default connect(
   },
   (dispatch) => {
     return {
+      clearDiscussion: () => { dispatch(clearDiscussion()) },
       getDiscussion: (discussionSlug) => { dispatch(getDiscussion(discussionSlug)); },
       toggleFavorite: (discussionId) => { dispatch(toggleFavorite(discussionId)); },
       updateOpinionContent: (content) => { dispatch(updateOpinionContent(content)); },

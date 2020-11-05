@@ -535,7 +535,7 @@ class ForumBox extends Component {
 
                     <Form.Label>Description</Form.Label>
                     <Form.Text className="mb-2">
-                      Describe how your Sharp Shot connects to the theme of this photomosaic.
+                      Describe how your Sharp Shot connects to the theme of this PhotoMosaic.
   </Form.Text>
                     <Form.Control value={this.state.tileDescription} onChange={(e) => this.setState({ tileDescription: e.target.value, success: false })} as="textarea"></Form.Control>
                   </Form.Group>

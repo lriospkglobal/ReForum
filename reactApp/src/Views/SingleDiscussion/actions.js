@@ -21,6 +21,7 @@ import {
   DELETE_OPINION_START,
   DELETE_OPINION_SUCCESS,
   DELETE_OPINION_FAILURE,
+  CLEAR_DISCUSSION
 } from './constants';
 
 import {
@@ -30,6 +31,16 @@ import {
   deletePostApi,
   deleteOpinionApi,
 } from './api';
+
+
+/**
+ * clear discussion
+ */
+export const clearDiscussion = () => {
+  return (dispatch, getState) => {
+    dispatch({ type: CLEAR_DISCUSSION });
+  };
+};
 
 /**
  * get the discussion from server

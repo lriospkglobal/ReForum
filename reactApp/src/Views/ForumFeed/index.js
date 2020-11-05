@@ -117,15 +117,17 @@ class ForumFeed extends Component {
   requestImage = (imgName, cb) => {
     this.setState({ loadingImage: true }, () => {
       axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
-        this.setState = {
+        this.setState({
           loadedEncodedImages:
           {
             ...this.state.loadedEncodedImages,
-            [imgName]: response.data.base64
+            [imgName]: response.data
           }
 
-        }
-        cb()
+        },
+          () => {
+            cb()
+          })
       }).catch(e => console.error(e))
     })
   }
@@ -529,7 +531,7 @@ class ForumFeed extends Component {
       if (!insidePopUp)
         this.getCoordenate(e)
 
-    }, 500)
+    }, 50)
 
 
 
@@ -551,6 +553,19 @@ class ForumFeed extends Component {
 
     })
 
+  }
+
+  exitCanvas = () => {
+
+    setTimeout(() => {
+
+      if (!insidePopUp) {
+        this.setState({
+          showPopover: false,
+          x: null, y: null
+        }, () => this.clearAllHighlights())
+      }
+    }, 200)
   }
 
   render() {
@@ -713,19 +728,8 @@ class ForumFeed extends Component {
               <canvas
                 className="canvas"
                 style={{ display: (this.state.currentForumObj && this.state.currentForumObj.mosaic) ? 'block' : 'none' }}
-                onMouseOut={this.state.viewLock ? null : () => {
+                onMouseOut={this.state.viewLock ? null : this.exitCanvas}
 
-                  setTimeout(200, () => {
-
-                    if (!insidePopUp) {
-                      this.setState({
-                        showPopover: false,
-                        x: null, y: null
-                      }, () => this.clearAllHighlights())
-                    }
-                  })
-
-                }}
                 onClick={this.clickedTile}
                 onMouseMove={(e) => this.state.viewLock ? null : this.moving(e)} ref={this.canvas}></canvas>
 
@@ -895,25 +899,20 @@ class ForumFeed extends Component {
                   </OverlayTrigger>}
                 </Card.Header>
                 <Card.Body>
-                  <section className="moderator-card d-flex">
-                    <div className="moderator-card__img-container w-25">
-                      {this.state.currentForumObj && this.state.currentForumObj.mentor_base64 ? <ImageBootstrap src={this.state.currentForumObj.mentor_base64} fluid /> : null}
+                  <section className="moderator-card">
+                    <div className="moderator-card__img-container mb-3">
+                      {this.state.currentForumObj && this.state.currentForumObj.mentor_base64 ? <ImageBootstrap className="w-100" src={this.state.currentForumObj.mentor_base64} fluid /> : null}
                     </div>
-                    <div className="w-75">
-                      <div className="w-100">
-                        <strong>NAME: </strong>
 
-                        <p className="mb-0"> {this.state.currentForumObj && this.state.currentForumObj.mentor_name ?
+                    {this.state.currentForumObj && this.state.currentForumObj.mentor_name ?
 
-                          < TextEdit text={this.state.currentForumObj.mentor_name} attr={'mentor_name'} role={role} callback={this.changeForumAttribute} styleClass="" />
-                          : null}</p>
-                      </div>
+                      < TextEdit text={this.state.currentForumObj.mentor_name} attr={'mentor_name'} role={role} callback={this.changeForumAttribute} styleClass="strong h6" />
+                      : null}
 
 
-                    </div>
 
                   </section>
-                  <Card.Text className="small mb-3">
+                  <Card.Text className="small my-3">
                     {this.state.currentForumObj && this.state.currentForumObj.mentor_biography ?
                       < TextEdit text={this.state.currentForumObj.mentor_biography} attr={'mentor_biography'} role={role} callback={this.changeForumAttribute} styleClass="" /> : ''}
                   </Card.Text>
@@ -936,29 +935,31 @@ class ForumFeed extends Component {
           aria-labelledby="example-modal-sizes-title-lg"
         >
 
-          <Modal.Body className="p-0 d-flex">
-            <div className="w-70 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.currentDiscussion.base64 + ')' }}>
+          <Modal.Body className="p-0 h-100">
+            <section className="d-flex h-100">
+              <div className="w-70 modal-image" style={{ backgroundImage: 'url(' + 'data:image/jpeg;base64,' + this.state.currentDiscussion.base64 + ')' }}>
 
-            </div>
-            <div className="w-40 p-3">
-              <section className="discussion-box__header d-flex mb-3">
+              </div>
+              <div className="overflow-auto w-40 p-3">
+                <section className="discussion-box__header d-flex mb-3">
 
 
-                <ImageBootstrap src={this.state.currentDiscussion.user.avatarUrl} roundedCircle />
+                  <ImageBootstrap src={this.state.currentDiscussion.user.avatarUrl} roundedCircle />
 
-                <div className="d-flex flex-column justify-content-center">
-                  <span>{this.state.currentDiscussion.user.name || this.state.currentDiscussion.user.username} </span>
-                  <span className="text-muted">{this.state.currentDiscussion && this.timeDisplay()}</span>
-                </div>
-                <button
-                  onClick={() =>
-                    this.setState({ lgShow: false, currentDiscussion: null, viewLock: false })
+                  <div className="d-flex flex-column justify-content-center">
+                    <span>{this.state.currentDiscussion.user.name || this.state.currentDiscussion.user.username} </span>
+                    <span className="text-muted">{this.state.currentDiscussion && this.timeDisplay()}</span>
+                  </div>
+                  <button
+                    onClick={() =>
+                      this.setState({ lgShow: false, currentDiscussion: null, viewLock: false })
 
-                  }
-                  className="close"><span>×</span><span className="sr-only">Close</span></button>
-              </section>
-              <SingleDiscussion discussionSlug={this.state.currentDiscussion.discussion_slug} />
-            </div>
+                    }
+                    className="close"><span>×</span><span className="sr-only">Close</span></button>
+                </section>
+                <SingleDiscussion discussions={discussions} discussionSlug={this.state.currentDiscussion.discussion_slug} />
+              </div>
+            </section>
           </Modal.Body>
         </Modal>}
 
