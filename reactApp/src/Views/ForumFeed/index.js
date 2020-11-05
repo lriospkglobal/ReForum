@@ -26,7 +26,7 @@ import FeedBox from '../../Components/FeedBox';
 import SideBar from '../../Components/SideBar';
 
 let id, insidePopUp, xCanvas, yCanvas
-let loadedEncodedImages = {}
+
 
 class ForumFeed extends Component {
   constructor(props) {
@@ -56,6 +56,7 @@ class ForumFeed extends Component {
       highlights: false,
       widthGrowth: null,
       loadingPreviousMosaics: false,
+      loadedEncodedImages: {},
       prevMosaicImage: null,
       vertical: { width: '200px', height: '280px' },
       horizontal: { width: '280px', height: '200px' },
@@ -69,11 +70,12 @@ class ForumFeed extends Component {
     }
     this.canvas = React.createRef()
     this.popover = React.createRef()
+
   }
 
   setImageModalPopover = (imgName) => {
 
-    if (loadedEncodedImages[imgName]) {
+    if (this.state.loadedEncodedImages[imgName]) {
       const image = new Image()
 
       image.onload = () => {
@@ -86,7 +88,7 @@ class ForumFeed extends Component {
         } else
           popupOrientation = this.state.vertical
         this.setState({
-          imageOnModal: loadedEncodedImages[imgName],
+          imageOnModal: this.state.loadedEncodedImages[imgName],
           loadingImage: false,
           popupOrientation
         }, () => {
@@ -105,7 +107,7 @@ class ForumFeed extends Component {
 
       }
 
-      image.src = 'data:image/jpeg;base64, ' + loadedEncodedImages[imgName]
+      image.src = 'data:image/jpeg;base64, ' + this.state.loadedEncodedImages[imgName]
 
     }
 
@@ -115,9 +117,12 @@ class ForumFeed extends Component {
   requestImage = (imgName, cb) => {
     this.setState({ loadingImage: true }, () => {
       axios.get('/api/forum/tile?tileFileName=' + imgName + '&forumId=' + this.state.currentForumId).then(response => {
-        loadedEncodedImages = {
-          ...loadedEncodedImages,
-          [imgName]: response.data.base64
+        this.setState = {
+          loadedEncodedImages:
+          {
+            ...this.state.loadedEncodedImages,
+            [imgName]: response.data.base64
+          }
 
         }
         cb()
@@ -135,7 +140,7 @@ class ForumFeed extends Component {
       if ((x >= imageCoordinatesX && x <= (imageCoordinatesX + this.state.tileSize)) && (y >= imageCoordinatesY && y <= (imageCoordinatesY + this.state.tileSize))) {
         imgName = this.state.coordinates[attr]
 
-        if (Object.keys(loadedEncodedImages).includes(imgName) && loadedEncodedImages[imgName]) {
+        if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName]) {
 
           this.setImageModalPopover(imgName)
         } else {
@@ -230,13 +235,10 @@ class ForumFeed extends Component {
     xCanvas = e.clientX - rect.left
     yCanvas = e.clientY - rect.top
 
-
-
     this.setState({ x: left + xCanvas, y: top + yCanvas, xCanvas, yCanvas, showPopover: false }, () => this.getIndividualImage(xCanvas, yCanvas))
-
-
-
   }
+
+
 
   drawImage = (currentForumObj) => {
     const context = this.canvas.current.getContext('2d')
@@ -351,7 +353,7 @@ class ForumFeed extends Component {
         x: imageCoordinatesX + left, y: imageCoordinatesY + top, showPopover: true, highlights: true, viewLock: true,
         xCanvas: imageCoordinatesX, yCanvas: imageCoordinatesY
       }, () => {
-        if (Object.keys(loadedEncodedImages).includes(imgName) && loadedEncodedImages[imgName])
+        if (Object.keys(this.state.loadedEncodedImages).includes(imgName) && this.state.loadedEncodedImages[imgName])
           this.setImageModalPopover(imgName)
         else
           this.requestImage(imgName, () => this.setImageModalPopover(imgName))
@@ -521,6 +523,7 @@ class ForumFeed extends Component {
   }
 
   moving = (e) => {
+
     clearTimeout(id)
     id = setTimeout(() => {
       if (!insidePopUp)
