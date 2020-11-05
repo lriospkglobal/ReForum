@@ -2,7 +2,7 @@
 const getAllForums = require('./controller').getAllForums;
 const getDiscussions = require('./controller').getDiscussions;
 const mongodb = require('mongodb');
-const { getImageFromGridFs, base64encode } = require('../helpers');
+const { getImageFromGridFs } = require('../helpers');
 const fs = require('fs');
 const Forum = require('./model');
 /**
@@ -16,28 +16,36 @@ const forumAPI = (app, client) => {
       chunkSizeBytes: 1024,
       bucketName: req.query.forumId
     });
-    const readstream = bucket.createReadStream(req.query.tileFileName);
-    readstream.on('data', (chunk) => {
-      res.send(chunk.toString('base64'));
+    const collectionChunks = db.collection(req.query.forumId + '.chunks');
+
+    bucket.find({ filename: req.query.tileFileName }).toArray((err, docs) => {
+      if (err) return res.status(500).send(err)
+      //Retrieving the chunks from the db          
+      collectionChunks.find({ files_id: docs[0]._id })
+        .sort({ n: 1 }).toArray(function (err, chunks) {
+          if (err) {
+            return res.status(500).send(err)
+          }
+          if (!chunks || chunks.length === 0) {
+            //No data found            
+            return res.status(500).send('No data')
+          }
+
+          let fileData = [];
+          for (let i = 0; i < chunks.length; i++) {
+
+
+            fileData.push(chunks[i].data.toString('base64'));
+          }
+
+          res.send(fileData.join(''))
+
+
+        })
+
     })
 
-    /* bucket.find({ filename: req.query.tileFileName }).toArray((err, files) => {
-      if (err) return res.status(500).send(err)
 
-
-
-
-      //bucket.openDownloadStreamByName(req.query.tileFileName).pipe(res)
-    }) */
-
-
-    /* getImageFromGridFs({ filename: req.query.tileFileName }, 'reforum', req.query.forumId, client, req.query.forumId).then(img => {
-      //const base64 = base64encode(img.savedFsFilename)
-      //fs.unlinkSync(img.savedFsFilename)
-
-      return res.send({ img })
-
-    }).catch(err => res.send(err)) */
   });
 
   //get past mosaics from forum
@@ -57,7 +65,7 @@ const forumAPI = (app, client) => {
             result.forEach((object) => {
 
               allPromises.push(
-                getImageFromGridFs({ filename: object.filename }, 'reforum', 'previous' + req.params.forum_id, client, req.params.forum_id)
+                getImageFromGridFs(object.filename, 'reforum', 'previous' + req.params.forum_id, client)
               )
 
 
@@ -67,8 +75,8 @@ const forumAPI = (app, client) => {
               /* Add base64 mosaic */
               values.forEach((value, index) => {
 
-                result[index]['base64'] = base64encode(value.savedFsFilename)
-                fs.unlinkSync(value.savedFsFilename)
+                result[index]['base64'] = value
+
 
               })
 
@@ -97,21 +105,23 @@ const forumAPI = (app, client) => {
         const allPromises = []
         result.forEach((forum) => {
           if (forum.mosaic) {
+
             allPromises.push(
-              getImageFromGridFs({ filename: forum.mosaic.filename }, 'reforum', 'mosaics', client, forum._id)
+              getImageFromGridFs(forum.mosaic.filename, 'reforum', 'mosaics', client, forum._id)
             )
           }
 
         });
         Promise.all(allPromises).then(values => {
-
           /* Add base64 mosaic */
           values.forEach(value => {
+
             for (let i = 0; i < result.length; i++) {
 
               if (result[i]._id === value.forumId) {
-                result[i]['mosaic']['base64'] = base64encode(value.savedFsFilename)
-                fs.unlinkSync(value.savedFsFilename)
+
+                result[i]['mosaic']['base64'] = value.base64
+
                 break;
               }
             }

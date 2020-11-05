@@ -1,5 +1,5 @@
 const asyncEach = require('async/each');
-const { getImageFromGridFs, base64encode } = require('../helpers');
+const { getImageFromGridFs } = require('../helpers');
 const fs = require('fs');
 // models
 const Forum = require('./model');
@@ -83,10 +83,9 @@ const getDiscussions = (client, forum_id, pinned, sorting_method = 'date') => {
             // get individual tile
             return new Promise((resolve, reject) => {
 
-              getImageFromGridFs({ filename: eachDiscussion.tile_id }, 'reforum', forum_id, client, forum_id).then(img => {
-                const base64 = base64encode(img.savedFsFilename);
-                fs.unlinkSync(img.savedFsFilename);
-                eachDiscussion.base64 = base64;
+              getImageFromGridFs(eachDiscussion.tile_id, 'reforum', forum_id, client).then(img => {
+
+                eachDiscussion.base64 = img;
                 resolve();
 
               }).catch(err => reject(err))

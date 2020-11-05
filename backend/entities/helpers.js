@@ -36,7 +36,7 @@ module.exports = {
 
 
 
-  getImageFromGridFs: (obj, dbName, bucketName, client, forumId) => {
+  getImageFromGridFs: (fileName, dbName, bucketName, client, forumId) => {
     return new Promise((resolve, reject) => {
       const db = client.db(dbName);
       const bucket = new mongodb.GridFSBucket(db, {
@@ -44,21 +44,36 @@ module.exports = {
         bucketName
       });
 
-      switch (Object.keys(obj)[0]) {
-        case 'id':
-        case 'filename':
-          bucket.openDownloadStreamByName(obj['filename']).
-            pipe(fs.createWriteStream(obj['filename'])).
-            on('error', function (error) {
 
-              reject(error)
-            }).
-            on('finish', function () {
+      const collectionChunks = db.collection(bucketName + '.chunks');
 
-              resolve({ savedFsFilename: obj['filename'], forumId })
+      bucket.find({ filename: fileName }).toArray((err, docs) => {
+        if (err) return reject(err)
+        //Retrieving the chunks from the db          
+        collectionChunks.find({ files_id: docs[0]._id })
+          .sort({ n: 1 }).toArray(function (err, chunks) {
+            if (err) {
+              return reject(err)
+            }
+            if (!chunks || chunks.length === 0) {
+              //No data found            
+              return reject('No data')
+            }
 
-            });
-      }
+            let fileData = [];
+            for (let i = 0; i < chunks.length; i++) {
+
+
+              fileData.push(chunks[i].data.toString('base64'));
+            }
+            if (forumId)
+              resolve({ forumId, base64: fileData.join('') })
+            else resolve(fileData.join(''))
+
+
+          })
+
+      })
     })
 
 
