@@ -10,6 +10,7 @@ import {
   DELETE_FORUM,
   DELETE_FORUM_SUCCESS,
   DELETE_FORUM_FAILURE,
+  UPDATED_FORUM
 } from './constants';
 
 const initialState = {
@@ -32,6 +33,10 @@ const initialState = {
 
 export const adminInfoReducer = (state = initialState, action) => {
   switch (action.type) {
+    case UPDATED_FORUM:
+      return Object.assign({}, state, {
+        forums: action.forums,
+      })
     case GET_ALL_INFO_START:
       return Object.assign({}, state, {
         loadingInfo: true,

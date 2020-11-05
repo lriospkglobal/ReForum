@@ -142,10 +142,12 @@ class SingleDiscussion extends Component {
 
       // check if logged in user is owner of the discussion
       let allowDelete = false;
+      let allowEdit = false
       if (
         (discussion.user._id === this.props.userId) ||
         this.props.userRole === 'admin'
       ) allowDelete = true;
+      if (discussion.user._id === this.props.userId) allowEdit = true;
 
 
       // check if user favorated the discussion
@@ -169,6 +171,7 @@ class SingleDiscussion extends Component {
             userFavorited={userFavorited}
             toggleingFavorite={toggleingFavorite}
             allowDelete={allowDelete}
+            allowEdit={allowEdit}
             deletingDiscussion={deletingDiscussion}
             deleteAction={this.deleteDiscussion.bind(this)}
             camera={camera}

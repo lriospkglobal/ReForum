@@ -10,6 +10,7 @@ import {
   DELETE_FORUM,
   DELETE_FORUM_SUCCESS,
   DELETE_FORUM_FAILURE,
+  UPDATED_FORUM
 } from './constants';
 
 import { FETCHING_DISCUSSIONS_FAILURE } from '../ForumFeed/constants'
@@ -18,7 +19,36 @@ import {
   getAdminDashboardInfoAPI,
   createForumAPI,
   deleteForumAPI,
+  updateForum as updateForumApi
 } from './api';
+
+
+/**
+ * Update forum
+ * @param  {String} id
+ * @param  {Object} toUpdate
+ * @return {action}
+ */
+export const updateForum = (id, toUpdate, successCb) => {
+  return ((dispatch, getState) => {
+
+
+
+    updateForumApi(id, toUpdate).then(() => {
+      let forums = getState().adminInfo.info.forums;
+      forums = forums.map(forum => {
+        if (forum._id === id) {
+          forum = { ...forum, ...toUpdate }
+        }
+
+        return forum
+      })
+      if (successCb) successCb()
+      return dispatch({ type: UPDATED_FORUM, forums })
+    }).catch(err => console.error(err))
+  })
+
+};
 
 /**
  * get all the info needed for dashboard

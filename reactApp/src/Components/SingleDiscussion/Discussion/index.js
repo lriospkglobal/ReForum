@@ -16,6 +16,7 @@ class Discussion extends Component {
       userFavorited,
       toggleingFavorite,
       allowDelete,
+      allowEdit,
       deletingDiscussion,
       deleteAction,
       userRole,
@@ -47,6 +48,34 @@ class Discussion extends Component {
           <span><strong>DATE: </strong>{moment(photoDate).format("MMM Do YY")}</span>
           <span><strong>TIME OF DAY: </strong>{photoTime}</span>
         </div>
+        <div className="mt-3">
+
+          {allowEdit &&
+            <OverlayTrigger
+              key={'top'}
+              placement={'top'}
+              overlay={
+                <Tooltip >
+                  As a creator of posts you can edit them.
+              </Tooltip>
+              }
+            >
+              <a href="" className="bold mx-1" onClick={(e) => {
+                e.preventDefault()
+                deleteAction()
+              }}>Edit Post</a>
+            </OverlayTrigger>
+
+          }
+
+          {allowDelete &&
+
+            <a href="" className="bold mx-1" onClick={(e) => {
+              e.preventDefault()
+
+            }}>Delete Post</a>
+          }
+        </div>
 
 
 
@@ -75,23 +104,6 @@ class Discussion extends Component {
               </div>
             </OverlayTrigger>
           }
-          <Dropdown className="extra-options">
-            <Dropdown.Toggle id="dropdown-basic">
-              <strong>. . .</strong>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu>
-              {allowDelete &&
-
-                <Dropdown.Item href="" onClick={(e) => {
-                  e.preventDefault()
-                  deleteAction()
-                }}>Delete post</Dropdown.Item>
-              }
-
-
-            </Dropdown.Menu>
-          </Dropdown>
 
         </div>
 

@@ -365,7 +365,7 @@ class ForumBox extends Component {
             <Form.Group className="page-title">
 
 
-              <Form.Label>Forum Title</Form.Label>
+              <Form.Label>Mosaic Title</Form.Label>
               <Form.Control value={newForumTitle} onChange={this.setTitle} type="text" />
 
             </Form.Group>

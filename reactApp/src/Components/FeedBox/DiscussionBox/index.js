@@ -71,10 +71,10 @@ function DiscussionBox(props) {
         <Container className="mt-4">
           <Row>
             <Col className="pl-0">
-              <p>{discussionTitle}</p>
+              <p><strong>TITLE: </strong> {discussionTitle}</p>
             </Col>
             <Col className="pr-0">
-              <p><strong>Time of Day: </strong> {photoTime}</p>
+              <p><strong>TIME OF DAY: </strong> {photoTime}</p>
             </Col>
           </Row>
           <Row>
@@ -90,7 +90,7 @@ function DiscussionBox(props) {
 
 
         </Container>
-        <p>{discussionContent}</p>
+        <p><strong>DESCRIPTION: </strong>{discussionContent}</p>
 
         <div className="discussion-box__footer ">
           {!mock ? <div>
@@ -149,7 +149,7 @@ function DiscussionBox(props) {
                 <button onClick={() => openFromUrl(tileId)} className="misc-button p-2">
                   <img src={eye} />
                 </button>
-                <span className="ml-2">View in mosaic</span>
+                <span className="ml-2">View in Mosaic</span>
               </div>
 
               <Button onClick={() => {
